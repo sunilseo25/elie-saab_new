@@ -430,19 +430,3 @@ items.forEach(item => {
   });
 });
 
-$(document).ready(function() {
-  $('.play_btn').on('click', function() {
-    var video = $(this).closest('.mega_video').find('video')[0];
-    if (video.paused) {
-      video.play();
-      $(this).addClass('active')
-    } else {
-      video.pause();
-      $(this).removeClass('active')
-    }
-  });
-});
-$('.Overlay_overlay').click(function(){
-  $('.mobile-toggle-wrapper').removeClass('active');
-  $('body').removeClass('overflow-hidden');
-})

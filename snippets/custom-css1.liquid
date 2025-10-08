@@ -22,17 +22,33 @@ html:not(.xh) label.aa.facet-checkbox {
 .template-product .thb-product-detail.product product-slider-thumbnails:not(.flickity-enabled) .product-images__slide:nth-of-type(1) {
     display: block;
 }
+.template-page-rtw-shows-page .cstbtnss.flex button.tab-btn:last-child, .template-page.template-page-bridal .carouselMain a.cstbtn, body#csthaut .cstftr img.retina_size, img.-mob-logo-ftr {
+    display: none;
+}
 @media(max-width:767px){
     section.custom-slider-section slider-component.mySwiper:not(.swiper-initialized) .swiper-wrapper .swiper-slide {
         transform: translateZ(0);
         width: 80%;
         margin-right: 5px;
     }
+    .template-page-bridal-home .custom-slider-section .custom-slick-slider:not(.slick-initialized) > div:nth-child(n+2) {
+    display: none;
+}
 }
 @media(min-width:1200px){
     section.custom-slider-section slider-component.mySwiper:not(.swiper-initialized) .swiper-wrapper {gap: 5px;}
     section.custom-slider-section slider-component.mySwiper:not(.swiper-initialized) .swiper-wrapper .swiper-slide {
         width: 25%;
     }
+    .template-page-bridal-home .custom-slider-section .custom-slick-slider:not(.slick-initialized) > div:nth-child(n+5) {
+    display: none;
+    }
+
+    .template-page-bridal-home .custom-slider-section .custom-slick-slider:not(.slick-initialized) > div {
+        margin: 0 2px;
+    }
+}
+html:not(.mainopt):not(.xh) button#spb__cartToastCloseBtn {
+    display:none !important;
 }
 </style>

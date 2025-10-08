@@ -49,7 +49,8 @@
           {% elsif block.settings.media_type == 'video_url' %}
             {%- assign url = block.settings.media_video_url | strip -%}
             <div class="video-wrapper">
-              <video id="tab-{{ forloop.index0 }}" src="{{ url }}"  class="single-video-tab lazyvideo" muted playsinline preload="none" style="width:100%;height:520px;object-fit:cover" controlslist="nodownload noremoteplayback" crossorigin="anonymous" poster="{{ section.settings.default_media_image | image_url }}" ></video>
+               <video id="tab-{{ forloop.index0 }}" src="{{ url }}"  class="single-video-tab lazyvideo" muted playsinline preload="none" style="width:100%;height:520px;object-fit:cover" controlslist="nodownload noremoteplayback" crossorigin="anonymous" poster="{{ section.settings.default_media_image | image_url }}" ></video>
+              {% comment %} <video id="tab-{{ forloop.index0 }}" src="{{ url }}" class="single-video-tab" autoplay muted playsinline preload="auto" style="width:100%;height:520px;object-fit:cover" controlslist="nodownload noremoteplayback" crossorigin="anonymous" ></video> {% endcomment %}
               {% if url contains 'youtu.be' or url contains 'youtube.com' %}
                 {%- assign id = url | replace: 'https://youtu.be/', '' | replace: 'https://www.youtube.com/watch?v=', '' | split: '&' | first -%}
                 <iframe src="https://www.youtube.com/embed/{{ id }}?autoplay=1&loop=1&mute=1&playlist={{ id }}&controls=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen class="single-video-tab" ></iframe>
@@ -58,7 +59,7 @@
                 <iframe src="https://player.vimeo.com/video/{{ id }}?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:520px" class="single-video-tab" ></iframe>
               {% endif %}
               {% if block.settings.media_collection_url != blank %}
-              <a href="{{ block.settings.media_collection_url }}" class="overlay-content overlay_content_link" id="overlay_content_{{ forloop.index0 }}"></a>
+              <a href="{{ block.settings.media_collection_url }}" class="overlay-content overlay_content_link" aria-label="overlay content" id="overlay_content_{{ forloop.index0 }}"></a>
               {% endif %}
             </div>
             <script>

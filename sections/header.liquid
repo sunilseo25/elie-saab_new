@@ -56,7 +56,25 @@
       }
 	{%- endstyle -%}
 </theme-header>
-{{- 'header.js' | asset_url | script_tag | replace: ' src' , ' d-src' | replace: ' type="text/javascript"' , ' type="load"'-}}
+{{- 'header.js' | asset_url | script_tag -}}
+<script type="load">
+ $(document).ready(function() {
+  $('.play_btn').on('click', function() {
+    var video = $(this).closest('.mega_video').find('video')[0];
+    if (video.paused) {
+      video.play();
+      $(this).addClass('active')
+    } else {
+      video.pause();
+      $(this).removeClass('active')
+    }
+  });
+});
+$('.Overlay_overlay').click(function(){
+  $('.mobile-toggle-wrapper').removeClass('active');
+  $('body').removeClass('overflow-hidden');
+}) 
+</script>
 <style>
    /* @media (min-width:768px){
     .st-wishlist-details-button{

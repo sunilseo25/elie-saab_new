@@ -159,7 +159,7 @@ body.st-wishlist-initialized .product-information--inner .st-wishlist-button:hov
     line-height: 1.5;
     -webkit-overflow-scrolling: touch;
     height: auto !important;
-    transition: all 0.5s ease-in
+    transition: transform 0.5s ease-in;
   }
 
   #dropdownCard .link:last-child,
@@ -292,7 +292,8 @@ body.st-wishlist-initialized .product-information--inner .st-wishlist-button:hov
   }
 
   #Facet-Drawer .side-panel-content {
-    padding: 0 10px
+    padding: 0 10px;
+         overflow-y:unset;
   }
 
   body .thb-filter-content li {
@@ -625,7 +626,9 @@ body.st-wishlist-initialized .product-information--inner .st-wishlist-button:hov
     overflow: hidden;
     display: block
   }
-
+.facets__mobile_form collapsible-card[data-type="Size"]{
+overflow:unset;
+}
   body .facet-drawer .side-panel-footer .button {
     padding: 8px 15px;
     height: 40px;

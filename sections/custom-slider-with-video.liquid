@@ -16,13 +16,13 @@
                     {%- render 'responsive-image', image: product.featured_image, sizes: '407x0,500x0', retina: product.settings.retina -%}
                     <div class="main-collection-section">
                       <div class="collection-text">{{ product.title | escape }}</div>
-{% unless product.price == 999900 or product.price == 9999900 %}
-  {% if localization.country.iso_code == 'US' %}
-    <span class="price"></span>
-  {% else %}
-    <span class="price">{{ product.price | money }}</span>
-  {% endif %}
-{% endunless %}                
+                        {% unless product.price == 999900 or product.price == 9999900 %}
+                          {% if localization.country.iso_code == 'US' %}
+                            <span class="price"></span>
+                          {% else %}
+                            <span class="price">{{ product.price | money }}</span>
+                          {% endif %}
+                        {% endunless %}                
                     </div>
                   </div>
                 </a>

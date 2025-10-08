@@ -394,6 +394,10 @@
 }
 
 @media (max-width: 767px) {
+.template-collection-custom-haute-couture-template .product-card .product-card-info button.st-wishlist-button{
+  top:15px;
+}
+
   .template-collection-custom-haute-couture-template .dropdown_select_wrapper {
     display: block;
   }

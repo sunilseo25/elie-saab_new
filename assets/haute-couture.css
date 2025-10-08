@@ -155,8 +155,8 @@
 
 .template-page-haute-couture-home #behind-scenes,
 .template-page-haute-couture-home #details{
-  margin-bottom: 6rem;
-  margin-top: 2rem;
+  /* margin-bottom: 6rem; */
+  /* margin-top: 2rem; */
 }
 
 .template-page-haute-couture-home .welcome-guest-heading:before,
@@ -366,7 +366,7 @@
   }
 
   .template-page-haute-couture-home #behind-scenes {
-    margin-bottom: 6rem;
+    /* margin-bottom: 6rem; */
     margin-top: 0;
   }
 

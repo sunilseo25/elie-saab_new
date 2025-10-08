@@ -16,13 +16,15 @@
           class="letter_image"
         >
       {% endif %}
-      <div class="flex">
         {% if section.settings.button_text != blank %}
+      <div class="flex">
+      
           <a href="{{ section.settings.button_link }}" class="letter-btn" target="_blank">
             {{ section.settings.button_text }}
           </a>
-        {% endif %}
+     
       </div>
+         {% endif %}
       <div class="sign-letter-main">
         <div class="sign-letter">
           {% if section.settings.letter_sign_image %}

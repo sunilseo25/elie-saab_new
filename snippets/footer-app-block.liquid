@@ -22,23 +22,13 @@
     });
 </script>
 <script>
-    var site_nav_link_burger = true;
     var site_nav_link_search = true;
     var site_nav_link_cart = true;
     var site_atc = true;
     document.addEventListener("DOMContentLoaded", function() {
-        var icon_menu = document.querySelector('.mobile-toggle-wrapper .mobile-toggle');
         var icon_search = document.querySelector('[href="/search"] .icon-item');
         var icon_cart = document.querySelector('[href="/cart"] .icon-item');
         var icon_atc = document.querySelector('.product-add-to-cart-container #AddToCart.select_variant');
-        if(icon_menu){
-          icon_menu.addEventListener("click", function() {
-              if(site_nav_link_burger && !document.documentElement.classList.contains('scld')) {
-                  event.preventDefault();
-                  site_nav_link_burger = false;
-              }
-          });
-        }
         if(icon_search){
           icon_search.addEventListener("click", function() {
               if(site_nav_link_search && !document.documentElement.classList.contains('scld')) {

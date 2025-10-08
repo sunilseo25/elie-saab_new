@@ -38,7 +38,7 @@
           </li>
           <li>
             <h4 class="nav-link" data-bs-toggle="pill" data-bs-target="#wishlist">
-              <button class="st-wishlist-details-button" data-type="manually"></button>
+              <button class="st-wishlist-details-button" aria-label="wishlist" data-type="manually"></button>
             </h4>
           </li>
           {%- if shop.customer_accounts_enabled -%}
@@ -87,10 +87,10 @@
                   <li class="nav-item carousel">
                     <a class="nav-link column-3" data-bs-toggle="tab" data-bs-target="bridal" href="javascript:void(0);" >Bridal</a >
                   </li>
-                  <div class="slide-btn flickity-nav flickity-prev" tabindex="0">
+                  <div class="slide-btn flickity-nav flickity-prev" aria-label="flick-prev" tabindex="0">
                     {%- render 'svg-icons' with 'arrow-left' -%}
                   </div>
-                  <div class="slide-btn flickity-nav flickity-next" tabindex="0">
+                  <div class="slide-btn flickity-nav flickity-next" aria-label="flick-next" tabindex="0">
                     {%- render 'svg-icons' with 'arrow-right' -%}
                   </div>
                 </wishlist-component>
@@ -633,7 +633,7 @@
             <slider-component class="products carousel row no-padding suggested_card">
               <div class="carousel_slide column small-6 medium-6 carousel__slide">
                 <div class="thumb_product cover_img">
-                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/rtw.jpg?v=1747864627">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/rtw.jpg?v=1747864627" alt="thumb-pro">
                 </div>
                 <a href="/collections/ready-to-wear-all">
                   <span>Shop</span>
@@ -642,7 +642,7 @@
               </div>
               <div class="carousel_slide column small-6 medium-6 carousel__slide">
                 <div class="thumb_product cover_img">
-                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/bags_cart.jpg?v=1747864720">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/bags_cart.jpg?v=1747864720" alt="thumb-pro">
                 </div>
                 <a href="/collections/handbags">
                   <span>Shop</span>
@@ -652,7 +652,7 @@
               {% unless localization.country.iso_code == 'US' %}
               <div class="carousel_slide column small-6 medium-6 carousel__slide">
                 <div class="thumb_product cover_img">
-                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/kids.jpg?v=1747864940">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/kids.jpg?v=1747864940" alt="thumb-pro"> 
                 </div>
                 <a href="/collections/kids">
                   <span>Shop</span>
@@ -662,7 +662,7 @@
               {% endunless %}
   <div class="carousel_slide column small-6 medium-6 carousel__slide">
                 <div class="thumb_product cover_img">
-                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/ES_L_Homme_1800x1000_3.jpg?v=1744150705">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/ES_L_Homme_1800x1000_3.jpg?v=1744150705" alt="thumb-pro">
                 </div>
                 <a href="https://eliesaab.com/pages/lhomme">
                   <span>View</span>
@@ -672,10 +672,10 @@
           
 
               <div class="flickity-nav product-next flickity-prev" tabindex="0">
-                <img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}">
+                <img width="30" height="30" alt="flick-pro" src="{{ 'arrow-left.svg' | asset_url }}">
               </div>
               <div class="flickity-nav product-prev flickity-next" tabindex="0">
-                <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+                <img width="30" height="30" alt="flick-pro" src="{{ 'arrow-right.svg' | asset_url }}">
               </div>
             </slider-component>
           </div>

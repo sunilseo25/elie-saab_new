@@ -41,7 +41,7 @@
                     {% case media.settings.media_type %}
                       {% when 'image' %}
                         <div class="image-wrapper">
-                          <a href="{{ media.settings.media_url }}">
+                          <a href="{{ media.settings.media_url }}" aria-label="Read more about cover image">
                             <div class="cover_img" style="--padding-bottom:160%">
                               {%- render 'responsive-image',
                                 image: media.settings.media_image,
@@ -85,7 +85,7 @@
                               sizes: '407x0,500x0',
                               image_size: '500x',
                               class: 'custom_video lazyvideo',
-                              attributes: 'controlslist="nodownload noremoteplayback"' | replace:'preload="metadata"','preload="none"' | replace: ' poster' , ' data-poster'
+                              attributes: 'controlslist="nodownload noremoteplayback"' | replace:'preload="metadata"','preload="none"' | replace: ' poster' , ' data-poster' | replace: '<img src' , '<img alt="img-pro" src'
                           }}
                           {% if media.settings.media_text_explore != blank %}
                             <a href="{{ media.settings.media_url }}">
