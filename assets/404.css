@@ -1,0 +1,33 @@
+.not-found {
+  max-width: 470px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 40px 0;
+}
+.not-found h1 {
+  font-size: 30px;
+  line-height: 32px;
+}
+.template-404 .row.footer-top,
+.template-404 .middle-footer {
+  display: none;
+}
+@media only screen and (min-width: 768px) {
+  .not-found {
+    padding: 70px 0;
+  }
+}
+@media only screen and (min-width: 1068px) {
+  .not-found {
+    padding: 100px 0;
+  }
+}
+.not-found .button {
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .not-found {
+    max-width: 240px;
+  }
+}

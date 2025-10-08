@@ -1,0 +1,447 @@
+{%- if menu -%}
+  {%- for link in menu.links -%}
+    {%- liquid
+      assign parent_index = forloop.index
+      assign has_sub_menu = false
+      assign has_mega_menu = false
+      assign has_menu_badge = false
+
+      assign mega_menu_block_index = false
+      assign mega_menu_block_index_sidebar = false
+      assign mega_menu_block_index_promotions = false
+
+      assign mega_menu_blocks = blocks | where: 'type', 'megamenu'
+      assign mega_menu_blocks_sidebar = blocks | where: 'type', 'megamenu_sidebar'
+      assign mega_menu_blocks_promotions = blocks | where: 'type', 'megamenu_promotions'
+
+      assign menu_badge_index = false
+      assign menu_badge_blocks = blocks | where: 'type', 'menu_badge'
+
+      if link.links.size > 0
+        assign has_sub_menu = true
+      endif
+
+      assign parent_name = link.title | downcase | strip
+      for block in mega_menu_blocks
+        assign block_parent_name = block.settings.parent_handle | downcase | strip
+        if block_parent_name == parent_name
+          assign has_mega_menu = true
+          assign mega_menu_block_index = forloop.index0
+        endif
+      endfor
+
+      for block in mega_menu_blocks_sidebar
+        assign position_sidebar = block.settings.position | plus: 0
+        if position_sidebar == parent_index
+          assign has_mega_menu = true
+          assign mega_menu_block_index_sidebar = forloop.index0
+        endif
+      endfor
+
+      for block in mega_menu_blocks_promotions
+        assign position_promotions = block.settings.position | plus: 0
+        if position_promotions == parent_index
+          assign has_mega_menu = true
+          assign mega_menu_block_index_promotions = forloop.index0
+        endif
+      endfor
+
+      for block in menu_badge_blocks
+        assign badge_position = block.settings.badge_position | plus: 0
+        if badge_position == parent_index
+          assign has_menu_badge = true
+          assign menu_badge_index = forloop.index0
+        endif
+      endfor
+    -%}
+    {% unless localization.country.iso_code == 'US' and link.title == 'Kids' %}
+
+    <li style="--n:{{ forloop.index }}">
+      {%- if has_sub_menu == true or has_mega_menu == true -%}
+        {%- liquid
+          assign mega_menu_block = mega_menu_blocks[mega_menu_block_index]
+          assign mega_menu_block_promotions = mega_menu_blocks_promotions[mega_menu_block_index_promotions]
+          assign mega_menu_block_sidebar = mega_menu_blocks_sidebar[mega_menu_block_index_sidebar]
+        -%}
+                
+        <div class="link-container sub-category">
+          <summary class="parent-link"
+                   data-title="{{ link.title | strip }}"
+                   data-handle="{{ link.title | handleize }}">
+            <span class="border-animation">{{ link.title }}</span>
+            {%- if has_menu_badge -%}
+              {%- assign menu_badge_block = menu_badge_blocks[menu_badge_index] -%}
+              <span class="menu-item-badge" style="--menu-badge-bg: {{ menu_badge_block.settings.color_bg }};--menu-badge-text: {{ menu_badge_block.settings.color_text }};">
+                {{- menu_badge_block.settings.text -}}
+              </span>
+            {%- endif -%}
+            <span class="link-forward test6">{%- render 'svg-icons' with 'custom-caret' -%}</span>
+            <span class="222 link-minus">{%- render 'svg-icons' with 'minus' -%}</span>
+          </summary>
+          <ul class="111 sub-menu submenu-1">
+            <div class="SubLevel_subLevelLayerWrapper">
+              <div class="menu__content">
+                <li class="parent-link-back first_level_back_menu" style="--n:{{ forloop.index }}">
+                  <button class="parent-link-back--button">
+                    <span class="light">
+                      <svg ...>...</svg>
+                      Return to main <span>/ {{ link.title }}</span>
+                    </span>
+                  </button>
+                  {% assign has_second_level = false %}
+                  {% for l in link.links %}
+                    {% if l.links.size > 0 %}
+                      {% assign has_second_level = true %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if has_second_level %}
+                  <button class="child-link-back--button">
+                    <span class="light second_level_back_menu">
+                      <svg ...>...</svg>
+                      {{ link.title }} <span>/ <span id="child-title"></span>
+                    </span>
+                    </span>
+                  </button>
+                  {% endif %}
+                </li>
+                {%- for l in link.links -%}
+                  {%- liquid
+                    assign has_sub_menu = false
+                    if l.links.size > 0
+                      assign has_sub_menu = true
+                    endif
+
+                    assign child_name = l.title | downcase | strip
+                    assign child_mega_menu_block = nil
+                    
+                    for block in mega_menu_blocks
+                      assign block_parent_name = block.settings.parent_handle | downcase | strip
+                      if block_parent_name == child_name
+                        assign child_mega_menu_block = block
+                      endif
+                    endfor
+                  -%}
+                  <li style="--n:{{ forloop.index }}">
+                    {%- if has_mega_menu and mega_menu_block_sidebar -%}
+                      {%- if l.links.size > 0 -%}
+                        <details class="link-container">
+                          <summary class="parent-link"
+                                   data-title="{{ l.title | strip }}"
+                                   data-handle="{{ l.title | handleize }}">
+                            <span class="border-animation">{{- l.title -}}</span>
+                            <span class="link-forward test">{%- render 'svg-icons' with 'thb-mobile-menu-forward' -%}</span>
+                            <span class="333 link-minus">{%- render 'svg-icons' with 'minus' -%}</span>
+                          </summary>
+                          <ul class="sub-menu submenu-2" tabindex="-1">
+                            <li class="parent-link-back">
+                              <button class="parent-link-back--button">
+                                <span class="light">Return to main</span> <span>/ {{ l.title }}</span>
+                              </button>
+                            </li>
+                            <ul class="mega-menu-sidebar--content">
+                              {%- for sub_link in l.links -%}
+                                <li style="--n:{{ forloop.index }}">
+                                  {%- if sub_link.type == 'collection_link' and sub_link.object.featured_image -%}
+                                    {%- if mega_menu_block_sidebar.settings.content_collection_image -%}
+                                      <a href="{{ sub_link.url }}" class="mega-menu-sidebar--content-container {% if sub_link.active %} _active{% endif %}"
+                                         data-title="{{ sub_link.title | strip }}"
+                                         data-handle="{{ sub_link.title | handleize }}">
+                                        <div class="mega-menu-sidebar--content-image">
+                                          {%- render 'responsive-image',
+                                            image: sub_link.object.featured_image,
+                                            sizes: '237x237',
+                                            priority: 'low'
+                                          -%}
+                                        </div>
+                                        <span class="text-button">{{- sub_link.title -}}</span>
+                                      </a>
+                                    {%- else -%}
+                                      <a href="{{ sub_link.url }}" class="thb-full-menu--link {% if sub_link.active %} _active{% endif %}"
+                                         data-title="{{ sub_link.title | strip }}"
+                                         data-handle="{{ sub_link.title | handleize }}">
+                                        {{- sub_link.title -}}
+                                      </a>
+                                    {%- endif -%}
+                                  {%- elsif sub_link.type == 'product_link' -%}
+                                    {%- render 'product-card-simple',
+                                      product_card_product: sub_link.object,
+                                      show_product_image: mega_menu_block_sidebar.settings.content_product_image
+                                    -%}
+                                  {%- endif -%}
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a href="{{ l.url }}" title="{{ l.title | escape }}"
+                           class="link-container bb {% if l.active %} _active{% endif %}"
+                           data-title="{{ l.title | strip }}"
+                           data-handle="{{ l.title | handleize }}">
+                          <span class="border-animation">{{- l.title }}</span>
+                        </a>
+                      {%- endif -%}
+                    {%- elsif has_sub_menu -%}
+                      <div class="link-container child-category">
+                        <summary class="parent-link"
+                                 data-title="{{ l.title | strip }}"
+                                 data-handle="{{ l.title | handleize }}">
+                          <span class="border-animation">{{- l.title }}</span>
+                          {%- if has_menu_badge -%}
+                            {%- assign menu_badge_block = menu_badge_blocks[menu_badge_index] -%}
+                            <span class="menu-item-badge" ...>{{- menu_badge_block.settings.text -}}</span>
+                          {%- endif -%}
+                          <span class="link-forward test2">{%- render 'svg-icons' with 'custom-caret' -%}</span>
+                          <span class="444 link-minus">{%- render 'svg-icons' with 'minus' -%}</span>
+                        </summary>
+                        <div class="child-menu">
+                          <div class="SubLevel_levelSeparator"></div>
+                          <div class="SubLevel_subLevelLayerWrapper">
+                            <ul class="sub-menu submenu-3" tabindex="-1">
+                              <li class="parent-link-back" style="--n:{{ forloop.index }}">
+                                <button class="parent-link-back--button">
+                                  <span class="light second_level_back_menu">
+                                    <svg ...>...</svg>
+                                    Return to main <span>/ {{ l.title }}</span>
+                                  </span>
+                                </button>
+                              </li>
+                              {%- for sub_link in l.links -%}
+                                <li style="--n:{{ forloop.index }}">
+                                  <a href="{{ sub_link.url }}"
+                                     title="{{ sub_link.title | escape }}"
+                                     class="link-container link-inline-menu {% if sub_link.active %} _active{% endif %}"
+                                     role="menuitem"
+                                     data-title="{{ sub_link.title | strip }}"
+                                     data-handle="{{ sub_link.title | handleize }}">
+                                    <span class="border-animation">{{- sub_link.title -}}</span>
+                                  </a>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                            {%- if child_mega_menu_block -%}
+                                <div class="menu__promotions menu__promotions_v2">
+                                <div class="menu__promotion_card">
+                                  {%- if child_mega_menu_block.settings.promo_1_image -%}
+                                    <div class="layout-square" style="--n:5">
+                                      {% render 'header-full-menu-promotion',
+                                        promotion_image: child_mega_menu_block.settings.promo_1_image,
+                                        promotion_video: child_mega_menu_block.settings.video,
+                                        promotion_video_url: child_mega_menu_block.settings.video_url,
+                                        promotion_autoplay: child_mega_menu_block.settings.autoplay,
+                                        promotion_link: child_mega_menu_block.settings.promo_1_link,
+                                        promotion_heading: child_mega_menu_block.settings.promo_1_heading,
+                                        promotion_link_label: child_mega_menu_block.settings.promo_1_link_label
+                                      %}
+                                    </div>
+                                  {%- endif -%}
+                                  {%- if child_mega_menu_block.settings.promo_2_image -%}
+                                    <div class="layout-square" style="--n:6">
+                                      {% render 'header-full-menu-promotion',
+                                        promotion_image: child_mega_menu_block.settings.promo_2_image,
+                                        promotion_video: child_mega_menu_block.settings.video2,
+                                        promotion_video_url: child_mega_menu_block.settings.video_url2,
+                                        promotion_autoplay: child_mega_menu_block.settings.autoplay2,
+                                        promotion_link: child_mega_menu_block.settings.promo_2_link,
+                                        promotion_heading: child_mega_menu_block.settings.promo_2_heading,
+                                        promotion_link_label: child_mega_menu_block.settings.promo_2_link_label
+                                      %}
+                                    </div>
+                                  {%- endif -%}
+                                  {%- if child_mega_menu_block.settings.promo_3_image -%}
+                                    <div class="layout-square" style="--n:7">
+                                      {% render 'header-full-menu-promotion',
+                                        promotion_image: child_mega_menu_block.settings.promo_3_image,
+                                        promotion_video: child_mega_menu_block.settings.video3,
+                                        promotion_video_url: child_mega_menu_block.settings.video_url3,
+                                        promotion_autoplay: child_mega_menu_block.settings.autoplay3,
+                                        promotion_link: child_mega_menu_block.settings.promo_3_link,
+                                        promotion_heading: child_mega_menu_block.settings.promo_3_heading,
+                                        promotion_link_label: child_mega_menu_block.settings.promo_3_link_label
+                                      %}
+                                    </div>
+                                  {%- endif -%}
+                                  {%- if child_mega_menu_block.settings.promo_4_image -%}
+                                    <div class="layout-square" style="--n:8">
+                                      {% render 'header-full-menu-promotion',
+                                        promotion_image: child_mega_menu_block.settings.promo_4_image,
+                                        promotion_video: child_mega_menu_block.settings.video4,
+                                        promotion_video_url: child_mega_menu_block.settings.video_url4,
+                                        promotion_autoplay: child_mega_menu_block.settings.autoplay4,
+                                        promotion_link: child_mega_menu_block.settings.promo_4_link,
+                                        promotion_heading: child_mega_menu_block.settings.promo_4_heading,
+                                        promotion_link_label: child_mega_menu_block.settings.promo_4_link_label
+                                      %}
+                                    </div>
+                                  {%- endif -%}
+                                </div>
+                              </div>
+                            {%- endif -%}
+                          </div>
+                        </div>
+                      </div>
+                    {%- else -%}
+                      <a href="{{ l.url }}" title="{{ l.title | escape }}"
+                         class="link-container link-inline-menu {% if l.active %} _active{% endif %}"
+                         data-title="{{ l.title | strip }}"
+                         data-handle="{{ l.title | handleize }}">
+                        <span class="border-animation">{{- l.title }}</span>
+                      </a>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </div>
+              {%- if mega_menu_block or mega_menu_block_promotions -%}
+                     <div class="menu__promotions menu__promotions_v1 {{ mega_menu_block.settings.image_column }}">
+                <div class="menu__promotion_card" style="--column:{{ mega_menu_block.settings.image_column }};{% if mega_menu_block.settings.image_column == '1' %} overflow-y: auto;{% endif %}">
+                  {%- if mega_menu_block -%}
+                    {%- if mega_menu_block.settings.promo_1_image -%}
+                      <div class="layout-square" style="--n:5">
+                        {% render 'header-full-menu-promotion',
+                          promotion_image: mega_menu_block.settings.promo_1_image,
+                          promotion_video: mega_menu_block.settings.video,
+                          promotion_video_url: mega_menu_block.settings.video_url,
+                          promotion_autoplay: mega_menu_block.settings.autoplay,
+                          promotion_link: mega_menu_block.settings.promo_1_link,
+                          promotion_heading: mega_menu_block.settings.promo_1_heading,
+                          promotion_link_label: mega_menu_block.settings.promo_1_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                    {%- if mega_menu_block.settings.promo_2_image -%}
+                      <div class="layout-square" style="--n:6">
+                        {% render 'header-full-menu-promotion',
+                          promotion_image: mega_menu_block.settings.promo_2_image,
+                          promotion_video: mega_menu_block.settings.video2,
+                          promotion_video_url: mega_menu_block.settings.video_url2,
+                          promotion_autoplay: mega_menu_block.settings.autoplay2,
+                          promotion_link: mega_menu_block.settings.promo_2_link,
+                          promotion_heading: mega_menu_block.settings.promo_2_heading,
+                          promotion_link_label: mega_menu_block.settings.promo_2_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                    {%- if mega_menu_block.settings.promo_3_image -%}
+                      <div class="layout-square" style="--n:7">
+                        {% render 'header-full-menu-promotion',
+                          promotion_image: mega_menu_block.settings.promo_3_image,
+                          promotion_video: mega_menu_block.settings.video3,
+                          promotion_video_url: mega_menu_block.settings.video_url3,
+                          promotion_autoplay: mega_menu_block.settings.autoplay3,
+                          promotion_link: mega_menu_block.settings.promo_3_link,
+                          promotion_heading: mega_menu_block.settings.promo_3_heading,
+                          promotion_link_label: mega_menu_block.settings.promo_3_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                    {%- if mega_menu_block.settings.promo_4_image -%}
+                      <div class="layout-square" style="--n:8">
+                        {% render 'header-full-menu-promotion',
+                          promotion_image: mega_menu_block.settings.promo_4_image,
+                          promotion_video: mega_menu_block.settings.video4,
+                          promotion_video_url: mega_menu_block.settings.video_url4,
+                          promotion_autoplay: mega_menu_block.settings.autoplay4,                          
+                          promotion_link: mega_menu_block.settings.promo_4_link,
+                          promotion_heading: mega_menu_block.settings.promo_4_heading,
+                          promotion_link_label: mega_menu_block.settings.promo_4_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                  {%- elsif mega_menu_block_promotions -%}
+                    {%- if mega_menu_block_promotions.settings.promo_1_image -%}
+                      <div>
+                        {% render 'header-full-menu-promotion-vertical',
+                          promotion_image: mega_menu_block_promotions.settings.promo_1_image,
+                          promotion_link: mega_menu_block_promotions.settings.promo_1_link,
+                          promotion_link_label: mega_menu_block_promotions.settings.promo_1_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                    {%- if mega_menu_block_promotions.settings.promo_2_image -%}
+                      <div>
+                        {% render 'header-full-menu-promotion-vertical',
+                          promotion_image: mega_menu_block_promotions.settings.promo_2_image,
+                          promotion_link: mega_menu_block_promotions.settings.promo_2_link,
+                          promotion_link_label: mega_menu_block_promotions.settings.promo_2_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                    {%- if mega_menu_block_promotions.settings.promo_3_image -%}
+                      <div>
+                        {% render 'header-full-menu-promotion-vertical',
+                          promotion_image: mega_menu_block_promotions.settings.promo_3_image,
+                          promotion_link: mega_menu_block_promotions.settings.promo_3_link,
+                          promotion_link_label: mega_menu_block_promotions.settings.promo_3_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                    {%- if mega_menu_block_promotions.settings.promo_4_image -%}
+                      <div>
+                        {% render 'header-full-menu-promotion-vertical',
+                          promotion_image: mega_menu_block_promotions.settings.promo_4_image,
+                          promotion_link: mega_menu_block_promotions.settings.promo_4_link,
+                          promotion_link_label: mega_menu_block_promotions.settings.promo_4_link_label
+                        %}
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+                </div>
+              </div>
+              {%- endif -%}
+            </div>
+          </ul>
+        </div>
+      {%- else -%}
+        <a href="{{ link.url }}" title="{{ link.title | escape }}"
+           class="link-container link-inline-menu {% if link.active %} _active{% endif %}"
+           data-title="{{ link.title | strip }}"
+           data-handle="{{ link.title | handleize }}">
+          <span class="border-animation">{{- link.title }}</span>
+          {%- if has_menu_badge -%}
+            <span class="menu-item-badge" ...>{{- menu_badge_block.settings.text -}}</span>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+    </li>
+    {% endunless %}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- if header_settings.mobile_secondary_menu != blank -%}
+  <ul class="mobile-secondary-menu">
+    {%- for link in header_settings.mobile_secondary_menu.links -%}
+      <li class="{% if link.active %} active{% endif %}">
+        <a href="{{ link.url }}"
+           title="{{ link.title | escape }}"
+           data-title="{{ link.title | strip }}"
+           data-handle="{{ link.title | handleize }}">
+          {{ link.title }}
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+
+{%- if header_settings.mobile_promo_image -%}
+  <div class="mega-menu-promotion">
+    {%- if header_settings.mobile_promo_link -%}
+      <a href="{{ header_settings.mobile_promo_link }}" target="_blank">
+    {%- endif -%}
+    {%- render 'responsive-image', image: header_settings.mobile_promo_image, sizes: '670x0' -%}
+    {%- if header_settings.mobile_promo_link -%}</a>{%- endif -%}
+    <div class="mega-menu-promotion--cover">
+      {%- if header_settings.mobile_promo_heading -%}
+        <p class="heading-font">{{ header_settings.mobile_promo_heading }}</p>
+      {%- endif -%}
+      {%- if header_settings.mobile_promo_link_label -%}
+        <a href="{{ header_settings.mobile_promo_link }}" target="_blank" class="text-button white">
+          {{- header_settings.mobile_promo_link_label -}}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+ 
+ 

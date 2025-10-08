@@ -1,0 +1,88 @@
+{{ 'featured-collection.css' | asset_url | stylesheet_tag }}
+{{ 'product-grid.css' | asset_url | stylesheet_tag }}
+{{ 'wishlist.css' | asset_url | stylesheet_tag }}
+<div class="row main__wishlist" data-account-tab="wishlist">
+	<div class="small-12 columns page__heading">
+       <h1>Your Wishlist, Tala</h1>
+    </div>
+  <div class="small-12 columns page__content">
+      <div class="wishlist_left">
+         <div>
+          <h3><strong>Boards</strong></h3>
+          <a href="" class="button full"> <span>Create a new board</span></a>
+         </div>
+        <div>
+          <h3>Your Boards</h3>
+          <ul>
+            <li>
+              <a href="">Wedding guest dress</a>
+            </li>
+             <li>
+              <a href="">Cocktail dress</a>
+            </li>
+            <li>
+              <a href="">Bridesmaid dress</a>
+            </li>
+            <li>
+              <a href="">Mother of the Bride dress</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="wishlist_right">
+         <h4><a href="">View all the items you loved</a></h4>
+        <div class="featured-collection swipe-on-mobile section-spacing section-spacing--disable-top  ">
+            <div class="full-width-row">
+                     <div class="featured-collection__inner display-type--carousel">
+                        <slide-show id="product-grid-{{ section.id }}" class="products row carousel">
+                          {% for recommendation in collections["fall-winter-24-25"].products limit: 10 %}
+                            <div class="small-12 medium-6 large-3 columns  carousel__slide ">
+                              {% render 'product-card', product_card_product: recommendation %}
+                            </div>
+                          {%- endfor -%} 
+                              {%- render 'slideshow-arrows' -%} 
+                        </slide-show> 
+                      </div> 
+            </div>
+          </div>
+          <ul class="suggested_categories">
+             <li>
+               <a href="">
+                 <img src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/Untitled_design_3.png?v=1741360378" />
+                <div><p>Cocktail dress</p></div>
+               </a>  
+             </li>
+            <li>
+               <a href="">
+                 <img src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/Untitled_design_4.png?v=1741360379" />
+                <div><p>Wedding guest dress</p></div>
+               </a>  
+             </li>
+             <li>
+               <a href="">
+                 <img src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/Untitled_design_5.png?v=1741360378" />
+                <div><p>Going on a date?</p></div>
+               </a>  
+             </li>
+             <li>
+               <a href="">
+                 <img src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/Untitled_design_6.png?v=1741360379" />
+                <div><p>Mother of the bride</p></div>
+               </a>  
+             </li>
+          </ul>
+      </div>
+  </div>  
+</div>  
+  <script src="{{ 'product-recommendations.js' | asset_url }}" defer="defer"></script>
+{% schema %}
+  {
+    "name": "Wishlist",
+    "settings": [],
+    "presets":[
+      {
+        "name":"Wishlist"
+      }
+    ]
+  }
+{% endschema %}

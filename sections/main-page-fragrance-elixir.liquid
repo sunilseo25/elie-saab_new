@@ -1,0 +1,170 @@
+{{ 'homepage.css' | asset_url | stylesheet_tag }}
+{{ 'fragrance.css' | asset_url | stylesheet_tag }}
+{{ 'fragrances-home.js' | asset_url | script_tag }}
+<style>
+  .customHide {
+        border-radius: 4px;
+      }
+</style>
+<script type="load">
+   jQuery(document).ready(function($) {
+      function updateTabIndicator() {
+            const activeTab1 = document.querySelector('.fragrance-elixir .video-tab.active span');
+              const activeTab = document.querySelector('.fragrance-elixir .video-tab.active');
+            const indicator = document.querySelector('.tab-indicator');
+            if (activeTab && indicator) {
+              const tabRect1 = activeTab1.getBoundingClientRect();
+              const containerRect1 = activeTab1.parentElement.getBoundingClientRect();
+              const tabRect = activeTab.getBoundingClientRect();
+              const containerRect = activeTab.parentElement.getBoundingClientRect();
+           const width = window.innerWidth;
+            var left = 0;
+           var width1 = 0;
+  if (width < 370) {
+    // alert("here");
+    // Mobile devices (e.g. phones)
+    console.log("Mobile view");
+    left = tabRect1.left - containerRect1.left;
+                width1 = tabRect1.width;
+
+    // Do something for mobile
+  } else if (width >= 370 && width < 768) {
+    // alert("here1");
+  left = tabRect1.left - containerRect1.left;
+                width1 = tabRect1.width;
+    // Small tablets
+    console.log("Small tablet view");
+    // Do something for small tablets
+  }else if (width >= 768 && width < 992) {
+    // Tablets
+    left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    console.log("Tablet view");
+    // Do something for tablets
+  } else if (width >= 992 && width < 1281) {
+    // Small desktops
+    left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    console.log("Small desktop view");
+    // Do something for small desktops
+  }else if (width >= 1281 && width < 1441) {
+    // Small desktops
+    left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    console.log("mac desktop view");
+    // Do something for small desktops
+  }  else {
+        left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    // Large desktops
+    console.log("Large desktop view");
+    // Do something for large desktops
+  }
+            
+          
+              indicator.style.left = `${left}px`;
+              indicator.style.width = `${width1}px`;
+            }
+          }
+if (window.innerWidth > 768) {
+      $(window).on("scroll", function () {
+          $(".text-slideshow").each(function () {
+              let section = $(this);
+              let sectionTop = section.offset().top;
+              let sectionBottom = sectionTop + section.outerHeight();
+              let scrollTop = $(window).scrollTop();
+              let windowHeight = $(window).height();
+            let customheight = 0;
+             const width = window.innerWidth;
+ if (width >= 768 && width < 992) {
+   customheight = 300;
+    // Tablets
+    // console.log("Tablet view");
+    // Do something for tablets
+  } else if (width >= 992 && width < 1281) {
+   customheight = 450;
+    // Small desktops
+    // console.log("Small desktop view");
+    // Do something for small desktops
+  }else if (width >= 1281 && width < 1441) {
+   customheight = 450;
+    // Small desktops
+    // console.log("mac desktop view");
+    // Do something for small desktops
+  }  else {
+   customheight = 500;
+    // Large desktops
+    // console.log("Large desktop view");
+    // Do something for large desktops
+  }
+              // Check if this section is currently in view
+              if (scrollTop + windowHeight - customheight > sectionTop && scrollTop < sectionBottom) {
+                  let sectionId = section.attr("id"); // Get the section's ID
+                  let matchingTab = $('.video-tab[data-tab-id="' + sectionId + '"]');
+
+                  // Remove active class from all tabs
+                  // $(".video-tab").removeClass("active");
+
+                  // Add active class to the matching tab
+                  if (matchingTab.length) {
+                    $(".fragrance-elixir .video-tab").removeClass("active");
+                      matchingTab.addClass("active");
+                      updateTabIndicator();
+                  }
+              }
+          });
+      });
+      }
+     $('.fragrance-elixir .video-tab').on('click', function () {
+           let tabId = $(this).data('tab-id');
+             $('.fragrance-elixir .video-tab').removeClass('active');
+             // $(this).addClass('active');
+             $('.fragrance-elixir .video-tab-content').removeClass('active');
+         const targetId = $(this).data('tab-id');
+         const targetSection = $('#' + targetId);
+             // $('.interior .video-tab-content[data-tab-id="' + tabId + '"]').addClass('active');
+        $(this).addClass('active');
+updateTabIndicator();
+       document.getElementById(targetId).scrollIntoView({ behavior: "smooth" });
+     });
+     $('.fragrance-elixir .video-tab').first().addClass('active');
+   
+     // 
+     const tabsvideo = document.querySelectorAll(".fragrance-elixir .video-tab");
+         let currentIndex = 0;
+         if (window.innerWidth <= 768) {
+           function updateTabsvideo(index) {
+             tabsvideo.forEach((tab, i) => {
+               tab.classList.remove("active");
+               tab.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+             });
+
+             tabsvideo[index].classList.add("active");
+             tabsvideo[index].click();
+           }
+
+         document.querySelector(".fragrance-elixir .prev-btn-video").addEventListener("click", () => {
+           if (currentIndex > 0) {
+             currentIndex--;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+         document.querySelector(".fragrance-elixir .next-btn-video").addEventListener("click", () => {
+           if (currentIndex < tabsvideo.length - 1) {
+             currentIndex++;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+         updateTabsvideo(currentIndex);
+     }
+     updateTabIndicator();
+   });
+</script>
+{% schema %}
+{
+  "name": "Elixir Section",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,44 @@
+{% comment %}
+  Typeform Section – simple heading + embedded form
+{% endcomment %}
+
+  <div class="policy_header">
+
+  {%- if section.settings.heading != blank -%}
+    <h1 id="policy_header_title">{{ section.settings.heading }}</h1>
+  {%- endif -%}
+  </div>
+  {%- if section.settings.typeform_uid != blank -%}
+    <div class="typeform-embed" data-tf-live="{{ section.settings.typeform_uid }}"></div>
+    <script src="//embed.typeform.com/next/embed.js" defer></script>
+  {%- else -%}
+    <p style="color:#999;">Add a Typeform UID in the section settings to display the form.</p>
+  {%- endif -%}
+
+
+{% schema %}
+{
+  "name": "Typeform section",
+  "tag": "section",
+  "class": "typeform-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading text",
+      "default": "Get in touch"
+    },
+    {
+      "type": "text",
+      "id": "typeform_uid",
+      "label": "Typeform UID",
+      "info": "Paste just the UID from Typeform (e.g. abc123XYZ)."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Typeform embed"
+    }
+  ]
+}
+{% endschema %}

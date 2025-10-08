@@ -1,0 +1,151 @@
+{{ 'homepage.css' | asset_url | stylesheet_tag }}
+{{ 'boutiques.css' | asset_url | stylesheet_tag }}
+<style>
+    .video__tabs {
+      max-width: 100%;
+      position: static;
+    }
+   .template-page-boutiques-home .text-size-regular p {
+     font-size: 15px;
+     font-weight: 500;
+     font-family: 'Futura';
+     margin: 15px 0;
+   }
+   .template-page-boutiques-home #borderBottom .rich-text {
+         border-bottom: 1px solid #d5d5d4;
+   }
+   .template-page-boutiques-home .text-slideshow {
+     padding: 20px 0px;
+     margin-bottom: 60px;
+   }
+   .template-page-boutiques-home .text-slideshow .row {
+         padding: unset;
+     margin: unset;
+     width: 100%;
+     max-width: 100%;
+   }
+   .template-page-boutiques-home .text-slideshow .row .columns {
+     padding: unset;
+   }
+  #haute-couture-boutiques,
+   #bridal-boutiques {
+     display: none;
+   }
+   .template-page-boutiques-home .text-slideshow {
+     border-bottom: 1px solid #d5d5d4;
+     padding-bottom: 40px;
+   }
+  .template-page-boutiques-home .text-slideshow-content.custom-slideshow .slick-slide img, .template-page-boutiques-home .text-slideshow-content.custom-slideshow .slick-slide video {
+            height: 700px;
+        object-position: center;
+        object-fit: cover;
+  }
+  @media screen and (max-width: 768px) {
+    .template-page-boutiques-home .text-slideshow-content.custom-slideshow .slick-slide img, .template-page-boutiques-home .text-slideshow-content.custom-slideshow .slick-slide video {
+            height: 400px;
+    }
+  }
+</style>
+<script type="load">
+   jQuery(document).ready(function($) {
+function updateTabIndicator() {
+  const activeTab = document.querySelector(".boutiques .video-tab.active");
+  const indicator = document.querySelector(".tab-indicator");
+  const mainTabProgress = document.querySelector(".boutiques .video-collection-tabs__list");
+
+  // Ensure all required elements exist before proceeding
+  if (!activeTab || !indicator || !mainTabProgress) {
+    return;
+  }
+
+  const tabRect = activeTab.getBoundingClientRect();
+  const parentRect = mainTabProgress.getBoundingClientRect();
+
+
+  let left = 0;
+  let width = 0;
+
+
+    left = tabRect.left;
+    width = tabRect.width;
+
+  indicator.style.left = `${left}px`;
+  indicator.style.width = `${width}px`;
+}
+
+     $(".boutiques .video-tab").on("click", function () {
+       console.log("Button clicked");
+       let tabId = $(this).data("tab-id");
+       $(".boutiques .video-tab").removeClass("active");
+       $(this).addClass("active");
+       $(".boutiques .video-tab-content").removeClass("active");
+       $('.boutiques .video-tab-content[data-tab-id="' + tabId + '"]').addClass(
+         "active"
+       );
+       $(".template-page-interior-chair .video-collection-tabs__list").addClass(
+         "stickyTab"
+       );
+       updateTabIndicator();
+       $(".text-slideshow").hide();
+      const targetId = $(this).data("tab-id");
+// Hide all store cards first (optional, if needed)
+$(".store-card").hide();
+
+// Show the store-card(s) that have targetId in data-attr
+$(`.store-card[data-attr*="${targetId}"]`).fadeIn(200);
+
+       $(".slick-next1").click();
+     });
+     // $(".boutiques .video-tab").first().addClass("active");
+const $firstTab = $(".boutiques .video-tab").first();
+  $firstTab.trigger("click");     
+       const tabsvideo = document.querySelectorAll(".boutiques .video-tab");
+     let currentIndex = 0;
+     if (window.innerWidth <= 768) {
+       function updateTabsvideo(index) {
+         tabsvideo.forEach((tab, i) => {
+           tab.classList.remove("active");
+           tab.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+         });
+
+         tabsvideo[index].classList.add("active");
+         tabsvideo[index].click();
+       }
+
+       document
+         .querySelector(".boutiques .prev-btn-video")
+         .addEventListener("click", () => {
+           if (currentIndex > 0) {
+             currentIndex--;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+       document
+         .querySelector(".boutiques .next-btn-video")
+         .addEventListener("click", () => {
+           if (currentIndex < tabsvideo.length - 1) {
+             currentIndex++;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+       updateTabsvideo(currentIndex);
+     }
+     updateTabIndicator();
+   });
+  $(document).ready(() => {
+    document.querySelectorAll('.boutiques').forEach(function(el) {
+      const parent = el.closest('.shopify-section');
+      if (parent) {
+          parent.classList.add('custom-sticky-style');
+      }
+  });
+  });
+</script>
+{% schema %}
+{
+  "name": "Boutiques home",
+  "settings": []
+}
+{% endschema %}

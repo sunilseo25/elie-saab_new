@@ -1,0 +1,259 @@
+{{ 'custom-checkout.css' | asset_url | stylesheet_tag }}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYtE0LUFnd0oLaHtx1LA60mLSMiBKHkog&libraries=places"></script>
+<link rel="stylesheet" href="//cdn.shopify.com/app/services/55576789151/assets/121203851423/checkout_stylesheet/v2-ltr-edge-b96fd900bdc2265a67df84089cfaf9fe-3914" media="all">
+
+
+
+<div class="thankyou-page">
+  <div class="loader" ><div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div> 
+
+  <!-- custom order page starts -->
+  <div class="container checkout-form-wrapper">
+    <div class="checkout-form">
+      <div class="default-background map-holder desktop_hidden" role="region">
+        <iframe width="100%" height="232" frameborder="0" scrolling="no" id="gmap_canvas" src="https://maps.google.com/maps?width=100%&amp;height=200&amp;hl=en&amp;q=Sheikh%20Mohamed%20Ben%20Rashed%20Boulevard%20Dubai+()&amp;t=p&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+      </div>
+      <div class="desktop_hidden">
+        <h3 class="h6 title-block">Thank you, <span class="custom_name">Lynn</span></h3>
+        <p class="custom_order_number">
+          <img src="https://cdn.shopify.com/s/files/1/0572/0345/8247/files/check.png?v=1737350232" height="20">
+          Confirmation <span class="custom_order"></span>
+        </p>
+      </div>
+      <div class="checkout-form-sections">
+        <div class="mobile_hidden">
+          <h3 class="h6 title-block">Thank you, <span class="custom_name">Lynn</span></h3>
+          <p class="custom_order_number">
+            {% comment %}
+              <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m11.998 2.005c5.517 0 9.997 4.48 9.997 9.997 0 5.518-4.48 9.998-9.997 9.998-5.518 0-9.998-4.48-9.998-9.998 0-5.517 4.48-9.997 9.998-9.997zm-5.049 10.386 3.851 3.43c.142.128.321.19.499.19.202 0 .405-.081.552-.242l5.953-6.509c.131-.143.196-.323.196-.502 0-.41-.331-.747-.748-.747-.204 0-.405.082-.554.243l-5.453 5.962-3.298-2.938c-.144-.127-.321-.19-.499-.19-.415 0-.748.335-.748.746 0 .205.084.409.249.557z" fill-rule="nonzero"/></svg>
+            {% endcomment %}
+            <img src="https://cdn.shopify.com/s/files/1/0572/0345/8247/files/check.png?v=1737350232" height="20">
+            Confirmation <span class="custom_order"></span>
+          </p>
+        </div>
+        <div class="details_card">
+          <div class="default-background map-holder mobile_hidden" role="region">
+            <iframe width="100%" height="232" frameborder="0" scrolling="no" id="gmap_canvas" src="https://maps.google.com/maps?width=100%&amp;height=225&amp;hl=en&amp;q=Sheikh%20Mohamed%20Ben%20Rashed%20Boulevard%20Dubai+()&amp;t=p&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+          </div>
+          <div class="thankyou_order_detail">
+            <h4>Order details</h4>
+            <div class="d-flex">
+              <div>
+                <h4>Contact information</h4>
+                <p class="custom_email"></p>
+              </div>
+              <div>
+                <h4>Payment method</h4>
+                <p class="custom_payment">
+                  <img src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/visa.png?v=1743767856" width="30">
+                  <span></span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="thankyou_order_detail">
+            <div class="d-flex">
+              <div>
+                <h4>Shipping address</h4>
+                <p class="custom_shipping"></p>
+              </div>
+              <div>
+                <h4>Billing Address</h4>
+                <p class="custom_billing"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right_section_content">
+        <div class="order_summary">
+          <h3 class="h6 title-block">Order Summary</h3>
+          {% assign today = 'now' | date: '%s' %}
+          {% assign future_date = today | plus: 864000 %}
+          <!-- Add 5 days in seconds (5 * 24 * 60 * 60) it was 691200 before -->
+          {% assign weekday = future_date | date: '%A' %}
+          <!-- Full weekday name -->
+          {% assign day = future_date | date: '%d' %}
+          <!-- Day of the month -->
+          {% assign month = future_date | date: '%B' %}
+          <!-- Full month name -->
+          <p class="delivery-date">
+            <span>Estimated Delivery </span>
+            <span style="display:inline-block;margin-left:15px;">
+              {{- weekday }}
+              {{ day }}
+              {{ month -}}
+            </span>
+          </p>
+        </div>
+        <div class="product_info">
+          <div class="slideshow-prod"></div>
+          <div class="digital_receipt">
+            <h4>Digital Receipt</h4>
+            <table>
+              <tr>
+                <td>Subtotal</td>
+                <td class="custom_subttoal">{{ cart.total_price | money_without_trailing_zeros }}$99</td>
+              </tr>
+              <tr>
+                <td>Shipping</td>
+                <td class="custom_shipping_price">$99</td>
+              </tr> 
+              <tr>
+                <td>Total</td>
+                <td class="custom_total">$99</td>
+              </tr>
+            </table>
+            {% comment %}
+            <ul>
+              <li><span>Subtotal</span><span class="custom_subttoal">$99</span></li>
+              <li><span>Shipping</span><span class="custom_shipping_price">$99</span></li>
+              <li><span>Estimated taxes</span><span class="custom_tax">$99</span></li>
+              <li><span>Total</span><span class="custom_total">$99</span></li>
+            </ul>
+            {% endcomment %}
+          </div>
+          <div class="digital_receipt need_help">
+            <h4>Need Help<span style="font-family:Raleway">?</span></h4>
+            <p>Reach out to our support team for any assistance</p>
+            <div id="ctm_messenger_svg" onclick='$("#my_custom_svg").trigger("click")'>
+              <img width="auto" height="50px" src="{{ 'messenger-launch.svg' | asset_url }}" alt="Intercom Launcher">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% assign money_formatted = 0 | money %}
+{% assign currency_symbol = money_formatted | remove: '0.000' | remove: '0.00' | strip_html %}
+<script type="load" d-src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script type="load" d-src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+<script type="load"> 
+  
+  let allproduct = {};
+  {% for collection in collections %}
+  {% if collection.handle != "all" %}
+    {% paginate collections[collection.handle].products by 2000 %}
+    {% for product in collections[collection.handle].products %}
+        {% for var in product.variants %}
+          if(typeof allproduct[{{- var.id -}}] == "undefined")
+            allproduct[{{- var.id -}}] = "{{ var.featured_image | default: product.featured_image | image_url: width: 400,  crop:"center"  }}"
+        {% endfor %}  
+      {% endfor %}   
+     {% endpaginate %} 
+   {% endif %} 
+  {% endfor %} 
+  
+   var my_symbol = '{{ currency_symbol }}';
+   function loadSlider(){
+     $('.slideshow-prod').slick({
+      dots: false,
+      slidesToShow: 2,
+      infinite: true,
+      speed: 500,
+      centerMode: false,
+      prevArrow:'<div class="slide-btn flickity-nav product-next flickity-prev" tabindex="0"><img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}"></div>',
+      nextArrow:'<div class="slide-btn flickity-nav product-prev flickity-next" tabindex="0"><img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}"></div>',
+      responsive: [
+        {
+          breakpoint: 575,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            infinite: false,
+          }
+        }
+      ]
+    });
+   };
+  
+       
+    let orderid = Number(location.search.split("NjE0MzQzNjM1NzgzMQ=")[1]);  
+     $.ajax({
+      type: 'GET',
+      url: 'https://eliesaabftp.com/675.f85.mytemp.website/sunil/switzerland-store/api/shopify/order/'+orderid,
+      success: function (data) {
+        
+        if(data.success == true){
+            let orderData = data.data.order;
+           console.log("data=>",orderData);
+            $(".custom_order").html(""+orderData.name);
+            $(".custom_email").html(orderData.contact_email);
+            let shippingAddress = "<span>"+orderData.shipping_address.name+"</span><br/><span>"+orderData.shipping_address.address1+"</span><br/><span>"+orderData.shipping_address.address2+"</span><br/><span>"+orderData.shipping_address.province+" "+orderData.shipping_address.province_code+"</span><br/><span>"+orderData.billing_address.zip+"</span><br/><span>"+orderData.shipping_address.country+"</span><br/><span>"+orderData.shipping_address.phone+"</span>";
+            $(".custom_shipping").html(shippingAddress.replaceAll(/null/g,""));
+          
+            let billingAddress = "<span>"+orderData.billing_address.name+"</span><br/><span>"+orderData.billing_address.address1+"</span><br/><span>"+orderData.billing_address.address2+"</span><br/><span>"+orderData.billing_address.province+" "+orderData.billing_address.province_code+"</span><br/><span>"+orderData.billing_address.zip+"</span><br/><span>"+orderData.billing_address.country+"</span><br/><span>"+orderData.billing_address.phone+"</span>";
+            $(".custom_name").html(orderData.shipping_address.first_name);
+            $(".custom_billing").html(billingAddress.replaceAll(/null/g,""));
+            
+            // $(".custom_subttoal").html(USDollar.format(orderData.subtotal_price).split(".")[0]);
+            $(".custom_subttoal").html( '<span class="money" data-base-price="' + USDollar.format(orderData.subtotal_price).split(".")[0] + '">' + USDollar.format(orderData.subtotal_price).split(".")[0] + '</span>' );          
+            $(".custom_shipping_price").html("Free");
+            $(".custom_tax").html(my_symbol+orderData.total_tax);
+            // $(".custom_total").html(USDollar.format(orderData.total_price).split(".")[0]);
+            $(".custom_total").html( '<span class="money" data-base-price="' + USDollar.format(orderData.total_price).split(".")[0] + '">' + USDollar.format(orderData.total_price).split(".")[0] + '</span>' );
+           // $(".custom_payment span").html(USDollar.format(orderData.total_price).split(".")[0]);
+            $(".custom_payment span").html( '<span class="money" data-base-price="' + USDollar.format(orderData.total_price).split(".")[0] + '">' + USDollar.format(orderData.total_price).split(".")[0] + '</span>' );          
+           let mapURL = encodeURI(orderData.shipping_address.address1+","+orderData.shipping_address.address2+","+orderData.shipping_address.province+","+orderData.shipping_address.country);
+           $(".map-holder").html(`<iframe width="100%" height="232" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=200&amp;hl=en&amp;q=${mapURL}&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>`)
+           let lineItems = "";
+            for (line in orderData.line_items) {
+              let variant_id = orderData.line_items[line].variant_id;
+              let variantTitle = orderData.line_items[line].name;            
+              if (orderData.line_items[line].variant_title != null)
+              variantTitle = orderData.line_items[line].variant_title.split(" / ")[1];            
+              let imageUrl = allproduct[variant_id];
+              if (!imageUrl) {
+                imageUrl = 'https://cdn.shopify.com/s/files/1/0605/8872/0370/files/placeholder.svg?v=1743770618';
+              }            
+              console.log("variant_id", variant_id, imageUrl);            
+              lineItems += `
+              <div class="prod_slide">
+                <div class="prod_slide-item">  
+                  <div class="prod_slide--media">
+                    <img src="${imageUrl}">
+                  </div>
+                  <div class="slideimage-text"> 
+                    <p><span>Size</span> ${variantTitle}</p> 
+                    <p><span class="money" data-base-price="${USDollar.format(orderData.line_items[line].price).split(".")[0]}">${USDollar.format(orderData.line_items[line].price).split(".")[0]}</span> </p>
+                  </div>    
+                </div>
+              </div>`;
+            }
+            $(".slideshow-prod").html(lineItems);
+           convertPrices();
+          //  setTimeout(function(){
+               loadSlider();
+           // },500)
+            if (history.pushState) {
+              var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname ;
+              window.history.pushState({path:newurl},'',newurl);
+            }
+            $(".loader").hide();
+        }else{
+          
+        }
+      },
+      error:function(){
+          
+      }
+     })
+</script>
+
+{% schema %}
+{
+  "name":"Thankyou Page",
+  "class":"custom_checkout_section",
+  "settings":[
+    {
+      "type":"richtext",
+      "id":"copyright_text",
+      "label":"Copyright text",
+      "default":"<p>ELIE SAAB 2025 ALL RIGHTS RESERVERD</p>"
+    }
+  ]
+}
+{% endschema %}

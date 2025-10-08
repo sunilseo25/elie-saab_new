@@ -1,0 +1,554 @@
+         <style>
+  .customHide {
+    border-radius: 4px;
+  }
+  @media(max-width:768px) {
+   .template-page-haute-couture-home .video-collection-tabs__list-link.active{
+        border-bottom-color: #fff !important;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        position: relative;
+        z-index: 9;
+    }
+    .template-page-haute-couture-home .video-collection-tabs__list-link{
+      width:auto !important;
+    }
+    .collection-text {
+      padding: 0 !important;
+    }
+    .collection-text:after {
+      display: none !Important;
+    }
+  }
+</style>
+{{ 'homepage.css' | asset_url | stylesheet_tag }}
+{{ 'interior-design.css' | asset_url | stylesheet_tag }}
+{{ 'bridal.css' | asset_url | stylesheet_tag }}
+{{ 'haute-couture.css' | asset_url | stylesheet_tag }}
+<style>
+          /* === Section Container === */
+          .section {
+            /* margin-bottom: 40px; */
+            text-align: center;
+          }
+.video-collection-tabs__list.loader{
+  filter: blur(2px);
+}
+          /* === Main Image Styling === */
+          #main-image img {
+            width: 100%;
+            max-width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            will-change: transform, opacity;
+          }
+
+          /* === Transition Classes for Main Image === */
+          #main-image img.slide-out-left,
+          .slide-out-left {
+            /* transform: translateX(-100%); */
+            opacity: 0;
+          }
+
+          #main-image img.slide-out-right,
+          .slide-out-right {
+            /* transform: translateX(100%); */
+            opacity: 0;
+          }
+
+          #main-image img.slide-in,
+          .slide-in {
+            /* transform: translateX(-100%); */
+            opacity: 1;
+          }
+
+          #main-image img.fade-in {
+            /* transform: translateX(100%); */
+            opacity: 1;
+          }
+
+          /* === Season Content Wrapper (Bottom) Animation Class === */
+          .season-content-transition {
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            will-change: transform, opacity;
+          }
+
+          /* === Season Navigation Styling === */
+          .season-nav-wrapper {
+            z-index: 2;
+            position: relative;
+            background: #fff;
+          }
+
+          .season-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 0;
+                padding: 15px 0 5px;
+            border-bottom: 2px solid #d5d5d4;
+            background: #231f20;
+          }
+
+          .season-title {
+            font-size: 24px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #fff;
+          }
+
+          .season-line {
+            height: 2px;
+            /* background: #d5d5d4; */
+            width: 200px;
+            margin: 5px auto;
+            position: relative;
+            border-radius: 4px;
+          }
+
+          .season-line span {
+            height: 2px;
+            background: #fff;
+            width: 100px;
+            position: absolute;
+            left: 50%;
+            border-radius: 4px;
+            bottom: -13.5px;
+            transform: translateX(-50%);
+          }
+
+          /* === Nav Buttons === */
+          .season-nav button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 40px;
+            font-weight: 300;
+            z-index: 10;
+            color: #acacac;
+          }
+
+          /* === Slider Image Styling === */
+          .slider img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 4px;
+          }
+
+          .slick-center img {
+            /* transform: scale(1.1); */
+            transition: transform 0.3s ease-in-out;
+          }
+
+          /* === Welcome Section === */
+          .welcome-guest-heading {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 10px 0;
+            color: #fff;
+          }
+
+          /* Hide desktop-only content on mobile */
+          .mobile-only {
+            display: none;
+          }
+          .sign-desc {
+            font-size: 16px;
+            margin: 25px auto;
+            max-width: 600px;
+          }
+
+          .letter-btn {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: underline;
+            font-weight: bold;
+          }
+      .welcome-guest .letter-btn {
+        text-decoration: unset;
+      }
+
+          /* === Responsive Styles === */
+          @media (max-width: 768px) {
+            #main-image img,
+            .slider img {
+              height: 600px !important;
+            }
+
+            .season-title {
+              font-size: 17px;
+            }
+
+            .season-nav button {
+              font-size: 30px;
+            }
+
+            .mobile-only {
+              display: block;
+            }
+            #main-image {
+              margin-bottom: 0px;
+            }
+            .season-nav-wrapper {
+              margin-bottom: 0px;
+            }
+            .welcome-guest-heading {
+                  font-size: 17px;
+          font-weight: 500;
+            }
+            .welcome-guest .letter-btn {
+              text-decoration: unset;
+            }
+            .view-btn:after {
+            background-color: #000;
+            border-radius: 4px;
+            content: " ";
+            display: block;
+            margin: 3px auto 0;
+            position: absolute;
+            right: 0;
+            bottom: -8px;
+            width: 100%;
+            height: 1px;
+            transition: width .3s ease-in-out, right .3s ease-in-out;
+        }
+            .template-page-haute-couture-home .rich-text .rte p {
+              font-size: 14px !important;
+            }
+            .template-page-haute-couture-home #looks-mob .custom-slick-slider {
+      margin-top: 6rem;
+  }
+            /* #diamond-dust {
+        margin-top: 20px;
+    } */
+          }
+</style>
+<script type="load">
+   jQuery(document).ready(function($) {    
+      function updateTabIndicator() {
+            const activeTab1 = document.querySelector('.haute-couture-home .video-tab.active span');
+              const activeTab = document.querySelector(' .haute-couture-home .video-tab.active');
+            const indicator = document.querySelector('.haute-couture-home .tab-indicator');
+            if (activeTab && indicator) {
+              const tabRect1 = activeTab1.getBoundingClientRect();
+              const containerRect1 = activeTab1.parentElement.getBoundingClientRect();
+              const tabRect = activeTab.getBoundingClientRect();
+              const containerRect = activeTab.parentElement.getBoundingClientRect();
+           const width = window.innerWidth;
+            var left = 0;
+               var width1 = 0;
+ 
+                 left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+       
+          
+              indicator.style.left = `${left}px`;
+              indicator.style.width = `${width1}px`;
+            }
+          }
+     let scrollEnabled = true;
+
+
+const tabMap = {};
+
+$(".haute-couture-home .video-tab").each(function () {
+  const tabId = $(this).data("tab-id");
+  if (tabId) {
+    tabMap[tabId] = $(this);
+  }
+});
+
+// Remove active from all tabs
+function clearActiveTabs() {
+  $(".haute-couture-home .video-tab").removeClass("active");
+}
+
+// Activate tab for a section
+function activateTab(sectionId) {
+  if (tabMap[sectionId]) {
+    clearActiveTabs();
+    tabMap[sectionId].addClass("active");
+    updateTabIndicator?.();
+  }
+}
+
+const isTablet = window.matchMedia('(max-width: 1024px)').matches; // adjust max-width as per your tablet criteria
+const thresholdValue = isTablet ? 1 : 0.9;
+// Create observer
+const observer = new IntersectionObserver(
+
+  (entries) => {
+       if (!scrollEnabled) return; 
+       
+    entries.forEach((entry) => {
+ 
+      if (entry.isIntersecting && entry.intersectionRatio >= thresholdValue) {
+   
+     
+        const sectionId = entry.target.id;
+        activateTab(sectionId);
+      }
+    });
+  },
+  {
+    
+    root: null, // use viewport
+    threshold: [thresholdValue], // trigger when 50% visible (adjust as needed)
+  }
+);
+// Observe all sections with class .row
+$(".row[id]").each(function () {
+  observer.observe(this);
+});
+
+
+
+     const tabsvideo = document.querySelectorAll(" .haute-couture-home .video-tabs .video-tab");
+         let currentIndex = 0;
+         if (window.innerWidth <= 768) {
+           function updateTabsvideo(index) {
+             tabsvideo.forEach((tab, i) => {
+               tab.classList.remove("active");
+               tab.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+             });
+
+             tabsvideo[index].classList.add("active");
+             tabsvideo[index].click();
+           }
+
+         document.querySelector(".haute-couture-home .prev-btn-video").addEventListener("click", () => {
+           if (currentIndex > 0) {
+             currentIndex--;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+         document.querySelector(".haute-couture-home .next-btn-video").addEventListener("click", () => {
+           if (currentIndex < tabsvideo.length - 1) {
+             currentIndex++;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+         updateTabsvideo(currentIndex);
+     }
+     updateTabIndicator();
+ 
+     document.querySelectorAll('.haute-couture-home').forEach(function(el) {
+      const parent = el.closest('.shopify-section');
+      if (parent) {
+          parent.classList.add('custom-sticky-style');
+      }
+  });
+function scrollToTabContent(tabId) {
+
+  scrollEnabled = false;
+
+$('html, body').animate({
+  scrollTop: $('#' + tabId).offset().top - 100
+}, 500, function () {
+  // 💡 Add a delay before enabling scroll observer again
+  setTimeout(() => {
+  activateTab(tabId)
+    scrollEnabled = true;
+  }, 600);
+});
+}
+
+
+// Tab click handler
+$('.haute-couture-home .video-tabs .video-tab').on('click', function () {
+
+ const tabId = $(this).data('tab-id');
+
+  history.replaceState(null, null, '#' + tabId);
+
+ scrollToTabContent(tabId);  
+
+});
+
+// Set first tab as active on page load
+      if(window.innerWidth > 769) {
+const hash = window.location.hash;
+    
+
+ if (hash) {
+    const tabId = hash.substring(1); // Remove the '#' symbol
+
+    // Optional: check if the element with that ID exists
+    if ($('#' + tabId).length) {
+      scrollToTabContent(tabId); // Call your scroll function from earlier
+          activateTab(tabId)
+    }
+  } 
+     else{
+       $('.haute-couture-home .video-tabs .video-tab').first().addClass('active');
+       updateTabIndicator()
+     }
+      }
+   });
+</script>
+<script data-main type="load">
+   
+ if (window.innerWidth <= 768) {
+
+class RenderPage{
+  constructor(){
+
+    this.currentindex = 0
+
+   
+     this.renderFullPage()
+       
+  }
+  renderFullPage(){
+        this.mobileTabsVideo = document.querySelectorAll(".haute-couture-home-1 .video-tabs .video-tab");
+
+     this.renderTab();
+     this.updateSlider()
+
+  }
+   renderTab(){
+
+          document.querySelector(".haute-couture-home-1 .prev-btn-video")?.addEventListener("click", (e) => {
+             if(this.currentindex==0){
+         return null
+       } 
+            const currentTabItems = e.currentTarget.closest(".video-collection-tabs__list")
+            currentTabItems.classList.add("loader")
+          
+      if (this.currentindex > 0) {
+        this.currentindex--;
+        this.updateTabsVideo(this.currentindex);
+        
+      }
+    });
+
+    document.querySelector(".haute-couture-home-1 .next-btn-video")?.addEventListener("click", (e) => {
+        if(this.currentindex===this.mobileTabsVideo.length - 1){
+        return null
+      }
+        const currentTabItems = e.currentTarget.closest(".video-collection-tabs__list")
+            currentTabItems.classList.add("loader")
+    
+      if (this.currentindex < this.mobileTabsVideo.length - 1) {
+        this.currentindex++;
+         this.updateTabsVideo(this.currentindex);
+      
+      }
+    });
+ 
+
+  
+  }
+
+   updateTabsVideo(index) {
+      this.mobileTabsVideo.forEach((tab, i) => {
+        tab.classList.remove("active");
+        tab.style.display = i === index ? "inline-block" : "none"; // Show only active
+      });
+
+      this.mobileTabsVideo[index].classList.add("active");
+       this.mobileTabsVideo[index].click()
+     const handlebox =  this.mobileTabsVideo[index].dataset.collectionHandel
+
+        this.fetchSectionFromPage(handlebox);
+    } 
+   fetchSectionFromPage(pageUrl) {
+fetch(`${pageUrl}`)
+  .then(response => response.text())
+  .then(htmlText => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
+
+    if (doc) {
+      const newContent = doc.querySelector("#main-content");
+      if (newContent) {
+        document.querySelector("#main-content").innerHTML = newContent.innerHTML;
+                 
+
+      // Run all inline and external scripts found inside new content
+      const scripts = newContent.querySelectorAll("script:not([data-main])");
+      scripts.forEach((script) => {
+        const newScript = document.createElement("script");
+
+        // Copy attributes (like src, type, etc.)
+        [...script.attributes].forEach((attr) =>
+          newScript.setAttribute(attr.name, attr.value)
+        );
+
+        // Copy inline script content
+        if (script.textContent) {
+          newScript.textContent = script.textContent;
+        }
+
+        // Append to body (or wherever you prefer)
+        document.body.appendChild(newScript);
+      });
+        this.renderFullPage()
+      } else {
+        console.warn(`Section with ID #main-content not found on ${pageUrl}`);
+      }
+    }
+  })
+  .catch(error => {
+    console.error('Error fetching section:', error);
+  });
+    }
+updateSlider(){
+const sliderItems = document.querySelectorAll(".custom-slick-slider");
+
+sliderItems.forEach((slider) => {
+  if (!$(slider).hasClass('slick-initialized') && typeof $(slider).slick === 'function') {
+    $(slider).slick({
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      arrows: true,
+      prevArrow:
+        '<button type="button" class="slick-prev1 flickity-nav"><img width="38" height="38" src="//eliesaab.com/cdn/shop/t/174/assets/arrow-left.svg?v=160317388040158456881749119394" alt="Previous"></button>',
+      nextArrow:
+        '<button type="button" class="slick-next1 flickity-nav"><img width="38" height="38" src="//eliesaab.com/cdn/shop/t/174/assets/arrow-right.svg?v=126479695621962320581749119394" alt="Next"></button>',
+      responsive: [
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 1,
+            arrows: false,
+            centerMode: true,
+              centerPadding: '30px',
+          },
+        },
+      ],
+    });
+  }
+});
+
+  
+}
+
+
+}
+      jQuery(document).ready(function($) {  
+    new RenderPage()
+
+      })
+
+
+    // load first tab content
+  
+}
+  
+</script>
+{% schema %}
+{
+  "name": "Haute Couture home",
+  "settings": []
+}
+{% endschema %}

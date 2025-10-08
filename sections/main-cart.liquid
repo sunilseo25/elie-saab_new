@@ -1,0 +1,2700 @@
+{%- liquid
+	assign payment_icons = section.blocks | where: "type", "payment_icons"
+	assign collapsible_panels = section.blocks | where: "type", "collapsible_tab"
+	assign shipping_estimator = section.blocks | where: "type", "shipping_estimator"
+	assign items_requiring_shipping = cart.items | where: 'requires_shipping'
+-%}
+
+<script>
+let cartData = {{ cart | json }};
+console.log("cartData",cartData);
+</script>
+
+<style>
+  @media only screen and (min-width: 1068px) {
+    body .thb-cart-form {
+      padding: 40px 0;
+    }
+  }
+  body .sub-footer{
+    margin:0
+  }
+  body .cart_progress_bar-main {
+    margin-bottom:40px
+  }
+  footer#footer>*:not(.sub-footer) {
+    display: none;
+  }
+  footer#footer {
+    padding: 0;
+    border: 0;
+  }
+  max-height,
+  body .side--panel{
+    font-weight:300
+  }
+  .progress-fill {
+    background-image: url({{ 'loader-logo.svg' | asset_url }});
+    background-repeat: no-repeat;
+    background-size: 32px;
+    background-position: right center;
+  }
+  tab-component .slide-btn.flickity--prev{
+    left: 40px;
+  }
+  tab-component .slide-btn.flickity--next{
+    right: 40px;
+  }
+  @media (min-width: 768px) {
+    body .side--panel {
+      max-width: 100%;
+    }
+  }
+</style>
+
+{{ 'cart.css' | asset_url | stylesheet_tag }}
+{{ 'cart.js' | asset_url | script_tag }}
+{{'custom-checkout.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="{{ 'max-height.css' | asset_url }}" media="print" onload="this.media='all'">
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDs2mhPEROJsD73nEZA0nzoZIWZSt71OSQ&libraries=places"></script>
+
+{% assign today = 'now' | date: '%s' %}
+{% assign future_date = today | plus: 864000 %} <!-- Add 5 days in seconds (5 * 24 * 60 * 60) it was 691200 before -->                    
+{% assign weekday = future_date | date: '%A' %} <!-- Full weekday name -->
+{% assign day = future_date | date: '%d' %} <!-- Day of the month -->
+{% assign month = future_date | date: '%B' %} <!-- Full month name -->   
+                    
+<div class="row main__cart">
+  <div class="small-12 columns">        
+    <div class="thb-cart-form" id="Cart" data-id="{{ section.id }}">
+      <div class="cart_progress_bar-main">
+        <tab-component class="nav nav-tabs cart_progress_bar">
+          <li class="carousel nav-item"><a class="nav-link active" {%- if cart != empty -%}data-bs-toggle="tab" data-bs-target="#cart-content"{% endif %} href="javascript:void(0);"><span><img width="14" height="14" src="{{ 'wishlist.svg' | asset_url }}"></span>Cart</a></li>
+          <li class="carousel nav-item"><a class="nav-link" {%- if cart != empty -%}data-bs-toggle="tab" data-bs-target="#personal"{% endif %} href="javascript:void(0);" onclick="window.location.href='/checkout'"><span>1</span>Personal details</a></li>
+          <li class="carousel nav-item"><a class="nav-link none_pointer" {%- if cart != empty -%}data-bs-toggle="tab" data-bs-target="#shipping_address"{% endif %} onclick="window.location.href='/checkout'" href="javascript:void(0);"><span>2</span>Shipping address</a></li>
+          <li class="carousel nav-item"><a class="nav-link none_pointer" {%- if cart != empty -%}data-bs-toggle="tab" data-bs-target="#payment_method"{% endif %} onclick="window.location.href='/checkout'" href="javascript:void(0);"><span>3</span>Payment</a></li>
+          {%- if cart != empty -%}
+            <div class="slide-btn flickity-nav flickity--prev" tabindex="0">{%- render 'svg-icons' with 'arrow-left' -%}</div>
+            <div class="slide-btn flickity-nav flickity-next" tabindex="0">{%- render 'svg-icons' with 'arrow-right' -%}</div>
+          {% endif %}
+        </tab-component>
+        <div class="underline-progress">
+          <div class="cartprogress under_progress"></div>
+        </div>
+      </div>
+      <div class="cart__btn_tabs">
+        <div class="tab-pane accordion-tab-pane active show" id="cart-content">
+          {%- if cart != empty -%}
+          <form action="{{ routes.cart_url }}" method="post" novalidate class="cart__form" id="cart__form__items"> 
+            <ul class="cart__form_items products row">
+              {%- for item in cart.items -%}
+              <li class="columns small-12 medium-6 large-4 main_item" id="CartItem-{{ item.index | plus: 1 }}"> 
+                <div class="cart__image">
+                  {% if item.image %}
+                    {%- render 'responsive-image', image: item.image, sizes: '500' -%}
+                  {% else %}
+                  <div class="thb-placeholder">
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="cart__titles">
+                  <div class="cart__titles_props">
+                    <a href="{{ item.url }}" title="{{ item.product.title | escape }}" class="m-none cart-product-link">{{ item.product.title | truncate:30  }}</a>
+                    <div class="cart__ctas_prices">
+                      <span class="price">
+                        {%- if item.original_line_price != item.final_line_price -%}
+                          <del><span class="amount">{{ item.original_line_price | money_without_trailing_zeros }}</span></del>
+                          <ins><span class="amount">{{ item.final_line_price | money_without_trailing_zeros }}</span></ins>
+                        {%- else -%}
+                          <ins><span class="amount">{{ item.original_line_price | money_without_trailing_zeros }}</span></ins>
+                        {%- endif -%}
+                        {%- if item.variant.available and item.unit_price_measurement -%}
+                          <small class="unit-price">
+                            {{ item.variant.unit_price | money_without_trailing_zeros }}
+                            <span class="unit-price-separator">/</span>
+                            {%- if item.variant.unit_price_measurement.reference_value != 1 -%}
+                              {{- item.variant.unit_price_measurement.reference_value -}}
+                            {%- endif -%}
+                            {{ item.variant.unit_price_measurement.reference_unit }}
+                          </small>
+                        {%- endif -%}
+                      </span>
+                      <div class="loading-overlay">
+                        {% render 'svg-icons' with 'thb-loading' %}
+                      </div>
+                    </div>
+                    <div class="d-none">
+                    <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" class="text-button remove-product remove" data-index="{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">Remove</a>
+                    </div>
+                  </div>
+                  <div class="cart__ctas cart__titles_props">
+                    <a href="{{ item.url }}" title="{{ item.product.title | escape }}" class="d-none cart-product-link">{{ item.product.title | truncate:30  }}</a>
+                    {% unless item.variant.title contains 'Default' %}
+                    <div class="product-cart-item-options">
+                      {%- for option in item.product.options_with_values -%}
+                        {% render 'product-option',
+                          option_type: "dropdown",
+                          color_picker_size: "large",
+                          color_picker_use_variants: false,
+                          product: item.product,
+                          option: option,
+                          forloop: forloop.index0,
+                          product_form_id: item.id,
+                          item:item
+                        %}
+                      {% endfor %}
+                    </div>
+                    {% endunless %}
+                    <div class="cart-quantity">
+                      <quantity-selector class="quantity cart-update" data-id="{{ item.key | escape }}">
+                        <button class="minus" type="button">{% render 'svg-icons' with 'minus' %}</button>
+                        <input type="number" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}" min="0" {% if item.variant.quantity_rule.max != null %} max="{{ item.variant.quantity_rule.max }}"{% elsif item.variant.inventory_management != null and item.variant.inventory_quantity > 0 %} max="{{ item.variant.inventory_quantity }}" {% endif %} step="{{ item.variant.quantity_rule.increment }}" class="qty" data-index="{{ item.index | plus: 1 }}" aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}" >
+                        <button class="plus" type="button">{% render 'svg-icons' with 'plus' %}</button>
+                      </quantity-selector>
+                    </div>
+                    <div class="cart__ctas_links">
+                      <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" class="remove remove-product m-none text-button" data-index="{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">Remove</a>
+                      <div style="display:none !important" class="cart-item__error form-notification error" id="Line-item-error-{{ item.index | plus: 1 }}" role="alert" hidden>
+                        {% render 'svg-icons' with 'thb-error' %}
+                        <small class="cart-item__error-text"></small>
+                      </div>
+                    </div>
+                 </div>  
+               </div>
+              </li>
+              {%- endfor -%} 
+              <script>cartData = {{ cart | json }};</script>
+           </ul>
+          </form>
+          {% else %}
+            <div class="cart-empty">
+              <h1 class="h6">{{ 'sections.cart.empty' | t }}</h1>
+              <a href="{{ routes.root_url }}" class="h6"><span>{{ 'general.continue_shopping' | t }}</span></a>
+            </div>
+          {% endif %}
+        </div>
+        {%- if cart != empty -%}
+        <div class="tab-pane accordion-tab-pane" id="personal">
+          <div class="accordion checkout-form-sections" id="accordionExample">
+            <div class="accordion-item section open detail-section" id="section-one">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#personal_details" data-slide="1">
+                <span><span>Personal details</span><span class="detail-step-confirm step_number">Step 1</span></span>
+              </button>
+              <div id="personal_details" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <form id="personal-form" novalidate>
+                    <div class="field">
+                      <div class="first_name">
+                        <input type="text" name="first" placeholder="First name*" name="checkout[shipping_address][first_name]" id="checkout_shipping_address_first_name" autocomplete="off" required value="{{ customer.first_name }}" >
+                      </div>
+                      <div class="last_name">
+                        <input type="text" name="last" placeholder="Last name*" name="checkout[shipping_address][last_name]" id="checkout_shipping_address_last_name" autocomplete="off" required value="{{ customer.last_name }}" >
+                      </div>
+                      <div>
+                      <input type="email" name="email" placeholder="Email Address*" name="checkout[shipping_address][email]" id="checkout_email_or_phone" autocomplete="off" required value="{{ customer.email }}">
+                       <p id="email_verify" class="phone_field_info info_text"></p>
+                      </div>   
+                      <div class="phone_field"> 
+                        <div class="phone-group phone_card" data-country="{{localization.country.iso_code}}">
+                        <label class="selected-country country_number" for="country-flag">
+                          <div class="country-flag-box">
+                            <span class="country-flag al" style="background-image: url('https://hatscripts.github.io/circle-flags/flags/ch.svg');background-position: center center; background-size: cover;"></span>
+                          </div> 
+                          <div class="selected_country-code">+355</div>
+                          <select class="country-flag" id="country-flag">
+                            <option data-code="al" min-digit="8" max-digit="10" value="+355">Albania</option>
+                            <option data-code="dz" min-digit="8" max-digit="9" value="+213">Algeria</option>
+                            <option data-code="as" min-digit="10" max-digit="10" value="+1-684">American Samoa</option>
+                            <option data-code="ad" min-digit="8" max-digit="12" value="+376">Andorra </option>
+                            <option data-code="ao" min-digit="9" max-digit="9" value="+244">Angola </option>
+                            <option data-code="ai" min-digit="10" max-digit="10" value="+1-264">Anguilla </option>
+                            <option data-code="ag" min-digit="10" max-digit="10" value="+1-268">Antigua and Barbuda </option>
+                            <option data-code="ar" min-digit="10" max-digit="10" value="+54">Argentina </option>
+                            <option data-code="am" min-digit="8" max-digit="8" value="+374">Armenia </option>
+                            <option data-code="aw" min-digit="7" max-digit="7" value="+297">Aruba</option>
+                            <option data-code="au" min-digit="9" max-digit="9" value="+61">Australia </option>
+                            <option data-code="at" min-digit="10" max-digit="11" value="+43">Austria </option>
+                            <option data-code="az" min-digit="9" max-digit="9" value="+994">Azerbaijan </option>
+                            <option data-code="bs" min-digit="10" max-digit="10" value="+1-242">Bahamas </option>
+                            <option data-code="bh" min-digit="8" max-digit="8" value="+973">Bahrain </option>
+                            <option data-code="bd" min-digit="10" max-digit="10" value="+880">Bangladesh </option>
+                            <option data-code="bb" min-digit="10" max-digit="10" value="+1-246">Barbados </option>
+                            <option data-code="be" min-digit="9" max-digit="9" value="+32">Belgium </option>
+                            <option data-code="bz" min-digit="7" max-digit="7" value="+501">Belize </option>
+                            <option data-code="bj" min-digit="6" max-digit="9" value="+229">Benin </option>
+                            <option data-code="bm" min-digit="10" max-digit="10" value="+1-441">Bermuda </option>
+                            <option data-code="bt" min-digit="8" max-digit="12" value="+975">Bhutan </option>
+                            <option data-code="bo" min-digit="8" max-digit="12" value="+591">Bolivia </option>
+                            <option data-code="ba" min-digit="8" max-digit="8" value="+387">Bosnia and Herzegovina </option>
+                            <option data-code="bw" min-digit="8" max-digit="12" value="+267">Botswana </option>
+                            <option data-code="br" min-digit="11" max-digit="11" value="+55">Brazil </option>
+                            <option data-code="bn" min-digit="8" max-digit="12" value="+673">Brunei </option>
+                            <option data-code="bg" min-digit="9" max-digit="9" value="+359">Bulgaria </option>
+                            <option data-code="bf" min-digit="8" max-digit="8" value="+226">Burkina Faso </option>
+                            <option data-code="bi" min-digit="7" max-digit="7" value="+257">Burundi </option>
+                            <option data-code="kh" min-digit="9" max-digit="9" value="+855">Cambodia </option>
+                            <option data-code="cm" min-digit="9" max-digit="9" value="+237">Cameroon </option>
+                            <option data-code="ca" min-digit="10" max-digit="10" value="+1">Canada </option>
+                            <option data-code="cv" min-digit="8" max-digit="12" value="+238">Cape Verde </option>
+                            <option data-code="ky" min-digit="10" max-digit="10" value="+1-345">Cayman Islands </option>
+                            <option data-code="cf" min-digit="8" max-digit="12" value="+236">Central African Republic </option>
+                            <option data-code="td" min-digit="8" max-digit="8" value="+235">Chad </option>
+                            <option data-code="cl" min-digit="9" max-digit="9" value="+56">Chile </option>
+                            <option data-code="cn" min-digit="11" max-digit="13" value="+86">China </option>
+                            <option data-code="cx" min-digit="8" max-digit="12" value="+61">Christmas Island </option>
+                            <option data-code="cc" min-digit="8" max-digit="12" value="+61">Cocos Islands </option>
+                            <option data-code="co" min-digit="10" max-digit="10" value="+57">Colombia </option>
+                            <option data-code="km" min-digit="8" max-digit="12" value="+269">Comoros </option>
+                            <option data-code="ck" min-digit="5" max-digit="5" value="+682">Cook Islands </option>
+                            <option data-code="cr" min-digit="8" max-digit="8" value="+506">Costa Rica</option>
+                            <option data-code="hr" min-digit="9" max-digit="9" value="+385">Croatia </option>
+                            <option data-code="cw" min-digit="8" max-digit="12" value="+599">Curaçao </option>
+                            <option data-code="cy" min-digit="8" max-digit="8" value="+357">Cyprus </option>
+                            <option data-code="cz" min-digit="9" max-digit="9" value="+420">Czech Republic </option>
+                            <option data-code="dk" min-digit="8" max-digit="8" value="+45">Denmark </option>
+                            <option data-code="dj" min-digit="8" max-digit="12" value="+253">Djibouti </option>
+                            <option data-code="dm" min-digit="10" max-digit="10" value="+1-767">Dominica </option>
+                            <option data-code="do" min-digit="10" max-digit="10" value="+1-809">Dominican Republic </option>
+                            <option data-code="tl" min-digit="8" max-digit="8" value="+670">East Timor </option>
+                            <option data-code="ec" min-digit="8" max-digit="9" value="+593">Ecuador </option>
+                            <option data-code="eg" min-digit="10" max-digit="10" value="+20">Egypt </option>
+                            <option data-code="sv" min-digit="8" max-digit="8" value="+503">El Salvador </option>
+                            <option data-code="gq" min-digit="8" max-digit="12" value="+240">Equatorial Guinea </option>
+                            <option data-code="er" min-digit="8" max-digit="12" value="+291">Eritrea </option>
+                            <option data-code="ee" min-digit="7" max-digit="8" value="+372">Estonia </option>
+                            <option data-code="et" min-digit="8" max-digit="12" value="+251">Ethiopia </option>
+                            <option data-code="sz" min-digit="8" max-digit="8" value="+268">Eswatini </option>
+                            <option data-code="fk" min-digit="5" max-digit="5" value="+500">Falkland Islands </option>
+                            <option data-code="fo" min-digit="5" max-digit="5" value="+298">Faroe Islands </option>
+                            <option data-code="fj" min-digit="8" max-digit="12" value="+679">Fiji </option>
+                            <option data-code="fi" min-digit="8" max-digit="10" value="+358">Finland </option>
+                            <option data-code="fr" min-digit="9" max-digit="9" value="+33">France </option>
+                            <option data-code="gf" min-digit="9" max-digit="12" value="+594">French Guiana</option>
+                            <option data-code="pf" min-digit="6" max-digit="6" value="+689">French Polynesia </option>
+                            <option data-code="ga" min-digit="7" max-digit="7" value="+241">Gabon </option>
+                            <option data-code="gm" min-digit="8" max-digit="12" value="+220">Gambia </option>
+                            <option data-code="ge" min-digit="9" max-digit="9" value="+995">Georgia </option>
+                            <option data-code="de" min-digit="10" max-digit="10" value="+49">Germany </option>
+                            <option data-code="gh" min-digit="9" max-digit="9" value="+233">Ghana </option>
+                            <option data-code="gi" min-digit="8" max-digit="12" value="+350">Gibraltar </option>
+                            <option data-code="gr" min-digit="10" max-digit="10" value="+30">Greece </option>
+                            <option data-code="gl" min-digit="6" max-digit="6" value="+299">Greenland </option>
+                            <option data-code="gd" min-digit="10" max-digit="10" value="+1-473">Grenada </option>
+                            <option data-code="gu" min-digit="10" max-digit="10" value="+1-671">Guam </option>
+                            <option data-code="gt" min-digit="8" max-digit="8" value="+502">Guatemala </option>
+                            <option data-code="gg" min-digit="10" max-digit="10" value="+44">Guernsey</option>
+                            <option data-code="gn" min-digit="8" max-digit="12" value="+224">Guinea </option>
+                            <option data-code="gw" min-digit="8" max-digit="12" value="+245">Guinea-Bissau </option>
+                            <option data-code="gy" min-digit="8" max-digit="12" value="+592">Guyana</option>
+                            <option data-code="ht" min-digit="8" max-digit="12" value="+509">Haiti </option>
+                            <option data-code="hn" min-digit="8" max-digit="8" value="+504">Honduras </option>
+                            <option data-code="hk" min-digit="8" max-digit="8" value="+852">Hong Kong </option>
+                            <option data-code="hu" min-digit="8" max-digit="9" value="+36">Hungary </option>
+                            <option data-code="is" min-digit="8" max-digit="12" value="+354">Iceland </option>
+                            <option data-code="in" min-digit="10" max-digit="10" value="+91">India </option>
+                            <option data-code="id" min-digit="9" max-digit="11" value="+62">Indonesia </option>
+                            <option data-code="iq" min-digit="10" max-digit="10" value="+964">Iraq </option>
+                            <option data-code="ie" min-digit="9" max-digit="9" value="+353">Ireland </option>
+                            <option data-code="im" min-digit="10" max-digit="10" value="+44-1624">Isle of Man</option>
+                            <option data-code="it" min-digit="8" max-digit="13" value="+39">Italy </option>
+                            <option data-code="ci" min-digit="10" max-digit="10" value="+225">Ivory Coast</option>
+                            <option data-code="jm" min-digit="10" max-digit="10" value="+1-876">Jamaica </option>
+                            <option data-code="jp" min-digit="10" max-digit="10" value="+81">Japan </option>
+                            <option data-code="je" min-digit="10" max-digit="10" value="+44-1534">Jersey </option>
+                            <option data-code="jo" min-digit="9" max-digit="9" value="+962">Jordan </option>
+                            <option data-code="kz" min-digit="10" max-digit="10" value="+7">Kazakhstan </option>
+                            <option data-code="ke" min-digit="10" max-digit="10" value="+254">Kenya</option>
+                            <option data-code="ki" min-digit="8" max-digit="8" value="+686">Kiribati </option>
+                            <option data-code="xk" min-digit="8" max-digit="8" value="+383">Kosovo</option>
+                            <option data-code="kw" min-digit="8" max-digit="8" value="+965">Kuwait </option>
+                            <option data-code="kg" min-digit="8" max-digit="9" value="+996">Kyrgyzstan </option>
+                            <option data-code="la" min-digit="8" max-digit="12" value="+856">Laos </option>
+                            <option data-code="lv" min-digit="8" max-digit="8" value="+371">Latvia </option>
+                            <option data-code="lb" min-digit="7" max-digit="8" value="+961">Lebanon </option>
+                            <option data-code="ls" min-digit="8" max-digit="12" value="+266">Lesotho </option>
+                            <option data-code="lr" min-digit="7" max-digit="8" value="+231">Liberia </option>
+                            <option data-code="li" min-digit="7" max-digit="7" value="+423">Liechtenstein </option>
+                            <option data-code="lt" min-digit="8" max-digit="8" value="+370">Lithuania </option>
+                            <option data-code="lu" min-digit="9" max-digit="9" value="+352">Luxembourg </option>
+                            <option data-code="mo" min-digit="8" max-digit="12" value="+853">Macau </option>
+                            <option data-code="mg" min-digit="8" max-digit="12" value="+261">Madagascar </option>
+                            <option data-code="mw" min-digit="8" max-digit="12" value="+265">Malawi </option>
+                            <option data-code="my" min-digit="7" max-digit="8" value="+60">Malaysia </option>
+                            <option data-code="mv" min-digit="7" max-digit="7" value="+960">Maldives </option>
+                            <option data-code="ml" min-digit="8" max-digit="8" value="+223">Mali </option>
+                            <option data-code="mt" min-digit="8" max-digit="8" value="+356">Malta </option>
+                            <option data-code="mh" min-digit="7" max-digit="7" value="+692">Marshall Islands </option>
+                            <option data-code="mq" min-digit="9" max-digit="12" value="+596">Martinique </option>
+                            <option data-code="mr" min-digit="8" max-digit="12" value="+222">Mauritania </option>
+                            <option data-code="mu" min-digit="8" max-digit="8" value="+230">Mauritius </option>
+                            <option data-code="yt" min-digit="8" max-digit="12" value="+262">Mayotte </option>
+                            <option data-code="mx" min-digit="10" max-digit="10" value="+52">Mexico </option>
+                            <option data-code="fm" min-digit="7" max-digit="7" value="+691">Micronesia </option>
+                            <option data-code="md" min-digit="8" max-digit="8" value="+373">Moldova </option>
+                            <option data-code="mc" min-digit="8" max-digit="8" value="+377">Monaco </option>
+                            <option data-code="mn" min-digit="8" max-digit="8" value="+976">Mongolia </option>
+                            <option data-code="me" min-digit="8" max-digit="8" value="+382">Montenegro </option>
+                            <option data-code="ms" min-digit="10" max-digit="10" value="+1-664">Montserrat </option>
+                            <option data-code="ma" min-digit="8" max-digit="12" value="+212">Morocco </option>
+                            <option data-code="mz" min-digit="12" max-digit="12" value="+258">Mozambique </option>
+                            <option data-code="mm" min-digit="8" max-digit="10" value="+95">Myanmar </option>
+                            <option data-code="na" min-digit="8" max-digit="12" value="+264">Namibia </option>
+                            <option data-code="nr" min-digit="8" max-digit="12" value="+674">Nauru </option>
+                            <option data-code="np" min-digit="10" max-digit="10" value="+977">Nepal </option>
+                            <option data-code="nl" min-digit="9" max-digit="9" value="+31">Netherlands </option>
+                            <option data-code="nc" min-digit="6" max-digit="6" value="+687">New Caledonia </option>
+                            <option data-code="nz" min-digit="8" max-digit="10" value="+64">New Zealand </option>
+                            <option data-code="ni" min-digit="8" max-digit="8" value="+505">Nicaragua </option>
+                            <option data-code="ne" min-digit="8" max-digit="8" value="+227">Niger </option>
+                            <option data-code="ng" min-digit="8" max-digit="8" value="+234">Nigeria </option>
+                            <option data-code="nu" min-digit="4" max-digit="4" value="+683">Niue </option>
+                            <option data-code="nf" min-digit="6" max-digit="6" value="+672">Norfolk Island </option>
+                            <option data-code="mk" min-digit="8" max-digit="8" value="+389">North Macedonia </option>
+                            <option data-code="mp" min-digit="10" max-digit="10" value="+1-670">Northern Mariana Islands </option>
+                            <option data-code="no" min-digit="8" max-digit="8" value="+47">Norway </option>
+                            <option data-code="om" min-digit="8" max-digit="12" value="+968">Oman </option>
+                            <option data-code="pk" min-digit="10" max-digit="10" value="+92">Pakistan </option>
+                            <option data-code="pw" min-digit="7" max-digit="7" value="+680">Palau </option>
+                            <option data-code="pa" min-digit="8" max-digit="8" value="+507">Panama </option>
+                            <option data-code="pg" min-digit="8" max-digit="8" value="+675">Papua New Guinea </option>
+                            <option data-code="py" min-digit="9" max-digit="9" value="+595">Paraguay </option>
+                            <option data-code="pe" min-digit="9" max-digit="9" value="+51">Peru </option>
+                            <option data-code="ph" min-digit="10" max-digit="10" value="+63">Philippines </option>
+                            <option data-code="pn" min-digit="8" max-digit="12" value="+870">Pitcairn Islands </option>
+                            <option data-code="pl" min-digit="8" max-digit="10" value="+48">Poland </option>
+                            <option data-code="pt" min-digit="8" max-digit="10" value="+351">Portugal </option>
+                            <option data-code="pr" min-digit="10" max-digit="10" value="+1-787">Puerto Rico </option>
+                            <option data-code="qa" min-digit="8" max-digit="8" value="+974">Qatar </option>
+                            <option data-code="ro" min-digit="10" max-digit="10" value="+40">Romania </option>
+                            <option data-code="rw" min-digit="8" max-digit="12" value="+250">Rwanda </option>
+                            <option data-code="kn" min-digit="10" max-digit="10" value="+1-869">Saint Kitts and Nevis </option>
+                            <option data-code="lc" min-digit="10" max-digit="10" value="+1-758">Saint Lucia </option>
+                            <option data-code="vc" min-digit="10" max-digit="10" value="+1-784">Saint Vincent and the Grenadines</option>
+                            <option data-code="ws" min-digit="5" max-digit="5" value="+685">Samoa </option>
+                            <option data-code="sm" min-digit="8" max-digit="12" value="+378">San Marino </option>
+                            <option data-code="st" min-digit="8" max-digit="12" value="+239">Sao Tome and Principe </option>
+                            <option data-code="sa" min-digit="9" max-digit="9" value="+966">Saudi Arabia </option>
+                            <option data-code="sn" min-digit="8" max-digit="12" value="+221">Senegal </option>
+                            <option data-code="rs" min-digit="8" max-digit="9" value="+381">Serbia </option>
+                            <option data-code="sc" min-digit="5" max-digit="5" value="+248">Seychelles </option>
+                            <option data-code="sl" min-digit="8" max-digit="12" value="+232">Sierra Leone </option>
+                            <option data-code="sg" min-digit="8" max-digit="8" value="+65">Singapore </option>
+                            <option data-code="sx" min-digit="8" max-digit="12" value="+1-721">Sint Maarten </option>
+                            <option data-code="sk" min-digit="9" max-digit="9" value="+421">Slovakia </option>
+                            <option data-code="si" min-digit="8" max-digit="12" value="+386">Slovenia </option>
+                            <option data-code="sb" min-digit="7" max-digit="7" value="+677">Solomon Islands </option>
+                            <option data-code="za" min-digit="9" max-digit="9" value="+27">South Africa </option>
+                            <option data-code="kr" min-digit="9" max-digit="10" value="+82">South Korea </option>
+                            <option data-code="es" min-digit="9" max-digit="9" value="+34">Spain </option>
+                            <option data-code="lk" min-digit="7" max-digit="7" value="+94">Sri Lanka</option>
+                            <option data-code="sd" min-digit="8" max-digit="12" value="+249">Sudan </option>
+                            <option data-code="sr" min-digit="8" max-digit="12" value="+597">Suriname </option>
+                            <option data-code="sj" min-digit="8" max-digit="12" value="+47">Svalbard </option>
+                            <option data-code="se" min-digit="7" max-digit="7" value="+46">Sweden </option>
+                            <option data-code="ch" min-digit="9" max-digit="9" value="+41">Switzerland </option>
+                            <option data-code="tw" min-digit="9" max-digit="9" value="+886">Taiwan </option>
+                            <option data-code="tj" min-digit="8" max-digit="12" value="+992">Tajikistan</option>
+                            <option data-code="tz" min-digit="6" max-digit="6" value="+255">Tanzania </option>
+                            <option data-code="th" min-digit="9" max-digit="9" value="+66">Thailand </option>
+                            <option data-code="tg" min-digit="8" max-digit="8" value="+228">Togo </option>
+                            <option data-code="tk" min-digit="8" max-digit="12" value="+690">Tokelau </option>
+                            <option data-code="to" min-digit="8" max-digit="12" value="+676">Tonga </option>
+                            <option data-code="tt" min-digit="8" max-digit="10" value="+1-868">Trinidad and Tobago </option>
+                            <option data-code="tn" min-digit="8" max-digit="8" value="+216">Tunisia </option>
+                            <option data-code="tr" min-digit="10" max-digit="10" value="+90">Turkey </option>
+                            <option data-code="tm" min-digit="8" max-digit="12" value="+993">Turkmenistan </option>
+                            <option data-code="tc" min-digit="10" max-digit="10" value="+1-649">Turks and Caicos Islands </option>
+                            <option data-code="tv" min-digit="8" max-digit="12" value="+688">Tuvalu </option>
+                            <option data-code="vi" min-digit="10" max-digit="10" value="+1-340">United States Virgin Islands </option>
+                            <option data-code="ug" min-digit="8" max-digit="12" value="+256">Uganda </option>
+                            <option data-code="ua" min-digit="9" max-digit="9" value="+380">Ukraine </option>
+                            <option data-code="ae" min-digit="9" max-digit="9" value="+971">United Arab Emirates </option>
+                            <option data-code="gb" min-digit="10" max-digit="10" value="+44">United Kingdom </option>
+                            <option data-code="us" min-digit="10" max-digit="10" value="+1">United States </option>
+                            <option data-code="uy" min-digit="8" max-digit="8" value="+598">Uruguay </option>
+                            <option data-code="uz" min-digit="8" max-digit="12" value="+998">Uzbekistan </option>
+                            <option data-code="vu" min-digit="8" max-digit="12" value="+678">Vanuatu </option>
+                            <option data-code="va" min-digit="10" max-digit="10" value="+379">Vatican City </option>
+                            <option data-code="vn" min-digit="9" max-digit="9" value="+84">Vietnam </option>
+                            <option data-code="wf" min-digit="8" max-digit="12" value="+681">Wallis and Futuna </option>
+                            <option data-code="eh" min-digit="8" max-digit="12" value="+212">Western Sahara </option>
+                            <option data-code="zm" min-digit="9" max-digit="9" value="+260">Zambia </option>
+                            <option data-code="zw" min-digit="9" max-digit="9" value="+263">Zimbabwe </option>
+                          </select>
+                          <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        </label>                          
+                        <input type="tel" placeholder="Phone Number*" value="{{ customer.phone }}" name="checkout[shipping_address][phone]" class="checkout_shipping_address_phone" id="checkout_shipping_address_phone" required minlength="10" maxlength="10" autocomplete="off" title="Invalid number. Please enter valid phone number"/>
+                        </div>
+                        <span class="info_text">Just in case we need to contact you about your order</span>
+                      </div>
+                    </div>
+                    <div class="text-right cofirm_btn">
+                      <button type="submit" class="button modified" data-tabs="#personal" style="display: none;" >
+                        Modify
+                        <div class="loading__spinner_inner">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="spinner" viewBox="0 0 66 66"><circle stroke-width="6" cx="33" cy="33" r="30" fill="none" class="path"></circle></svg>
+                        </div>
+                      </button>
+                      <button type="submit" class="button confirm1" data-tabs="#shipping_address"><span>Confirm</span>
+                        <div class="loading__spinner_inner">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="spinner" viewBox="0 0 66 66"><circle stroke-width="6" cx="33" cy="33" r="30" fill="none" class="path"></circle></svg>
+                        </div>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item shipping-section" id="section-two">
+              <button class="accordion-button none_pointer collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#shipping_address" data-slide="2">
+                <span><span>Shipping address <small class="m-none shipping_desk_txt">Estimated Delivery {{ weekday }} {{ day }} {{ month }}</small> </span><span class="shipping-step-confirm step_number">Step 2</span></span>
+              </button>
+              <small class="d-none shipping_desk_txt">Estimated Delivery {{ weekday }} {{ day }} {{ month }}</small>
+              <div id="shipping_address" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <form id="shipping-form">
+                    <div class="field shipping_form">
+                      <div>
+                        <input type="text" placeholder="Address" name="checkout[shipping_address][address1]" id="checkout_shipping_address_address1" autocomplete="off" required pattern="^\d{1}[A-Za-z].*">
+                      </div>
+                      <div>
+                        <input type="text" name="checkout[shipping_address][address2]" id="checkout_shipping_address_address2" placeholder="Apartment, Suite or Delivery Notes" autocomplete="off" required>
+                      </div>
+                      <div class="field">
+                        <div>
+                          <input type="text" name="checkout[shipping_address][postcode]" id="checkout_shipping_address_postcode" required placeholder="Zip Code" autocomplete="off">
+                        </div>
+                        <div>
+                          <input type="text" name="checkout[shipping_address][state]" id="checkout_shipping_address_state" required placeholder="State" autocomplete="off">
+                        </div>
+                      </div>
+                      <div class="field">
+                        <div>
+                          <input type="text" placeholder="City"  name="checkout[shipping_address][city]" id="checkout_shipping_address_city" required autocomplete="off">
+                          <input type="text" class="checkout_shipping_address_country" name="checkout[shipping_address][country]" style="display:none" id="checkout_shipping_address_country" placeholder="Country" autocomplete="off">
+                        </div>
+                        <div class="custom_select_option"> 
+                          <select name="country" class="checkout_shipping_address_country_dropdown checkout_shipping_address_country" onchange="document.querySelector('#checkout_shipping_address_country').value = this.options[this.selectedIndex].innerText.trim()" required>
+                           <option value="">Country</option>
+        <option data-code="ar" min-digit="10" max-digit="10" value="+54">Argentina </option>
+        <option data-code="au" min-digit="9" max-digit="9" value="+61">Australia </option>
+        <option data-code="at" min-digit="10" max-digit="11" value="+43">Austria </option>
+        <option data-code="bh" min-digit="8" max-digit="8" value="+973">Bahrain </option>
+        <option data-code="be" min-digit="9" max-digit="9" value="+32">Belgium </option>
+        <option data-code="bg" min-digit="9" max-digit="9" value="+359">Bulgaria </option>
+        <option data-code="ca" min-digit="10" max-digit="10" value="+1">Canada </option>
+        <option data-code="cn" min-digit="11" max-digit="13" value="+86">China </option>
+        <option data-code="co" min-digit="10" max-digit="10" value="+57">Colombia </option>
+        <option data-code="hr" min-digit="9" max-digit="9" value="+385">Croatia </option>
+        <option data-code="cy" min-digit="8" max-digit="8" value="+357">Cyprus </option>
+        <option data-code="cz" min-digit="9" max-digit="9" value="+420">Czech Republic </option>
+        <option data-code="dk" min-digit="8" max-digit="8" value="+45">Denmark </option>
+        <option data-code="eg" min-digit="10" max-digit="10" value="+20">Egypt </option>
+        <option data-code="ee" min-digit="7" max-digit="8" value="+372">Estonia </option>
+        <option data-code="fi" min-digit="8" max-digit="10" value="+358">Finland </option>
+        <option data-code="fr" min-digit="9" max-digit="9" value="+33">France </option>
+        <option data-code="de" min-digit="10" max-digit="10" value="+49">Germany </option>
+        <option data-code="gh" min-digit="9" max-digit="9" value="+233">Ghana </option>
+        <option data-code="gr" min-digit="10" max-digit="10" value="+30">Greece </option>
+        <option data-code="hk" min-digit="8" max-digit="8" value="+852">Hong Kong </option>
+        <option data-code="hu" min-digit="8" max-digit="9" value="+36">Hungary </option>
+        <option data-code="in" min-digit="10" max-digit="10" value="+91">India </option>
+        <option data-code="ie" min-digit="9" max-digit="9" value="+353">Ireland </option>
+        <option data-code="it" min-digit="8" max-digit="13" value="+39">Italy </option>
+        <option data-code="jp" min-digit="10" max-digit="10" value="+81">Japan </option>
+        <option data-code="jo" min-digit="9" max-digit="9" value="+962">Jordan </option>
+        <option data-code="kw" min-digit="8" max-digit="8" value="+965">Kuwait </option>
+        <option data-code="lv" min-digit="8" max-digit="8" value="+371">Latvia </option>
+        <option data-code="lb" min-digit="7" max-digit="8" value="+961">Lebanon </option>
+        <option data-code="lt" min-digit="8" max-digit="8" value="+370">Lithuania </option>
+        <option data-code="lu" min-digit="9" max-digit="9" value="+352">Luxembourg </option>
+        <option data-code="mc" min-digit="8" max-digit="8" value="+377">Monaco </option>
+        <option data-code="ma" min-digit="8" max-digit="12" value="+212">Morocco </option>
+        <option data-code="nl" min-digit="9" max-digit="9" value="+31">Netherlands </option>
+        <option data-code="nz" min-digit="8" max-digit="10" value="+64">New Zealand </option>
+        <option data-code="ng" min-digit="8" max-digit="8" value="+234">Nigeria </option>
+        <option data-code="om" min-digit="8" max-digit="12" value="+968">Oman </option>
+        <option data-code="pa" min-digit="8" max-digit="8" value="+507">Panama </option>
+        <option data-code="pl" min-digit="8" max-digit="10" value="+48">Poland </option>
+        <option data-code="pt" min-digit="8" max-digit="10" value="+351">Portugal </option>
+        <option data-code="qa" min-digit="8" max-digit="8" value="+974">Qatar </option>
+        <option data-code="ro" min-digit="10" max-digit="10" value="+40">Romania </option>
+        <option data-code="sa" min-digit="9" max-digit="9" value="+966">Saudi Arabia </option>
+        <option data-code="sg" min-digit="8" max-digit="8" value="+65">Singapore </option>
+        <option data-code="sk" min-digit="9" max-digit="9" value="+421">Slovakia </option>
+        <option data-code="si" min-digit="8" max-digit="12" value="+386">Slovenia </option>
+        <option data-code="kr" min-digit="9" max-digit="10" value="+82">South Korea </option>
+        <option data-code="es" min-digit="9" max-digit="9" value="+34">Spain </option>
+        <option data-code="se" min-digit="7" max-digit="7" value="+46">Sweden </option>
+        <option data-code="ch" min-digit="9" max-digit="9" value="+41">Switzerland </option>
+        <option data-code="tr" min-digit="10" max-digit="10" value="+90">Turkey </option>
+        <option data-code="ae" min-digit="9" max-digit="9" value="+971">United Arab Emirates </option>
+        <option data-code="gb" min-digit="10" max-digit="10" value="+44">United Kingdom </option>
+        <option data-code="us" min-digit="10" max-digit="10" value="+1">United States </option>
+                          </select>
+                           <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                       </div>  
+                      </div>
+                      <p class="shipping_error" style="display:none;position: static; height: auto; padding: 0 !important; width: 100%; margin-top: 5px; transform: translateY(0) !important; font-weight: 300; font-size: 13px !important; color: red !important;">Shipping country does not match your location. The page will reload upon confirm to update prices.</p>
+                    </div>
+                    <div class="bill_card">
+                      <label>Billing Address</label>
+                      <div class="bill_list">
+                        <label for="same_address" class="radio_check">
+                          <input type="radio" name="billing" id="same_address" checked>
+                          <span>Same as Shipping Address</span>
+                        </label>
+                        <label for="different_address" class="radio_check">
+                          <input type="radio" name="billing" id="different_address">
+                          <span>Use a different billing address</span>
+                        </label>
+                      </div>
+                       <div class="billing_form" style="display:none;">
+                          <div class="field">
+                            <div>
+                              <input type="text" placeholder="Address" name="checkout[billing_address][address1]" id="checkout_billing_address_address1" required autocomplete="off" required pattern="^\d{1}[A-Za-z].*">
+                            </div>
+                            <div>
+                              <input type="text" name="checkout[billing_address][address2]" id="checkout_billing_address_address2" placeholder="Apartment, Suite or Delivery Notes" autocomplete="off" required>
+                            </div>
+                            <div class="field">
+                              <div>
+                                <input type="text" name="checkout[billing_address][postcode]" id="checkout_billing_address_postcode" required placeholder="Zip Code" autocomplete="off">
+                              </div>
+                              <div>
+                                <input type="text" name="checkout[billing_address][state]" id="checkout_billing_address_state" required placeholder="State" autocomplete="off">
+                              </div>
+                            </div>
+                            <div class="field">
+                              <div>
+                                <input type="text" placeholder="City" name="checkout[billing_address][city]" id="checkout_billing_address_city" autocomplete="off" required>
+                                <input type="text" style="display:none" class="checkout_billing_address_country" name="checkout[billing_address][country]" id="checkout_billing_address_country" placeholder="Country" autocomplete="off">
+                              </div>
+                             <div class="custom_select_option"> 
+                            <select name="billing_country" class="checkout_billing_address_country_dropdown required checkout_billing_address_country" onchange="document.querySelector('#checkout_billing_address_country').value = this.options[this.selectedIndex].innerText.trim()" required>
+                             <option value="">Country</option>
+                                    <option data-code="ar" min-digit="10" max-digit="10" value="+54">Argentina </option>
+        <option data-code="au" min-digit="9" max-digit="9" value="+61">Australia </option>
+        <option data-code="at" min-digit="10" max-digit="11" value="+43">Austria </option>
+        <option data-code="bh" min-digit="8" max-digit="8" value="+973">Bahrain </option>
+        <option data-code="be" min-digit="9" max-digit="9" value="+32">Belgium </option>
+        <option data-code="bg" min-digit="9" max-digit="9" value="+359">Bulgaria </option>
+        <option data-code="ca" min-digit="10" max-digit="10" value="+1">Canada </option>
+        <option data-code="cn" min-digit="11" max-digit="13" value="+86">China </option>
+        <option data-code="co" min-digit="10" max-digit="10" value="+57">Colombia </option>
+        <option data-code="hr" min-digit="9" max-digit="9" value="+385">Croatia </option>
+        <option data-code="cy" min-digit="8" max-digit="8" value="+357">Cyprus </option>
+        <option data-code="cz" min-digit="9" max-digit="9" value="+420">Czech Republic </option>
+        <option data-code="dk" min-digit="8" max-digit="8" value="+45">Denmark </option>
+        <option data-code="eg" min-digit="10" max-digit="10" value="+20">Egypt </option>
+        <option data-code="ee" min-digit="7" max-digit="8" value="+372">Estonia </option>
+        <option data-code="fi" min-digit="8" max-digit="10" value="+358">Finland </option>
+        <option data-code="fr" min-digit="9" max-digit="9" value="+33">France </option>
+        <option data-code="de" min-digit="10" max-digit="10" value="+49">Germany </option>
+        <option data-code="gh" min-digit="9" max-digit="9" value="+233">Ghana </option>
+        <option data-code="gr" min-digit="10" max-digit="10" value="+30">Greece </option>
+        <option data-code="hk" min-digit="8" max-digit="8" value="+852">Hong Kong </option>
+        <option data-code="hu" min-digit="8" max-digit="9" value="+36">Hungary </option>
+        <option data-code="in" min-digit="10" max-digit="10" value="+91">India </option>
+        <option data-code="ie" min-digit="9" max-digit="9" value="+353">Ireland </option>
+        <option data-code="it" min-digit="8" max-digit="13" value="+39">Italy </option>
+        <option data-code="jp" min-digit="10" max-digit="10" value="+81">Japan </option>
+        <option data-code="jo" min-digit="9" max-digit="9" value="+962">Jordan </option>
+        <option data-code="kw" min-digit="8" max-digit="8" value="+965">Kuwait </option>
+        <option data-code="lv" min-digit="8" max-digit="8" value="+371">Latvia </option>
+        <option data-code="lb" min-digit="7" max-digit="8" value="+961">Lebanon </option>
+        <option data-code="lt" min-digit="8" max-digit="8" value="+370">Lithuania </option>
+        <option data-code="lu" min-digit="9" max-digit="9" value="+352">Luxembourg </option>
+        <option data-code="mc" min-digit="8" max-digit="8" value="+377">Monaco </option>
+        <option data-code="ma" min-digit="8" max-digit="12" value="+212">Morocco </option>
+        <option data-code="nl" min-digit="9" max-digit="9" value="+31">Netherlands </option>
+        <option data-code="nz" min-digit="8" max-digit="10" value="+64">New Zealand </option>
+        <option data-code="ng" min-digit="8" max-digit="8" value="+234">Nigeria </option>
+        <option data-code="om" min-digit="8" max-digit="12" value="+968">Oman </option>
+        <option data-code="pa" min-digit="8" max-digit="8" value="+507">Panama </option>
+        <option data-code="pl" min-digit="8" max-digit="10" value="+48">Poland </option>
+        <option data-code="pt" min-digit="8" max-digit="10" value="+351">Portugal </option>
+        <option data-code="qa" min-digit="8" max-digit="8" value="+974">Qatar </option>
+        <option data-code="ro" min-digit="10" max-digit="10" value="+40">Romania </option>
+        <option data-code="sa" min-digit="9" max-digit="9" value="+966">Saudi Arabia </option>
+        <option data-code="sg" min-digit="8" max-digit="8" value="+65">Singapore </option>
+        <option data-code="sk" min-digit="9" max-digit="9" value="+421">Slovakia </option>
+        <option data-code="si" min-digit="8" max-digit="12" value="+386">Slovenia </option>
+        <option data-code="kr" min-digit="9" max-digit="10" value="+82">South Korea </option>
+        <option data-code="es" min-digit="9" max-digit="9" value="+34">Spain </option>
+        <option data-code="se" min-digit="7" max-digit="7" value="+46">Sweden </option>
+        <option data-code="ch" min-digit="9" max-digit="9" value="+41">Switzerland </option>
+        <option data-code="tr" min-digit="10" max-digit="10" value="+90">Turkey </option>
+        <option data-code="ae" min-digit="9" max-digit="9" value="+971">United Arab Emirates </option>
+        <option data-code="gb" min-digit="10" max-digit="10" value="+44">United Kingdom </option>
+        <option data-code="us" min-digit="10" max-digit="10" value="+1">United States </option>
+                          </select>
+                           <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                       </div>  
+                            </div>
+                          </div>
+                       </div>  
+                      <div class="cofirm_btn">
+                        <button type="submit" style="display: none;" class="button shipping-modified">Modify</button>
+                        <button type="submit" class="button confirm2" data-tabs="#payment_method"><span>Confirm</span></button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item payment-section" id="section-three">
+              <button class="accordion-button none_pointer collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#payment_method" data-slide="3">
+                <span><span>Payment</span><span class="payment-step-confirm step_number">Step 3</span></span>
+              </button>
+              <div id="payment_method" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <form id="card-form" novalidate>                    
+                    <div class="card-input-container card-element-row">
+                      <div id="card-number" class="StripeElement"></div>
+                      <div class="payment_icons">
+                        <img src ="{{'visa.png' | asset_url }}" alt="payment icons" id="visaIcon">
+                        <img src ="{{'master-card.png' | asset_url }}" alt="payment icons" id="masterCardIcon"> 
+                      </div>
+                      </div>
+                      <div class="form-group-bottom card-element-row">
+                        <input type="text" placeholder="Name on Card" id="card_name" name="card_name" class="StripeElement" value="" autocomplete="off" required>
+                        <div id="card-expiry" class="StripeElement"></div>
+                        <div id="card-cvc" class="StripeElement"></div>
+                      </div>
+                      <div class="text-center cofirm_btn">
+                        <button type="submit" class="button payment_btn pay-button">
+                          <span class="pay_price">Pay {{ cart.total_price | money_without_trailing_zeros }}</span>
+                          <div class="progress-fill"></div>
+                          {% comment %}
+                          <div class="loading__spinner hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="spinner" viewBox="0 0 66 66"><circle stroke-width="6" cx="33" cy="33" r="30" fill="none" class="path"></circle></svg>
+                          </div>
+                          {% endcomment %}
+                        </button>
+                        <img width="110" src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/payment_fff2ce7a-6662-47a8-ab4e-aaa8d2d9d74e.png?v=1743511644">
+                      </div>
+                    <div class="show_error" style="display:none"></div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>          
+        </div>
+        {% endif %}
+        <div class="cart_sidebar-rgt" id="sideCart">
+          <div class="cart_sidebar_header">
+            <label for="address1"> 
+              <strong> <input type="radio" name="attributes[address]" value="address" checked > Eco Packaging</strong>
+              <span>All orders come wrapped in an ELIE SAAB box - reponsibly produced, more than 93% recycled materials</span>
+            </label>
+          </div>
+          <div class="cart_sidebar_totals">
+            <div class="cart-payment" id="cart-payment">
+              <div class="cart_total_payment">
+                <table id="cart__totals" class="table mini_cart">
+                  <tbody>
+                    <tr>
+                      <td>Subtotal</td>
+                      <td>{{ cart.total_price | money_without_trailing_zeros }}</td>
+                    </tr>
+                    <tr>
+                      <td>Shipping</td>
+                      <td>Free</td>
+                    </tr> 
+                    <tr>
+                      <td>Total</td>
+                      <td class="total-price" data-checkout-payment-due-target="{{ cart.total_price }}" data-checkout-payment-total-target="{{ cart.total_price | money_without_currency | replace: ',', '' }}">{{ cart.total_price | money_without_trailing_zeros }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="proceed-to-checkout-btn">
+                <img width="70" src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/Checkout.png?v=1743431776" />
+                <button type="button" onclick="window.location.href='/checkout'" class="{%- if cart != empty -%}tab-change checkout-button{% endif %} button full" {%- if cart == empty -%}style="--solid-button-background: #d5d5d4; --solid-button-label: #acacac; background-color: transparent;"{% endif %}><span>{{ "Begin Checkout" }} </span></button>
+                {% comment %}
+                <button type="button" {%- if cart != empty -%}data-tabs="#personal"{% endif %} class="{%- if cart != empty -%}tab-change checkout-button{% endif %} button full" {%- if cart == empty -%}style="--solid-button-background: #d5d5d4; --solid-button-label: #acacac; background-color: transparent;"{% endif %}><span>{{ "Begin Checkout" }} </span></button>
+                {% endcomment %}
+                <p class="d-none">Free shipping will be applied at checkout</p>
+                {% comment %}
+                <a href="{{ routes.root_url }}" ><span>{{ 'general.continue_shopping' | t }}</span></a>
+                {% endcomment %}
+              </div>
+            </div>
+            <div class="cart_btn_tabs">
+            {%- for block in collapsible_panels -%}
+              {%- if block.settings.heading != blank -%}
+                <collapsible-row class="accordion" {{ block.shopify_attributes }}>
+                <details id="Details-{{ block.id }}-{{ section.id }}" {% if block.settings.open %}open{% endif %}>
+                  <summary>
+                    {{ block.settings.heading | default: block.settings.page.title }}
+                    <span>
+                      <svg viewBox="0 0 10 6" width="14">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path>
+                      </svg>
+                    </span>
+                  </summary>
+                  <div class="collapsible__content accordion__content rte" id="Accordion-{{ block.id }}-{{ section.id }}">
+                    {%- liquid
+                      assign seo_text_max_height = block.settings.seo_text_max_height
+                      assign seo_text_read_more = block.settings.seo_text_read_more
+                      assign seo_text_read_less = block.settings.seo_text_read_less
+                    -%}
+                    {%- render 'text-max-height-v2',
+                      no_bg: true,
+                      block: block.id,
+                      show_read_button:block.settings.show_read_button,
+                      content: block.settings.content,
+                      read_more: seo_text_read_more,
+                      read_less: seo_text_read_less,
+                      max_height: seo_text_max_height,
+                      custom_liquid:block.settings.custom_liquid,
+                      page:block.settings.page
+                    -%}
+                  </div>
+                </details>
+              </collapsible-row>
+              {%- endif -%}
+            {%- endfor -%}
+            </div>  
+           </div>
+          <div class="side-panel side--panel modal exampleModal" data-bs-backdrop="static">
+            <div class="modal-dialog">    
+              <div class="modal_body">
+                {% assign collapsible_count = 0 %}
+                <ul class="nav nav-tabs collaps_tab">
+                  {% for block in section.blocks %}
+                    {%- if block.type == 'collapsible_tab' and block.settings.heading != blank and block.settings.show_read_button-%}
+                      {% assign collapsible_count = collapsible_count | plus: 1 %}
+                      <li class="nav-item {% if forloop.first %}active{% endif %}">
+                        <span class="nav-link {% if collapsible_count == 1 %}active{% endif %}" data-bs-toggle="tab" data-bs-target="#{{ block.id }}">
+                          {{ block.settings.heading | default: block.settings.page.title }}
+                        </span>
+                      </li>
+                    {%- endif -%}
+                  {% endfor %}
+                </ul>
+                <div class="underline-progress">
+                  <div class="tab-underline under_progress"></div>
+                </div>      
+                <div class="tab-content">
+                  {% assign collapsible__count = 0 %}
+                  {% for block in section.blocks %}
+                    {%- if block.type == 'collapsible_tab' and block.settings.heading != blank -%}
+                      {% assign collapsible__count = collapsible__count | plus: 1 %}
+                      <div class="tab-pane fade {% if collapsible__count == 1 %}active{% endif %}" id="{{ block.id }}">
+                        {{ block.settings.content }}
+                        {{ block.settings.page.content }}
+                        {{ block.settings.custom_liquid }}
+                      </div>
+                    {%- endif -%}
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="modal_header">
+                <span class="btn-close" id="closeModalBtn" data-bs-dismiss="modal">     
+                  <span>Continue checkout</span>
+                  <svg width="10" height="10" viewBox="0 0 10 6">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" name="checkoutid" class="checkoutid" value="">
+<input type="hidden" name="intentid" class="intentid" value="">
+<input type="hidden" name="customorderid" class="custom_order_id" value="">
+<input type="hidden" name="currencysymbol" class="currencysymbol" value="">
+<input type="hidden" name="intentsecret" class="intentsecret" value="0">
+<div class="ds-html" style="dispay:none"> </div>
+{% assign money_formatted = 0 | money %}
+{% assign currency_symbol = money_formatted | remove: '0.000' | remove: '0.00' | strip_html %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+{% if settings.default_checkout %}
+<script>
+  // window.location.href = "/checkout";
+</script>
+{% endif %}
+
+<script type="load">
+  function checkCountry(val){
+     setTimeout(function(){   
+        if((val == "US" || val == "CA") && (localStorage.getItem("selectedCountry23") != "US" || localStorage.getItem("selectedCountry23") != "CA")){
+           $(".shipping_error").css({"display":"block"});
+        }else if((val != "US" || val != "CA") && (localStorage.getItem("selectedCountry23") == "US" || localStorage.getItem("selectedCountry23") == "CA")){
+           $(".shipping_error").css({"display":"block"});
+        }else{
+           $(".shipping_error").css({"display":"none"});
+        }
+   },500) 
+  }
+ $("body").on("change", ".checkout_shipping_address_country_dropdown", function(){
+      let _this = $(this);
+      let countryCode = _this.find("option:selected").attr("data-code").toUpperCase();
+      checkCountry(countryCode);
+  })
+  // setTimeout(function() {
+  //   $("td[data-checkout-payment-total-target]").attr("data-checkout-payment-total-target",$("[data-checkout-payment-total-target] span").data("price")+"00"); 
+  //     $("td[data-checkout-payment-due-target]").attr("data-checkout-payment-due-target",$("[data-checkout-payment-due-target] span").data("price")+"00"); 
+  // },4000);  
+  
+  document.querySelectorAll('.exampleModal').forEach(function (modal) {
+    modal.addEventListener('shown.bs.modal', function (e) {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    });
+  });
+  document.addEventListener('hidden.bs.modal', function (event) {
+    let scrollY = window.scrollY;
+    window.scrollTo(0, scrollY);
+  });
+
+  $(document).ready(function () {
+    function setUnderline() {
+      var $activeTab = $(".cart_progress_bar .nav-link.active");
+      var $underline = $(".cartprogress");
+      if ($activeTab.length > 0) {
+        var offset = $activeTab.offset().left - $(".cart_progress_bar").offset().left;
+        $underline.css({
+          width: $activeTab.outerWidth(),
+          transform: 'translateX(' + offset + 'px)',
+        });
+      }
+    } 
+    
+   {%- if cart != empty -%}
+
+    function tabChangeEvent(){
+       console.log("Event change box")
+     $(".tab-change").on("click", function () {
+     console.log("change event")
+      // $(this).parent().addClass('is-hidden');
+      var targetTab = $(this).attr("data-tabs");
+      var $button = $(".cart_progress_bar .nav-link[data-bs-target='" + targetTab + "']");
+      $button.tab("show");
+      $('tab-component .flickity-next').addClass('disabled');
+    });  
+    } 
+ 
+tabChangeEvent()
+
+
+    document.addEventListener('change', function (e) {
+      console.log("change event")
+     setTimeout(tabChangeEvent,2000) 
+    })
+
+    document.addEventListener('cart:removed', function(e) {
+      console.log("tab event change")
+ setTimeout(tabChangeEvent,2000)
+  // Perform additional logic like UI refresh, revalidation, etc.
+});
+    $('.cart_progress_bar .nav-link').on('click', function(e) {
+      e.preventDefault();    
+      var target = $(this).data('bs-target');    
+      console.log("target",target)
+      $('.carousel .nav-link').removeClass('active');
+      $('.accordion-tab-pane').removeClass('active show');    
+      $(this).addClass('active');
+      if (target === '#personal' || target === '#shipping_address' || target === '#payment_method') {
+            // $('#personal').addClass('active show');
+        //above one line or below line
+      $('#cart-content').addClass('active show');
+        
+        $('.proceed-to-checkout-btn').addClass('is-hidden');
+        $('.accordion-button').attr('aria-expanded', 'false').addClass('collapsed');
+      } else {
+        $(target).addClass('active show');
+        $('.proceed-to-checkout-btn').removeClass('is-hidden');
+      }      
+      if (target === '#shipping_address' || target === '#payment_method') {
+        $('#personal_details').removeClass('show');
+        $('[data-bs-target="#personal_details"]').attr('aria-expanded', 'false').addClass('collapsed');
+      }
+      if (target === '#personal') {
+        $('#personal_details').collapse('show');
+        $('[data-bs-target="#personal_details"]').attr('aria-expanded', 'true').removeClass('collapsed');
+      } else if (target === '#shipping_address') {
+        $('#shipping_address').collapse('show');
+        $('[data-bs-target="#shipping_address"]').attr('aria-expanded', 'true').removeClass('collapsed');
+      } else if (target === '#payment_method') {
+        $('#payment_method').collapse('show');
+        $('[data-bs-target="#payment_method"]').attr('aria-expanded', 'true').removeClass('collapsed');
+      }    
+      setUnderline();
+    });
+    {% endif %}
+    
+    $('.accordion-button').on('click', function() {
+      var targetAccordion = $(this).data('bs-target');      
+      if (targetAccordion === '#personal_details' || targetAccordion === '#shipping_address' || targetAccordion === '#payment_method' ) {
+        $('.carousel .nav-link').removeClass('active');
+        $('.accordion-tab-pane').removeClass('active show');            
+        $('#personal').addClass('active show');
+      }
+      if (targetAccordion === '#personal_details') {
+        $('[data-bs-target="#personal"]').addClass('active');
+      } 
+      else if (targetAccordion === '#shipping_address') {
+        $('[data-bs-target="#shipping_address"]').addClass('active');        
+      } else if (targetAccordion === '#payment_method') {
+        $('[data-bs-target="#payment_method"]').addClass('active');
+      }
+      setUnderline();
+    });
+    
+    setUnderline();
+    $(window).on("resize", function () {
+      setUnderline();
+    });
+  });  
+  
+  function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  let PAY_PRICE = `{{ cart.total_price | money }}`; 
+  var currencyMain= getCookie('currency');//"INR";
+  console.log("currencyMain1",currencyMain);
+  if(currencyMain == "LBP")
+     currencyMain = "USD"
+  
+  var payment_intent_id = "";
+  var payment_intent_client_secret = "";
+  var stripe = "";
+  var stripe_publishable_key = "";
+  var stripe_secret_Key = "";
+  var stripe_authorization = "";
+  var cardNumber = "";
+  var intent_created = 0;
+  var email_verify_key = "";
+  var country_short_name = "";
+  var state_short_name = "";
+  var customerId= '';
+document.addEventListener("DOMContentLoaded", function () {
+  // Get the country cookie value
+  
+  // function getCookie(name) {
+  //   const value = `; ${document.cookie}`;
+  //   const parts = value.split(`; ${name}=`);
+  //   if (parts.length === 2) return parts.pop().split(";").shift();
+  // }
+  // var countryCookie = getCookie("country");
+  // console.log("countryCookie", countryCookie);
+  // if (countryCookie) {
+  //   countryCookie = countryCookie.toLowerCase().trim();
+  //   console.log("countryCookie", countryCookie);
+  //   const selectElement = document.querySelector(`select.country-flag`);
+  //   if (selectElement) {
+  //     var options_value = selectElement.querySelector(`[data-code="${countryCookie}"]`).value;
+  //     selectElement.value = options_value;
+  //     console.log('options_value',options_value);
+  //     selectElement.dispatchEvent(new Event('change'));
+  //     document.querySelector('.selected_country-code').innerText = options_value;
+  //     const spanElement = document.querySelector('span.country-flag');
+  //     if (spanElement) {
+  //       spanElement.classList.remove('ch');
+  //       spanElement.classList.add(countryCookie);
+  //     }
+  //   }
+  // }
+  
+  document.body.addEventListener('click', function (event) {
+    // Check if the clicked element matches the target element
+    if (event.target.closest("#ctm_messenger_svg img")) {
+      $("#my_custom_svg").trigger('click');
+    }
+  });
+  fetch('https://eliesaabftp.com/675.f85.mytemp.website/sunil/switzerland-store/api/get-keys', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'U2VjdXJlIFNob3BpZnkgQXBpIFJlcXVlc3Q=',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: '1' }) // Add the necessary request data
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.error) {
+        console.error('Error:', data.error);
+      } else {
+          const publishableKey = atob(data.pkey); // Decrypt on client-side
+          const secretKey = atob(data.skey); // Decrypt on client-side
+          email_verify_key = atob(data.ekey);
+          stripe_publishable_key = publishableKey;
+          stripe_secret_Key = secretKey;
+          stripe_authorization = 'Bearer ' + stripe_secret_Key;
+
+          console.log("stripe_publishable_keystripe_publishable_keystripe_publishable_key", stripe_publishable_key);
+          stripe = Stripe(stripe_publishable_key);
+          // Create an instance of Elements.
+          var elements = stripe.elements({
+            locale: 'en'
+          });
+          var style = {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                '::placeholder': {
+                    color: '#aab7c4',
+                },
+            },
+            invalid: {
+                color: '#fa755a',
+            },
+          };
+          cardNumber = elements.create('cardNumber', { style });
+          var cardExpiry = elements.create('cardExpiry', { style });
+          var cardCvc = elements.create('cardCvc', { style });
+          
+          // Mount each element to its respective container
+          cardNumber.mount('#card-number');
+          cardExpiry.mount('#card-expiry');
+          cardCvc.mount('#card-cvc');
+      
+           cardNumber.on('change', function (event) {
+             if(intent_created == 0){
+              
+                
+                  const urlencoded = new URLSearchParams();
+                const totalPrice = $('.total-price').attr('data-checkout-payment-due-target');   
+               console.log("currencyMain",currencyMain);
+                urlencoded.append("currency", currencyMain);
+                urlencoded.append("amount", totalPrice);
+                urlencoded.append("description", "Original Amount {{ cart.total_price | money | strip_html }}");
+                urlencoded.append("automatic_payment_methods[allow_redirects]", "never");
+                urlencoded.append("automatic_payment_methods[enabled]", "true");
+               urlencoded.append("customer", customerId);
+                fetch('https://api.stripe.com/v1/payment_intents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': stripe_authorization
+                    },
+                    body: urlencoded,
+                }).then(function (response) {
+                    console.log("success");
+                    console.log(response);
+                    return response.json();
+                }).then(function (data) {
+                    console.log("server response");
+                    console.log(data);
+                    if (data.error) {
+                      // $(".loader").hide();
+                      $('.show_error').text(data.error.message).show();
+                      console.log('testing');
+                      return;
+                    }        
+                    const paymentIntentData = data;
+                    console.log("payment_intents_data", paymentIntentData);
+                    payment_intent_id = paymentIntentData.id;
+                    payment_intent_client_secret = paymentIntentData.client_secret;
+                    intent_created = 1;
+                });
+                
+               //end
+                
+             }              
+            // Hide all icons initially
+            $('#visaIcon, #masterCardIcon, #amexIcon').hide();
+            // If the user types non-numeric characters or clears the input
+            if (!event.complete && !event.brand) {
+              // If the input doesn't detect a brand, show all icons
+              $('#visaIcon, #masterCardIcon, #amexIcon').show();
+            } else if (event.error) {
+              // If Stripe detects an error (invalid input, letters, etc.), show all icons
+              $('#visaIcon, #masterCardIcon, #amexIcon').show();
+            } else {
+              // Otherwise, handle based on detected brand
+              if (event.brand === 'visa') {
+                $('#visaIcon').show();
+              } else if (event.brand === 'mastercard') {
+                $('#masterCardIcon').show();
+              } else if (event.brand === 'amex') {
+                $('#amexIcon').show();
+              } else {
+                // If no specific brand is detected, show all icons as a fallback
+                $('#visaIcon, #masterCardIcon, #amexIcon').show();
+              }
+            }
+          });
+      }
+    })
+  .catch(error => console.error('Error:', error));    
+});
+  
+// New Js for confirm and modify //
+document.querySelector(".confirm1").addEventListener("click", (event) => {
+    event.preventDefault();
+    const button = event.target;
+    button.classList.add('is_loading');
+    
+    setTimeout(() => {
+      button.classList.remove('is_loading');
+    }, 1000)
+  
+    // Find the closest `.detail-section`
+    const detailSection = button.closest(".detail-section");
+    // jQuery validation setup
+    $.validator.addMethod("phoneMaxDigit", function (value, element) {
+      const selectedOption = $('.country-flag option:selected');
+      const maxDigit = parseInt(selectedOption.attr('max-digit'), 10) || 10;
+      const digitsOnly = value.replace(/\D/g, "");
+      return digitsOnly.length === maxDigit;
+    }, function (_, element) {
+      const selectedOption = $('.country-flag option:selected');
+      const maxDigit = parseInt(selectedOption.attr('max-digit'), 10) || 10;
+      return `Invalid number. Please enter a ${maxDigit}-digit phone number.`;
+    });
+  
+    const form = detailSection.querySelector("#personal-form");
+    $(form).validate({
+     rules: {
+        first: {
+          required: true
+        },
+        last: {
+          required: true
+        },
+        checkout_email_or_phone: {
+          required: true,
+          email: true
+        },
+        phone: {
+          required: true,
+          phoneMaxDigit: true,
+          digits: true
+        }
+      },
+      messages: {
+        first: {
+          required: "Required field"
+        },
+        last: {
+          required: "Required field"
+        },
+        email: {
+          required: "Invalid email. Please enter valid email.",
+          email: "Invalid email. Please enter valid email."
+        },
+        phone: {
+          required: "Invalid number. Please enter valid phone number",
+        }
+      },
+      errorPlacement: function (error, element) {
+        error.insertAfter(element); // Place error message after the element
+      }
+    });
+
+    if (!$(form).valid()) {
+      return;
+    }
+  
+    if (detailSection) {
+      // Find the form within the section
+      const form = detailSection.querySelector("form");
+      if (form && !form.checkValidity()) {
+        // If form validation fails, display the required message
+        form.reportValidity();
+        return; // Stop further execution
+      }
+      
+      var checkout_email_or_phone = $('#checkout_email_or_phone').val();
+      // const apiKey = '11a0a58d77934a6e808a30e894fa2bfb';
+      console.log("email_verify_key: ",email_verify_key);      
+      var settings = {
+        "url": "https://emailvalidation.abstractapi.com/v1/?api_key="+email_verify_key+"&email="+checkout_email_or_phone,
+        "method": "GET",
+        "timeout": 0,
+      };
+      
+      $.ajax(settings).done(function (response) {
+        console.log("response: ",response);
+        if (response.is_valid_format.value && response.deliverability === 'DELIVERABLE') {
+            console.log("DELIVERABLE");
+            $("#email_verify").text("");
+
+           // Proceed with the rest of the code if the form is valid
+            const detailConfirm = detailSection.querySelector(".detail-step-confirm");
+            if (detailConfirm) {
+                const maindetailSection = document.querySelector(".detail-section");
+                if (maindetailSection) {
+                  maindetailSection.classList.add("details-confirmed");
+                }
+                detailConfirm.textContent = "Step 1 Confirmed";
+                detailConfirm.parentNode.classList.add('step_completed');
+                detailConfirm.parentNode.classList.remove('step_incompleted');        
+            }
+          
+            $("#section-one button.accordion-button").click()
+            $("#section-two button.accordion-button").click();
+
+            $("body").attr("data-2-step",2); 
+            var targetTab = button.getAttribute("data-tabs");
+            var $button = $(".cart_progress_bar .nav-link[data-bs-target='" + targetTab + "']");
+            $(".cart_progress_bar .nav-link").removeClass("active");
+            $button.addClass("active");
+            $button.removeClass("none_pointer");
+            $('[data-bs-target="#shipping_address"]').removeClass("none_pointer");
+           $('.nav-link[data-bs-target="#personal"]').removeClass("error");
+          
+            const modifiedElement = document.querySelector(".modified");
+            setTimeout(()=>{
+              if (modifiedElement) {
+                button.disabled = true;
+                button.querySelector("span").innerText = "Confirm";
+                modifiedElement.style.display = "block";
+                modifiedElement.disabled = false;
+              }
+            },500)
+          $("#checkout_shipping_address_first_name").prop('disabled', true);
+          $("#checkout_shipping_address_last_name").prop('disabled', true);
+          $("#checkout_email_or_phone").prop('disabled', true);
+          $("#checkout_shipping_address_phone").prop('disabled', true);
+          $('select.country-flag').prop('disabled', true);
+
+
+          // var firstname = $("#checkout_shipping_address_first_name").val();
+          // var lastname = $("#checkout_shipping_address_last_name").val();
+          // var email = $("#checkout_email_or_phone").val();
+          // var phone = $("#checkout_shipping_address_phone").val();
+          // var country = $('select.country-flag').val();
+
+          // localStorage.setItem("firstname", firstname);
+          // localStorage.setItem("lastname", lastname);
+          // localStorage.setItem("email", email);
+          // localStorage.setItem("phone", phone);
+          // localStorage.setItem("country", country);
+          
+          $('.button.modified').prop('disabled', false);
+          button.classList.remove('is_loading');  
+        } else if (response.is_valid_format.value && response.deliverability === "UNDELIVERABLE") {
+          console.log("UNDELIVERABLE");
+          $("#email_verify").text("Invalid email. Please enter valid email.");
+          button.classList.remove('is_loading');
+        }
+      });
+    }
+   // 1. Search for existing customer by email
+       var testEmail = $("#checkout_email_or_phone").val();
+                fetch('https://api.stripe.com/v1/customers', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': stripe_authorization
+                  },
+                  body: new URLSearchParams({
+                    email: testEmail
+                  })
+                })
+                .then(function(response) {
+                  return response.json();
+                })
+                .then(function(customerData) {
+                  console.log("Customer created:", customerData);
+                   customerId = customerData.id;
+                
+                  // Store this ID for use in your PaymentIntent later
+                  //window.createdStripeCustomerId = customerId;
+                })
+                .catch(function(error) {
+                  console.error("Customer creation error:", error);
+                });
+               //end
+});
+  
+document.getElementById("checkout_shipping_address_phone").addEventListener("input", function () {
+  this.value = this.value.replace(/\D/g, "");
+});
+    
+document.querySelector(".modified").addEventListener("click", (event) => {
+  $("#checkout_shipping_address_first_name").prop('disabled', false);
+  $("#checkout_shipping_address_last_name").prop('disabled', false);
+  $("#checkout_email_or_phone").prop('disabled', false);
+  $("#checkout_shipping_address_phone").prop('disabled', false);
+  $('select.country-flag').prop('disabled', false);
+  $('[data-bs-target="#personal_details"] .step_number').text('Step 1 Incomplete').parent().addClass('step_incompleted').removeClass('step_number')
+     $('[data-bs-target="#personal"]').addClass("error")
+  event.target.disabled = true;
+  const button = event.target;
+  const confirm1 = document.querySelector(".confirm1");
+  setTimeout(() => {
+    if (confirm1) {
+     button.disabled = true;
+     confirm1.disabled = false;
+    }
+  },500)
+  $("#section-two button.accordion-button").addClass('none_pointer').removeClass('active');
+  $("#section-three button.accordion-button").addClass('none_pointer').removeClass('active')
+  
+});
+  
+document.querySelector(".confirm2").addEventListener("click", (event) => {
+    event.preventDefault();
+    const button = event.target;
+    const detailSection = button.closest(".shipping-section");
+  
+    if (detailSection) {
+      // Find the form within the section
+
+      const form = detailSection.querySelector("#shipping-form");
+      $(form).validate({
+        rules: {
+          "checkout[shipping_address][address1]": { required: true },
+          "checkout[shipping_address][postcode]": { required: true, digits: true, minlength: 4},
+          "checkout[shipping_address][state]": { required: true },
+          "checkout[shipping_address][city]": { required: true },
+          country : { required: true },
+      
+          // Billing fields (only validate if "Use different address" is selected)
+          "checkout[billing_address][address1]": {
+            required: function () {
+              return document.querySelector("#different_address").checked;
+            }
+          },
+          "checkout[billing_address][postcode]": {
+            required: function () {
+              return document.querySelector("#different_address").checked;
+            },
+            digits: true, minlength: 4
+          },
+          "checkout[billing_address][state]": {
+            required: function () {
+              return document.querySelector("#different_address").checked;
+            }
+          },
+          "checkout[billing_address][city]": {
+            required: function () {
+              return document.querySelector("#different_address").checked;
+            }
+          },
+          billing_country : {
+            required: function () {
+              return document.querySelector("#different_address").checked;
+            }
+          }
+        },
+        messages: {
+          "checkout[shipping_address][address1]": { required: "Required field" },
+          "checkout[shipping_address][address2]": { required: "Required field" },
+          "checkout[shipping_address][postcode]": { required: "Required field",digits: "Enter a valid ZIP code ", minlength: "Enter a valid ZIP code",},
+          "checkout[shipping_address][state]": { required: "Required field" },
+          "checkout[shipping_address][city]": { required: "Required field" },
+          country: { required: "Required field" },      
+          "checkout[billing_address][address1]": { required: "Required field" },
+          "checkout[billing_address][postcode]": { required: "Required field",digits: "Enter a valid ZIP code", minlength: "Enter a valid ZIP code" },
+          "checkout[billing_address][state]": { required: "Required field" },
+          "checkout[billing_address][city]": { required: "Required field" },
+          billing_country: { required: "Required field" }
+        },
+        errorPlacement: function (error, element) {
+          error.insertAfter(element);
+        }
+      });
+
+      if (!$(form).valid()) {
+        return;
+      }
+
+      $("#checkout_shipping_address_address1").prop('disabled', true);
+      $("#checkout_shipping_address_address2").prop('disabled', true);
+      $("#checkout_shipping_address_city").prop('disabled', true);
+      $(".checkout_shipping_address_country").prop('disabled', true);
+      $("#checkout_shipping_address_state").prop('disabled', true);
+      $("#checkout_shipping_address_postcode").prop('disabled', true);
+      
+      $("#checkout_billing_address_address1").prop('disabled', true);
+      $("#checkout_billing_address_address2").prop('disabled', true);
+      $("#checkout_billing_address_city").prop('disabled', true);
+      $(".checkout_billing_address_country").prop('disabled', true);
+      $("#checkout_billing_address_state").prop('disabled', true);
+      $("#checkout_billing_address_postcode").prop('disabled', true);
+      $("#different_address").prop('disabled', true);
+
+      // var shipping_address1 = $("#checkout_shipping_address_address1").val();
+      // var shipping_address2 = $("#checkout_shipping_address_address2").val();
+      // var shipping_city = $("#checkout_shipping_address_city").val();
+      // var shipping_country = $(".checkout_shipping_address_country").val();
+      // var shipping_state = $('#checkout_shipping_address_state').val();
+      // var shipping_code = $('#checkout_shipping_address_postcode').val();
+
+      // var billing_address1 = $("#checkout_billing_address_address1").val();
+      // var billing_address2 = $("#checkout_billing_address_address2").val();
+      // var billing_city = $("#checkout_billing_address_city").val();
+      // var billing_country = $(".checkout_billing_address_country").val();
+      // var billing_state = $('#checkout_billing_address_state').val();
+      // var billing_code = $('#checkout_billing_address_postcode').val();
+      
+      // localStorage.setItem("shipping_address1", shipping_address1);
+      // localStorage.setItem("shipping_address2", shipping_address2);
+      // localStorage.setItem("shipping_city", shipping_city);
+      // localStorage.setItem("shipping_country", shipping_country);
+      // localStorage.setItem("shipping_state", shipping_state);
+      // localStorage.setItem("shipping_code", shipping_code);
+      
+      // localStorage.setItem("billing_address1", billing_address1);
+      // localStorage.setItem("billing_address2", billing_address2);
+      // localStorage.setItem("billing_city", billing_city);
+      // localStorage.setItem("billing_country", billing_country);
+      // localStorage.setItem("billing_state", billing_state);
+      // localStorage.setItem("billing_code", billing_code); 
+
+      let countryCode = $(".checkout_shipping_address_country_dropdown option:selected").attr("data-code").toUpperCase();
+      console.log($(".shipping_error").css("display"),"block")
+      if($(".shipping_error").css("display") == "block"){
+        console.log($(".shipping_error").css("display"),"block1")
+           $("#currencySelector .country-inline input[value='"+countryCode+"']").click();
+      }
+     
+      
+      if (form && !form.checkValidity()) {
+        // If form validation fails, display the required message
+        form.reportValidity();
+        return; // Stop further execution
+      }
+      // Proceed with the rest of the code if the form is valid
+      const detailConfirm = detailSection.querySelector(".shipping-step-confirm");
+      if (detailConfirm) {
+        const mainshippingSection = document.querySelector(".shipping-section");
+        if (mainshippingSection) {
+          mainshippingSection.classList.add("details-confirmed");
+        }
+        detailConfirm.textContent = "Step 2 Confirmed";
+        detailConfirm.parentNode.classList.add('step_completed');
+        detailConfirm.parentNode.classList.remove('step_incompleted');
+      }      
+     
+      $("body").attr("data-3-step",3);
+      $("#section-two button.accordion-button").click().removeClass('none_pointer'); 
+      $("#section-three button.accordion-button").click().removeClass('none_pointer');
+      $("#section-one button.accordion-button").removeClass('none_pointer')
+      $('[data-bs-target="#shipping_address"]').removeClass("error");
+      var targetTab = event.target.getAttribute("data-tabs");
+      var $button = $(".cart_progress_bar .nav-link[data-bs-target='" + targetTab + "']");
+      $button.tab("show");
+      $('[data-bs-target="#payment_method"]').removeClass("none_pointer");
+
+      const shippingmodifiedElement = document.querySelector(".shipping-modified");
+      setTimeout(()=>{
+        if (shippingmodifiedElement) {
+         // button.style.display = "none";
+          button.disabled = true;
+          button.querySelector("span").innerText = "Confirm";
+          shippingmodifiedElement.style.display = "block";
+          if (shippingmodifiedElement.hasAttribute("disabled")) {
+            shippingmodifiedElement.removeAttribute("disabled"); 
+          }
+        }
+      },500)
+    }
+});
+
+document.querySelector(".shipping-modified").addEventListener("click", (event) => {
+  event.target.disabled = true;
+  const button = event.target;
+  const confirm2 = document.querySelector(".confirm2");
+  setTimeout(() => {
+    if (confirm2) {
+     //button.style.display = "none";
+      button.disabled = true;
+      confirm2.style.display = "block";
+      confirm2.disabled = false;
+    }
+  },500);
+  
+  $("#checkout_shipping_address_address1").prop('disabled', false);
+  $("#checkout_shipping_address_address2").prop('disabled', false);
+  $("#checkout_shipping_address_postcode").prop('disabled', false);
+  $("#checkout_shipping_address_state").prop('disabled', false);
+  $('#checkout_shipping_address_city').prop('disabled', false);
+  $(".checkout_shipping_address_country").prop('disabled', false);  
+  $("#checkout_billing_address_address1").prop('disabled', false);
+  $("#checkout_billing_address_address2").prop('disabled', false);
+  $("#checkout_billing_address_postcode").prop('disabled', false);
+  $("#checkout_billing_address_state").prop('disabled', false);
+  $('#checkout_billing_address_city').prop('disabled', false);
+  $(".checkout_billing_address_country").prop('disabled', false);
+  $("#different_address").prop('disabled', false);
+  
+  $("#section-one button.accordion-button").addClass('none_pointer').removeClass('active');
+  $("#section-three button.accordion-button").addClass('none_pointer').removeClass('active');
+  $('[data-bs-target="#shipping_address"] .step_number').text('Step 2 Incomplete').parent().addClass('step_incompleted').removeClass('step_number');
+    $('[data-bs-target="#shipping_address"]').addClass("error")
+});
+  
+// $(document).ready(function() {
+//   $(".country-flag").find('option:selected').data('code');
+//   var min_digit = $(".country-flag").find('option:selected').attr('min-digit');
+//   var max_digit = $(".country-flag").find('option:selected').attr('max-digit');
+//   var title = "Please enter a phone number with" +min_digit+ "to" +max_digit+ "digits.";
+//   $('#checkout_shipping_address_phone').attr('minlength', min_digit);
+//   $('#checkout_shipping_address_phone').attr('maxlength', max_digit);
+//   $('#checkout_shipping_address_phone').attr('title', title);
+// });
+  
+// $(document).ready(function () {
+//   $(document).on('change', '.country-flag', function() {
+//     let allFilled = true;
+//     // Iterate through all input fields in the form
+//     $('#personal-form input[required]').each(function () {
+//       if ($(this).val().trim() === '') {
+//           allFilled = false;
+//           return false;
+//       }
+//     });
+//     if (allFilled) {
+//       $('.button.confirm1').prop('disabled', false);
+//     }
+//     var min_digit = $(this).find('option:selected').attr('min-digit');
+//     var max_digit = $(this).find('option:selected').attr('max-digit');  
+//     $('#checkout_shipping_address_phone').attr('minlength', min_digit);
+//     $('#checkout_shipping_address_phone').attr('maxlength', max_digit);
+//   });
+// });
+  
+$(document).on('keyup change', '#personal-form input', function () {
+    let allFilled = true;
+
+    // Iterate through all input fields in the form
+    $('#personal-form input[required]').each(function () {
+        if ($(this).val().trim() === '') {
+            allFilled = false;
+            return false; // Exit loop if any field is empty
+        }
+    });
+
+    // if ($('.modified').hasClass('modified_btn')) {
+    //   allFilled = false; // Force disable confirm button if the condition is met
+    // }
+
+    // Enable or disable the "Confirm" button based on allFilled
+    if (allFilled) {
+        $('.button.confirm1').prop('disabled', false).css({
+            'cursor': 'pointer',
+            'opacity': '1'
+        });
+    } else {
+        $('.button.confirm1').prop('disabled', false).css({
+            'cursor': 'pointer',
+            'opacity': '1'
+        });
+    }
+});
+
+$(document).on('keyup change', '#shipping-form input', function () {  
+    let allFilled = true;
+    if ($(this).is('#checkout_shipping_address_address1')) {
+        initAutocompleteshipp()
+    }else if($(this).is('#checkout_billing_address_address1')){
+      initAutocompletebill()
+    }
+    var shipp_value = $("#checkout_shipping_address_address1").val();
+    if (shipp_value == "") {
+        $("#checkout_shipping_address_postcode").val("");
+        $("#checkout_shipping_address_state").val("");
+        $("#checkout_shipping_address_city").val("");
+        $("#checkout_shipping_address_country").val("");
+         $('select.checkout_shipping_address_country').prop('selectedIndex',0);
+    }
+    var shipp_value = $("#checkout_billing_address_address1").val();
+    if (shipp_value == "") {
+        $("#checkout_billing_address_postcode").val("");
+        $("#checkout_billing_address_state").val("");
+        $("#checkout_billing_address_city").val("");
+        $(".checkout_billing_address_country").val("");
+       $('select.checkout_billing_address_country').prop('selectedIndex',0);
+    }
+
+    // Iterate through all input fields in the form
+    $('#shipping-form input[required]').each(function () {
+      if ($(this).val().trim() === '') {
+        allFilled = false;
+        return false;
+      }
+    });
+    if (allFilled) {
+      $('.button.confirm2').prop('disabled', false).css({
+        'cursor': 'pointer',
+        'opacity': '1'
+      });
+    } else {
+      $('.button.confirm2').prop('disabled', false).css({
+        'cursor': 'pointer',
+        'opacity': '1'
+      });
+    }
+});
+// End New Js for confirm and modify //
+
+let autocompleteship = null;
+  
+// Initialize the autocomplete functionality for address using google map api //
+// Initialize the autocomplete functionality for address using google map api //
+function initAutocompleteshipp() {
+  console.log("initAutocompleteshipp");
+    var input = document.getElementById('checkout_shipping_address_address1');
+  
+    if (!autocompleteship) {
+    var options = {
+      types: ['geocode', 'establishment'], // Restrict results to addresses
+    };
+  
+    autocompleteship = new google.maps.places.Autocomplete(input, options);
+  
+    autocompleteship.addListener('place_changed', function() {
+      var place = autocompleteship.getPlace();
+  
+      // If the place does not have geometry, return
+      if (!place.geometry) {
+        return;
+      }
+      
+      // Initialize variables to hold the values
+      var street_number = '';
+      var route = '';
+      var postcode = '';
+      var state = '';
+      var city = '';
+      var country = '';
+      country_short_name = '';
+      state_short_name = '';
+      console.log("place.address_components=>",place.address_components);
+      // Loop through address components to find the relevant data
+      place.address_components.forEach(function(component) {
+        var types = component.types;
+        console.log("types",types);
+        if (types.includes('street_number')) {
+          street_number = component.long_name;
+        }
+        if (types.includes('route')) {
+          route = component.long_name;
+        }
+        
+        if (types.includes('postal_code')) {
+          postcode = component.long_name;
+        }
+        if (types.includes('administrative_area_level_1')) {
+          state = component.long_name;
+           console.log("types1",component.long_name,component.short_name);
+          state_short_name = component.short_name;
+        }
+        if (types.includes('locality')) {
+          city = component.long_name;
+        }
+        if (types.includes('country')) {
+          country = component.long_name;
+          console.log("shortName",component.short_name);
+          country_short_name= component.short_name;
+        }
+      });
+      
+      var addressLine1 = `${street_number} ${route}`.trim();
+      if (!addressLine1 || addressLine1 === '') {
+        addressLine1 = place.formatted_address || '';
+      }
+
+      input.value = addressLine1;
+      
+      // Fill in the corresponding fields with the extracted values
+      document.getElementById('checkout_shipping_address_postcode').value = postcode;
+      document.getElementById('checkout_shipping_address_state').value = state;
+      document.getElementById('checkout_shipping_address_city').value = city;
+      document.getElementById('checkout_shipping_address_country').value = country;
+      $('select.checkout_shipping_address_country option[data-code="'+country_short_name.toLowerCase()+'"]').prop('selected',true);
+      checkCountry(country_short_name);
+    });
+    }
+  }
+
+function checkIfAllFieldsFilled() {
+
+  const ship_postcode = document.getElementById('checkout_shipping_address_postcode').value.trim();
+  const ship_state = document.getElementById('checkout_shipping_address_state').value.trim();
+  const ship_city = document.getElementById('checkout_shipping_address_city').value.trim();
+  const ship_country = document.getElementById('checkout_shipping_address_country').value.trim();
+  
+  const postcode = document.getElementById('checkout_billing_address_postcode').value.trim();
+  const state = document.getElementById('checkout_billing_address_state').value.trim();
+  const city = document.getElementById('checkout_billing_address_city').value.trim();
+  const country = document.getElementById('checkout_billing_address_country').value.trim();
+
+  // Check if all fields have non-empty values
+  if (ship_postcode && ship_state && ship_city && ship_country && postcode && state && city && country) {
+    document.querySelector('.button.confirm2').disabled = false;
+    document.querySelector('.button.confirm2').style.cursor = 'pointer';
+    document.querySelector('.button.confirm2').style.opacity = '1';
+  } else {
+    document.querySelector('.button.confirm2').disabled = true;
+    document.querySelector('.button.confirm2').style.cursor = 'pointer';
+    document.querySelector('.button.confirm2').style.opacity = '1';
+  }
+}
+
+let autocompletebill = null; // Global variable to track the instance
+
+function initAutocompletebill() {
+  console.log("initAutocompletebill");
+
+  var input = document.getElementById('checkout_billing_address_address1');
+
+  // Check if autocomplete is already initialized
+  if (!autocompletebill) {
+    var options = {
+      types: ['geocode', 'establishment'], // Restrict results to addresses and establishments
+    };
+
+    // Initialize the Google Places Autocomplete
+    autocompletebill = new google.maps.places.Autocomplete(input, options);
+
+    autocompletebill.addListener('place_changed', function() {
+      var place = autocompletebill.getPlace();
+
+      // If the place does not have geometry, return
+      if (!place.geometry) {
+        return;
+      }
+      
+      // Initialize variables to hold the values
+      var street_number = '';
+      var route = '';
+
+      var postcode = '';
+      var state = '';
+      var city = '';
+      var country = '';
+
+      // Loop through address components to find the relevant data
+      place.address_components.forEach(function(component) {
+        var types = component.types;
+
+        if (types.includes('street_number')) {
+          street_number = component.long_name;
+        }
+        if (types.includes('route')) {
+          route = component.long_name;
+        }
+        
+        if (types.includes('postal_code')) {
+          postcode = component.long_name;
+        }
+        if (types.includes('administrative_area_level_1')) {
+          state = component.long_name;
+        }
+        if (types.includes('locality')) {
+          city = component.long_name;
+        }
+        if (types.includes('country')) {
+          country = component.long_name;
+          country_short_name= component.short_name;
+        }
+      });
+
+      var addressLine1 = `${street_number} ${route}`.trim();
+      if (!addressLine1 || addressLine1 === '') {
+        addressLine1 = place.formatted_address || '';
+      }
+
+      input.value = addressLine1;
+      
+      // Fill in the corresponding fields with the extracted values
+      document.getElementById('checkout_billing_address_postcode').value = postcode;
+      document.getElementById('checkout_billing_address_state').value = state;
+      document.getElementById('checkout_billing_address_city').value = city;
+      document.getElementById('checkout_billing_address_country').value = country;
+      $('select.checkout_billing_address_country option[data-code="'+country_short_name.toLowerCase()+'"]').prop('selected',true);
+      checkIfAllFieldsFilled();
+    });
+  }
+}
+
+// End Initialize the autocomplete functionality for address using google map api //
+  
+$(document).on('keyup change', '#shipping-form input', function () {
+    let allShippingFilled = true;
+    let allBillingFilled = true;
+
+    // Check if all required shipping fields are filled
+    $('#shipping-form .shipping_form input[required]').each(function () {
+        if ($(this).val().trim() === '') {
+            allShippingFilled = false;
+            return false; // Exit loop if any required shipping field is empty
+        }
+    });
+
+    // Check if all required billing fields are filled
+    $('#shipping-form .billing_form input[required]').each(function () {
+        if ($(this).val().trim() === '') {
+            allBillingFilled = false;
+            return false; // Exit loop if any required billing field is empty
+        }
+    });
+    
+    // Check if the "Same as shipping" checkbox is checked
+    let isSameAsShipping = $('#same_address').prop('checked');
+
+    // If the checkbox is checked, only check shipping fields
+    if (isSameAsShipping) {
+
+        // Copy shipping address values to billing address fields
+        var checkout_shipping_address_address1 = $('#checkout_shipping_address_address1').val();
+        var checkout_shipping_address_address2 = $('#checkout_shipping_address_address2').val();
+        var checkout_shipping_address_city = $('#checkout_shipping_address_city').val();
+        var checkout_shipping_address_country = $('#checkout_shipping_address_country').val();
+        var checkout_shipping_address_state = $('#checkout_shipping_address_state').val();
+        var checkout_shipping_address_postcode = $('#checkout_shipping_address_postcode').val();
+
+        $('#checkout_billing_address_address1').val(checkout_shipping_address_address1);
+        $('#checkout_billing_address_address2').val(checkout_shipping_address_address2);
+        $('#checkout_billing_address_city').val(checkout_shipping_address_city);
+        $('#checkout_billing_address_country').val(checkout_shipping_address_country);
+        $('#checkout_billing_address_state').val(checkout_shipping_address_state);
+        $('#checkout_billing_address_postcode').val(checkout_shipping_address_postcode);
+       $('select.checkout_billing_address_country option[data-code="'+$('select.checkout_shipping_address_country option:selected').data("code")+'"]').prop('selected',true);
+           
+        // If all required shipping fields are filled, enable the confirm button
+        if (allShippingFilled) {
+            $('.button.confirm2').prop('disabled', false).css({
+                'cursor': 'pointer',
+                'opacity': '1'
+            });
+        } else {
+            $('.button.confirm2').prop('disabled', false).css({
+                'cursor': 'pointer',
+                'opacity': '1'
+            });
+        }
+    } else {
+        // If the checkbox is unchecked, check both shipping and billing fields
+        if (allShippingFilled && allBillingFilled) {
+            $('.button.confirm2').prop('disabled', false).css({
+                'cursor': 'pointer',
+                'opacity': '1'
+            });
+        } else {
+            $('.button.confirm2').prop('disabled', false).css({
+                'cursor': 'pointer',
+                'opacity': '1'
+            });
+        }
+    }
+});
+
+$(document).on('click', '#same_address', function () {
+
+    // $(".shipping_desk_txt").show();
+  $(".shipping_desk_txt").addClass("active");
+  $(".shipping_mob_txt").addClass("active");
+
+    var checkout_shipping_address_address1 = $('#checkout_shipping_address_address1').val();
+    var checkout_shipping_address_address2 = $('#checkout_shipping_address_address2').val();
+    var checkout_shipping_address_city = $('#checkout_shipping_address_city').val();
+    var checkout_shipping_address_country = $('#checkout_shipping_address_country').val();
+    var checkout_shipping_address_state = $('#checkout_shipping_address_state').val();
+    var checkout_shipping_address_postcode = $('#checkout_shipping_address_postcode').val();
+  
+    // Copy values from shipping address to billing address
+    var checkout_billing_address_address1 = $('#checkout_billing_address_address1').val(checkout_shipping_address_address1);
+    var checkout_billing_address_address2 = $('#checkout_billing_address_address2').val(checkout_shipping_address_address2);
+    var checkout_billing_address_city = $('#checkout_billing_address_city').val(checkout_shipping_address_city);
+    var checkout_billing_address_country = $('#checkout_billing_address_country').val(checkout_shipping_address_country);
+    var checkout_billing_address_state = $('#checkout_billing_address_state').val(checkout_shipping_address_state);
+    var checkout_billing_address_postcode = $('#checkout_billing_address_postcode').val(checkout_shipping_address_postcode);
+
+    
+  const sectionForm = document.querySelector(".shipping-section #shipping-form");
+    const billingForm = document.querySelector(".billing_form");
+    // Hide the billing form if checkbox is checked, show it if unchecked
+    if ($(this).prop('checked')) { 
+        $('.billing_form').hide();
+        $('.billing_form').removeClass("active");
+    }
+});
+
+$(document).on('click', '#different_address', function () {
+  // $(".shipping_desk_txt").show();
+  $(".shipping_desk_txt").addClass("active");
+  $(".shipping_mob_txt").addClass("active");
+  
+    if ($(this).prop('checked')) {
+      $('.billing_form').show(); // Show billing form
+      $('.billing_form').addClass("active");
+      const sectionForm = document.querySelector(".shipping-section #shipping-form");
+      const billingForm = document.querySelector(".billing_form");
+     // Find the form within the section
+
+      if (billingForm) {
+          const inputs = billingForm.querySelectorAll('input');
+          inputs.forEach(input => {
+              input.value = '';
+          });
+      } 
+    }
+});
+   
+  function scrollToBottom() {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    function areFieldsFilled(form) {
+      let valid = true;
+      const inputs = form.querySelectorAll('input[required], select[required]');
+      
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          valid = false;
+        }
+      });
+    
+      console.log("valid");
+      console.log(valid);
+      return valid;
+    }
+  
+  
+    document.getElementById('personal-form').addEventListener('submit', function (event) { 
+      event.preventDefault();
+      const form = this;
+      
+      if (areFieldsFilled(form)) {
+        console.log('Personal Info:', {
+          firstName: form.querySelector('#checkout_shipping_address_first_name').value,
+          lastName: form.querySelector('#checkout_shipping_address_last_name').value,
+          email: form.querySelector('#checkout_email_or_phone').value,
+          phone: form.querySelector('#checkout_shipping_address_phone').value,
+        });
+        
+        // Hide personal form, show shipping form
+        $("#section-one button.accordion-button").click(); 
+         $("#section-two button.accordion-button").click(); 
+        // $("body").attr("data-step",2);
+      } else {
+        // alert('Please fill all required fields in the Personal Information section.');
+      }
+    });
+  
+    document.getElementById('shipping-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const form = this;
+      
+      if (areFieldsFilled(form)) {
+        console.log('Shipping Info:', {
+          address1: form.querySelector('#checkout_shipping_address_address1').value,
+          address2: form.querySelector('#checkout_shipping_address_address2').value,
+          city: form.querySelector('#checkout_shipping_address_city').value,
+          state: form.querySelector('#checkout_shipping_address_state').value,
+          postcode: form.querySelector('#checkout_shipping_address_postcode').value,
+          country: form.querySelector('#checkout_shipping_address_country').value,
+        });
+  
+        // Hide shipping form, show payment form
+      $("#section-two button.accordion-button").click(); 
+        $("#section-three button.accordion-button").click(); 
+       //  $("body").attr("data-step",3);
+      } else {
+        // alert('Please fill all required fields in the Shipping Details section.');
+      }
+    });
+    document.getElementById('card-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      
+      $('#card-form').validate({
+        rules: {
+          card_name: {
+            required: true
+          }
+        },
+        messages: {
+          card_name: {
+            required: "Required field"
+          }
+        },
+      });
+      
+      const isValid = $('#card-form').valid();
+      if (!isValid) {
+        return;
+      }
+      
+      $(".pay-button").css({"pointer-events":"none","opacity":1 });
+      setTimeout(function(){
+       $(".pay-button").css({"pointer-events":"all","opacity":1});
+      },5000)
+      
+      const form = this;
+ 
+      // Get values from Personal Form
+      const personalForm = document.getElementById('personal-form');
+      const firstName = personalForm?.querySelector('#checkout_shipping_address_first_name')?.value.trim() || '';
+      const lastName = personalForm?.querySelector('#checkout_shipping_address_last_name')?.value.trim() || '';
+      const email = personalForm?.querySelector('#checkout_email_or_phone')?.value.trim() || '';      
+      const phone = personalForm?.querySelector('#checkout_shipping_address_phone')?.value.trim() || '';
+            
+      // Get values from Shipping Form
+      const shippingForm = document.getElementById('shipping-form');
+      const address = shippingForm.querySelector('#checkout_shipping_address_address1').value.trim();
+      const apartment = shippingForm.querySelector('#checkout_shipping_address_address2').value.trim();
+      const suburb = shippingForm.querySelector('#checkout_shipping_address_city').value.trim();
+      const country = shippingForm.querySelector('#checkout_shipping_address_country').value.trim();
+      const country_short_name = shippingForm.querySelector('.checkout_shipping_address_country_dropdown')?.selectedOptions[0]?.dataset.code?.toUpperCase() || 'US';
+      const state = shippingForm.querySelector('#checkout_shipping_address_state').value.trim();
+      const postcode = shippingForm.querySelector('#checkout_shipping_address_postcode').value.trim();
+
+      // Get values from Billing Form
+      const billingFormVisible = document.querySelector('.billing_form')?.style.display !== 'none';
+      const billing_address = billingFormVisible ? shippingForm.querySelector('#checkout_billing_address_address1').value.trim() : address;
+      const billing_apartment = billingFormVisible ? shippingForm.querySelector('#checkout_billing_address_address2').value.trim() : apartment;
+      const billing_suburb = billingFormVisible ? shippingForm.querySelector('#checkout_billing_address_city').value.trim() : suburb;
+      const billing_country = billingFormVisible ? shippingForm.querySelector('#checkout_billing_address_country').value.trim() : country;
+      const billing_country_code = billingFormVisible ? shippingForm.querySelector('.checkout_billing_address_country_dropdown')?.selectedOptions[0]?.dataset.code?.toUpperCase() : country_short_name;
+      const billing_state = billingFormVisible ? shippingForm.querySelector('#checkout_billing_address_state').value.trim() : state;
+      const billing_postcode = billingFormVisible ? shippingForm.querySelector('#checkout_billing_address_postcode').value.trim() : postcode;
+
+      console.log("address: ",address);
+      console.log("apartment: ",apartment);
+      console.log("suburb: ",suburb);
+      console.log("country: ",country);
+      console.log("state: ",state);
+      console.log("postcode: ",postcode);
+      
+      console.log("billing_address: ",billing_address);
+      console.log("billing_apartment: ",billing_apartment);
+      console.log("billing_suburb: ",billing_suburb);
+      console.log("billing_country: ",billing_country);
+      console.log("billing_state: ",billing_state);
+      console.log("billing_postcode: ",billing_postcode);
+    
+      // Get values from Card Form
+        const cardName = form.querySelector('#card_name').value.trim();
+    
+        // Check if all fields in the forms are filled
+        if (firstName && lastName && email && phone && address && suburb && country && state && postcode && cardName && billing_address && billing_suburb && billing_country && billing_state && billing_postcode) {
+            // document.querySelector('.loading__spinner').classList.remove('hidden');
+            // document.querySelector('.pay-button .pay_price').textContent = 'Processing...';    
+          
+            let _name = `${firstName} ${lastName}`;
+            console.log("country_short_name",country_short_name);
+
+            if(country_short_name == '') {
+              country_short_name = 'US'
+            }
+            stripe.createPaymentMethod({
+                type: 'card',
+                card: cardNumber,
+                  billing_details: {
+                      name: _name,
+                      email: email,
+                      phone: phone,
+                      address: {
+                          line1: address,
+                          line2: apartment,
+                          city: suburb,
+                          state: state,
+                          postal_code: postcode,
+                          country: country_short_name,
+                      },
+                  }
+            }).then(function (result) {
+                if (result.error) {
+                  console.log(result.error);
+                  console.log(result.error.message);
+                  // $(".loader").hide();
+                  console.error('Payment failed:', result.error.message);
+                  $('.show_error').text(result.error.message).show();
+                  console.log('testing2')
+                  document.querySelector('button[type="submit"]').disabled = false; 
+                  document.querySelector('.pay-button .pay_price').innerHTML = '<strong>Pay</strong> '+PAY_PRICE;
+                  // document.querySelector('.loading__spinner').classList.add('hidden');
+                  return;
+                } else {
+                    $(".loader").show();
+                    document.querySelector('button.pay-button').disabled = true;
+                    console.log("result");
+                    console.log(result);
+                    console.log("result");
+                    const customerName = `${firstName} ${lastName}`;
+                    const payment_method_id = result.paymentMethod.id;
+
+                    const urlencoded = new URLSearchParams();
+                    const totalPrice = $('.total-price').attr('data-checkout-payment-due-target');
+                    const orderPrice = $('.total-price').attr('data-checkout-payment-total-target');                                  
+                    const paymentIntentData = data;
+                    console.log("payment_intents_data", paymentIntentData);
+                    // var payment_intent_id = $('.intentid').val();
+                    // var payment_intent_client_secret = $('.intentsecret').val();
+                  
+                    stripe.confirmCardPayment(payment_intent_client_secret, {
+                        payment_method: payment_method_id,
+                    }).then((result) => {
+                        if (result.error) {
+                            // Display error.message in your UI
+                            console.error('Payment failed:', result.error.message);
+                            $('.show_error').text(result.error.message).show();
+                            // console.log('testing3');
+                            document.querySelector('button[type="submit"]').disabled = false;
+                            document.querySelector('.pay-button .pay_price').innerHTML = '<strong>Pay</strong> '+PAY_PRICE;
+                            // document.querySelector('.loading__spinner').classList.add('hidden');
+                            setTimeout(function() {
+                              $('button[type="submit"]').prop('disabled', false);
+                              $('.show_error').hide();
+                            },5000);
+                            return;
+                          } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+                            // Payment succeeded
+                            console.log('Payment succeeded:', result.paymentIntent);
+                          
+                            const $btn = $('.pay-button');
+                            const $fill = $btn.find('.progress-fill');
+                            const $text = $('.pay-button .pay_price');
+                            const btnWidth = $btn.outerWidth();
+                            let interval = null;
+                            let progress = 0;
+                            if (interval) clearInterval(interval);
+                            $text.text('Processing...');
+                            $fill.css('--percentage', '0%');
+                            $('.show_error').hide();
+                            $btn.addClass('progress_success');
+                            interval = setInterval(() => {
+                              if (progress >= 99) {
+                                clearInterval(interval);
+                                $text.text('Completed');
+                              } else {
+                                progress++;
+                                const translateX = 100 - progress;
+                                if (progress >= 76) {$btn.addClass('active');}
+                                $fill.css('--percentage', progress + '%').addClass('active');
+                                document.querySelector('button.pay-button').disabled = false;
+                              }
+                            }, 50);
+                            $('.cofirm_btn').prepend('<span class="processed_message">Your payment is being processed – this only takes a few seconds.</span>');
+                          
+                            const paymentIntentId = data.id;
+                            const paymentStatus = result.paymentIntent.status;
+
+                            const itemsArray = cartData.items;
+                          console.log("itemsArray",itemsArray);
+                            const newStructure = {
+                              items: itemsArray.map(item => ({
+                                quantity: item.quantity,
+                                variant_id: item.variant_id,
+                                price: (item.final_price / 100).toFixed(2)
+                              }))
+                            };
+                            console.log(newStructure);
+
+                            const dataOrder = {
+                                formdata: {
+                                    memberAccountNumber: email,
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    address: address,
+                                    apartment: apartment,
+                                    suburb: suburb,
+                                    country: country,
+                                    state: state,
+                                    postcode: postcode,
+                                    phone: phone,
+                                    payment_intent_id: payment_intent_id,
+                                    payment_status: paymentStatus,
+                                    billing_first_name: firstName,
+                                    billing_last_name: lastName,
+                                    billing_address: billing_address,
+                                    billing_apartment: billing_apartment,
+                                    billing_suburb: billing_suburb,
+                                    billing_country: billing_country,
+                                    billing_state: billing_state,
+                                    billing_postcode: billing_postcode,
+                                    billing_phone: phone,
+                                    order_price: orderPrice,
+                                    currency:currencyMain,
+                                    main_price:"{{ cart.total_price }}",
+                                    mobileCode: $('#country-flag').val(),
+                                    countryCode: getCookie("country")
+                                    // card_brand: cardBrand,
+                                    // card_exp_month: cardExpMonth,
+                                    // card_exp_year: cardExpYear,
+                                    // card_last4: cardLast4,
+                                    // card_name: cardName,
+                                },
+                                cartdata: newStructure,
+                            };
+                            console.log(newStructure),
+                            console.log("_request");
+                            console.log("_request");
+
+                            $.ajax({
+                                type: 'POST',
+                                url: 'https://eliesaabftp.com/675.f85.mytemp.website/sunil/switzerland-store/api/create-order',
+                                //datatype: 'json',
+                                data: dataOrder,
+                                success: function (data) {
+                                   // console.log(data);
+                                    if (data.message === "Success") {
+                                        const orderNumber = data.orderid;
+                                        const thankYouUrl = data.thankyou;
+                                        $.ajax({
+                                            type: "POST",
+                                            url: '/cart/clear.js',
+                                            data: '',
+                                            dataType: 'json',
+                                            success: function () {
+                                               window.location.href = "/pages/thankyou?NjE0MzQzNjM1NzgzMQ="+orderNumber;
+                                            },
+                                            error: function (XMLHttpRequest, textStatus) {
+                                                /* error code */
+                                            }
+                                        });
+                                      setTimeout(function(){
+                                       window.location.href = "/pages/thankyou?NjE0MzQzNjM1NzgzMQ="+orderNumber;
+                                      },1000);
+                                        
+                                        // $(".loader").hide();
+                                    } else {
+                                        console.log('Failed');
+                                        // $('.loader').hide();
+                                        document.querySelector('button.pay-button').disabled = false;
+                                        document.querySelector('.pay-button .pay_price').innerHTML = '<strong>Pay</strong> '+PAY_PRICE;
+                                        // document.querySelector('.loading__spinner').classList.add('hidden');
+                                       // $(".submit_data").attr('disabled', true);
+                                        $('.show_error').text("Something went wrong!").show();
+                                        return;
+                                    }
+                                },
+                                error: function (data) {
+                                  // $('.loader').hide();
+                                  document.querySelector('button.pay-button').disabled = false;
+                                  document.querySelector('.pay-button .pay_price').innerHTML = '<strong>Pay</strong> '+PAY_PRICE;
+                                  // document.querySelector('.loading__spinner').classList.add('hidden');
+                                  console.log("error enters");
+                                  $('.show_error').text("Something went wrong!").removeAttr("style");
+                                  console.log(data);
+                                  const message = "Something Went wrong while creating order";
+                                  return;
+                                }
+                            }); 
+                            
+                        }
+                    });
+                    
+                }
+            });
+        } else {
+            // alert('Please fill all required fields in the Personal Information, Shipping, and Payment sections.');
+        }
+    });  
+    // Create a new structure with only quantity and variant_id  
+    var cart_data = {{ cart | json }};      
+    const itemsArray = cart_data.items;
+    const newStructure = {
+      items: itemsArray.map(item => ({
+        quantity: item.quantity,
+        variant_id: item.variant_id
+      }))
+    };
+    console.log(newStructure);  
+    var data = {
+      cartdata:JSON.stringify(newStructure),
+    };
+    console.log(cart_data);
+  
+    $('#card-number').on('input', function (event) {
+        var inputValue = $(this).val().replace(/\D/g, ''); // Remove non-numeric characters
+        var formattedValue = '';  
+        // Limit to 16 digits
+        for (var i = 0; i < Math.min(inputValue.length, 16); i += 4) {
+          formattedValue += inputValue.slice(i, i + 4) + ' ';
+        }
+        $(this).val(formattedValue.trim());
+    });
+  });
+  
+  $(document).ready(function(){
+    var my_cart = `{{cart | json}}`;
+    console.log(my_cart);
+    var my_symbol = '{{ currency_symbol }}';
+    console.log("my_symbol" + my_symbol);
+    $(".currencysymbol").val(my_symbol);
+    var price_iso_code = '{{ cart.currency.iso_code }}';
+    console.log("price_iso_code" + price_iso_code);
+    var default_price_iso_code = '{{ shop.currency }}';
+    console.log(default_price_iso_code);   
+      
+      var currency_code = `{{ cart.currency.iso_code }}`;
+      console.log(currency_code);
+      // Function to get the value of a query string parameter
+      function getQueryStringParameter(parameterName) {
+          // Get the URL query string
+          var queryString = window.location.search.substring(1);
+          
+          // Split the query string into key-value pairs
+          var queryParams = queryString.split('&');
+          console.log(queryParams);
+  
+          // Iterate through the key-value pairs
+          for (var i = 0; i < queryParams.length; i++) {
+              // Split each pair into key and value
+              var pair = queryParams[i].split('=');
+  
+              // Check if the current key matches the parameter name
+              if (pair[0] === parameterName) {
+                  // Return the value of the parameter
+                  return decodeURIComponent(pair[1]);
+              }
+          }
+  
+          // If the parameter is not found, return null
+          return null;
+      }
+  
+      // Example: Check if "status" is present in the URL and its value is "error"
+      var statusValue = getQueryStringParameter('status');    
+      if (statusValue !== null) {
+          if (statusValue === 'error') {
+              $(".show_error").text("Something went wrong!").show();
+              scrollToBottom();
+          }
+      }
+  
+    // Function to get the value of a query string parameter
+      function getQueryStringParameter(parameterName) {
+          // Get the URL query string
+          var queryString = window.location.search.substring(1);
+          
+          // Split the query string into key-value pairs
+          var queryParams = queryString.split('&');
+          console.log(queryParams);
+  
+          // Iterate through the key-value pairs
+          for (var i = 0; i < queryParams.length; i++) {
+              // Split each pair into key and value
+              var pair = queryParams[i].split('=');
+  
+              // Check if the current key matches the parameter name
+              if (pair[0] === parameterName) {
+                  // Return the value of the parameter
+                  return decodeURIComponent(pair[1]);
+              }
+          }
+  
+          // If the parameter is not found, return null
+          return null;
+      } 
+  });
+
+  var countryDialCodes = {
+    AF: "+93",
+    AL: "+355",
+    DZ: "+213",
+    AS: "+1-684",
+    AD: "+376",
+    AO: "+244",
+    AI: "+1-264",
+    AG: "+1-268",
+    AR: "+54",
+    AM: "+374",
+    AW: "+297",
+    AU: "+61",
+    AT: "+43",
+    AZ: "+994",
+    BS: "+1-242",
+    BH: "+973",
+    BD: "+880",
+    BB: "+1-246",
+    BY: "+375",
+    BE: "+32",
+    BZ: "+501",
+    BJ: "+229",
+    BM: "+1-441",
+    BT: "+975",
+    BO: "+591",
+    BA: "+387",
+    BW: "+267",
+    BR: "+55",
+    BN: "+673",
+    BG: "+359",
+    BF: "+226",
+    BI: "+257",
+    KH: "+855",
+    CM: "+237",
+    CA: "+1",
+    CV: "+238",
+    KY: "+1-345",
+    CF: "+236",
+    TD: "+235",
+    CL: "+56",
+    CN: "+86",
+    CO: "+57",
+    KM: "+269",
+    CG: "+242",
+    CD: "+243",
+    CR: "+506",
+    CI: "+225",
+    HR: "+385",
+    CU: "+53",
+    CY: "+357",
+    CZ: "+420",
+    DK: "+45",
+    DJ: "+253",
+    DM: "+1-767",
+    DO: "+1-809",
+    EC: "+593",
+    EG: "+20",
+    SV: "+503",
+    GQ: "+240",
+    ER: "+291",
+    EE: "+372",
+    ET: "+251",
+    FJ: "+679",
+    FI: "+358",
+    FR: "+33",
+    GA: "+241",
+    GM: "+220",
+    GE: "+995",
+    DE: "+49",
+    GH: "+233",
+    GR: "+30",
+    GD: "+1-473",
+    GT: "+502",
+    GN: "+224",
+    GW: "+245",
+    GY: "+592",
+    HT: "+509",
+    HN: "+504",
+    HK: "+852",
+    HU: "+36",
+    IS: "+354",
+    IN: "+91",
+    ID: "+62",
+    IR: "+98",
+    IQ: "+964",
+    IE: "+353",
+    IL: "+972",
+    IT: "+39",
+    JM: "+1-876",
+    JP: "+81",
+    JO: "+962",
+    KZ: "+7",
+    KE: "+254",
+    KI: "+686",
+    KP: "+850",
+    KR: "+82",
+    KW: "+965",
+    KG: "+996",
+    LA: "+856",
+    LV: "+371",
+    LB: "+961",
+    LS: "+266",
+    LR: "+231",
+    LY: "+218",
+    LI: "+423",
+    LT: "+370",
+    LU: "+352",
+    MO: "+853",
+    MK: "+389",
+    MG: "+261",
+    MW: "+265",
+    MY: "+60",
+    MV: "+960",
+    ML: "+223",
+    MT: "+356",
+    MH: "+692",
+    MR: "+222",
+    MU: "+230",
+    MX: "+52",
+    FM: "+691",
+    MD: "+373",
+    MC: "+377",
+    MN: "+976",
+    ME: "+382",
+    MA: "+212",
+    MZ: "+258",
+    MM: "+95",
+    NA: "+264",
+    NR: "+674",
+    NP: "+977",
+    NL: "+31",
+    NZ: "+64",
+    NI: "+505",
+    NE: "+227",
+    NG: "+234",
+    NO: "+47",
+    OM: "+968",
+    PK: "+92",
+    PW: "+680",
+    PA: "+507",
+    PG: "+675",
+    PY: "+595",
+    PE: "+51",
+    PH: "+63",
+    PL: "+48",
+    PT: "+351",
+    QA: "+974",
+    RO: "+40",
+    RU: "+7",
+    RW: "+250",
+    KN: "+1-869",
+    LC: "+1-758",
+    VC: "+1-784",
+    WS: "+685",
+    SM: "+378",
+    ST: "+239",
+    SA: "+966",
+    SN: "+221",
+    RS: "+381",
+    SC: "+248",
+    SL: "+232",
+    SG: "+65",
+    SK: "+421",
+    SI: "+386",
+    SB: "+677",
+    SO: "+252",
+    ZA: "+27",
+    ES: "+34",
+    LK: "+94",
+    SD: "+249",
+    SR: "+597",
+    SZ: "+268",
+    SE: "+46",
+    CH: "+41",
+    SY: "+963",
+    TW: "+886",
+    TJ: "+992",
+    TZ: "+255",
+    TH: "+66",
+    TL: "+670",
+    TG: "+228",
+    TO: "+676",
+    TT: "+1-868",
+    TN: "+216",
+    TR: "+90",
+    TM: "+993",
+    TV: "+688",
+    UG: "+256",
+    UA: "+380",
+    AE: "+971",
+    GB: "+44",
+    US: "+1",
+    UY: "+598",
+    UZ: "+998",
+    VU: "+678",
+    VA: "+379",
+    VE: "+58",
+    VN: "+84",
+    YE: "+967",
+    ZM: "+260",
+    ZW: "+263",
+  };
+</script>
+{% schema %}
+{
+  "name": "Cart",
+  "class": "cart-section",
+  "blocks": [
+    {
+      "type": "shipping_estimator",
+      "name": "Shipping estimator",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "default_country",
+          "info": "If the customer is logged in, the country of their shipping address will be used.",
+          "label": "Default country"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Collapsible row",
+          "info": "Include a heading that explains the content.",
+          "label": "Heading"
+        },
+        {
+          "type": "checkbox",
+          "id": "open",
+          "default": false,
+          "label": "Open by default"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Row content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Row content from page"
+        },
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom liquid",
+          "info": "Add app snippets or other Liquid code to create advanced customizations. For product description, you can use {{ product.description }}"
+        },
+        {
+          "type": "range",
+          "id": "seo_text_max_height",
+          "min": 10,
+          "max": 500,
+          "step": 5,
+          "label": "Max height",
+          "default": 100,
+          "info": "Displays a read more button after the text height exceeds a certain height."
+        },
+        {
+          "type":"checkbox",
+          "id":"show_read_button",
+          "label":"Show read button",
+          "default":true
+        },
+        {
+          "type": "text",
+          "id": "seo_text_read_more",
+          "default": "Read more",
+          "label": "Read more label",
+          "info": "Button will be shown when the content exceeds the max height"
+        },
+        {
+          "type": "text",
+          "id": "seo_text_read_less",
+          "default": "Read less",
+          "label": "Read less label",
+          "info": "Button will be shown when the content exceeds the max height"
+        }
+      ]
+    },
+    {
+      "type": "payment_icons",
+      "name": "Payment icons",
+      "limit": 1,
+      "settings": []
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "cart_notes_enable",
+      "label": "Enable order notes",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

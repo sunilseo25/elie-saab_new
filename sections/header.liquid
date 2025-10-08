@@ -1,0 +1,889 @@
+{%- liquid
+   assign full_width = section.settings.full_width
+	assign style = section.settings.style
+	assign sticky_header = section.settings.sticky_header
+	assign transparent_header = false
+	assign logo_height_range = section.settings.logo_height_range
+	assign logo_height_range_mobile = section.settings.logo_height_range_mobile
+	assign header_shadow = section.settings.header_shadow
+	assign transparent_header_border = section.settings.transparent_header_border
+	assign transparent_header_background = section.settings.transparent_header_background
+
+	if template == 'index'
+		assign transparent_header = section.settings.transparent_header
+	endif
+-%}
+<theme-header id="header" class="header {{ style }} {{ header_shadow }} transparent--{{ transparent_header }} transparent-border--{{ transparent_header_border }} {% if sticky_header %}header-sticky--active{%- endif -%}">
+	{%- if transparent_header_background and transparent_header -%}
+	<div class="header--transparent-background" style="--header-transparent-background: {{ section.settings.transparent_header_background_gradient }};"></div>
+	{%- endif -%}
+	<div class="row {% if full_width %}full-width-row{% endif %}">
+		<div class="small-12 columns {% if section.settings.hamburger_menu and section.settings.style == 'style3' %}hamburger_menu{% endif %}">
+			{%- case style -%}
+			{%- when 'style1' -%}
+				{% render 'header-style1', blocks: section.blocks, header_settings: section.settings %}
+			{%- when 'style2' -%}
+				{% render 'header-style2', blocks: section.blocks, header_settings: section.settings %}
+			{%- when 'style3' -%}
+				{% render 'header-style3', blocks: section.blocks, header_settings: section.settings %}
+			{%- when 'style4' -%}
+				{% render 'header-style4', blocks: section.blocks, header_settings: section.settings %}
+			{%- endcase -%}
+		</div>
+	</div>
+	{%- style -%}
+		:root {
+			--logo-height: {{ logo_height_range | append: 'px' }};
+			--logo-height-mobile: {{ logo_height_range_mobile | append: 'px' }};
+		}
+		{% unless sticky_header %}
+		.header-section {
+			position: static !important;
+		}
+		{%- endunless -%}
+      @media screen and (min-width:750px){
+        .thb-header-right:hover a{
+          opacity:0.4;
+        }
+        .thb-header-right a:hover{
+          opacity:1;
+        }
+      }
+      @media screen and (max-width:749px){
+        theme-header.header{
+          border-bottom: 1px solid #f6f6f6;
+        }
+      }
+	{%- endstyle -%}
+</theme-header>
+{{- 'header.js' | asset_url | script_tag | replace: ' src' , ' d-src' | replace: ' type="text/javascript"' , ' type="load"'-}}
+<style>
+   /* @media (min-width:768px){
+    .st-wishlist-details-button{
+      margin-top: 2px; 
+    }
+    .st-wishlist-details-button[data-type=manually] .st-label{
+      width: 19px;
+      height: 19px;
+    }
+    .thb-header-right .thb-item-count {
+      bottom: -1px;
+      right: -8px !important;
+      text-align: right;
+      letter-spacing: -2px;
+    } 
+    body .st-wishlist-details-button[data-type=manually] .st-number{
+      right: -5px !important;
+      letter-spacing: -2px;
+    }
+    .thb-secondary-area-item.custom_list{
+      margin-right:5px;
+    }
+   } */
+</style>
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if section.settings.logo %}
+      "logo": {{ section.settings.logo | image_url: width: section.settings.logo.width | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      {{ settings.social_twitter_link | json }},
+      {{ settings.social_facebook_link | json }},
+      {{ settings.social_pinterest_link | json }},
+      {{ settings.social_instagram_link | json }},
+      {{ settings.social_tiktok_link | json }},
+      {{ settings.social_youtube_link | json }},
+      {{ settings.social_vimeo_link | json }},
+      {{ settings.social_linkedin_link | json }},
+      {{ settings.social_wechat_link | json }}
+    ],
+    "url": {{ shop.url | append: page.url | json }}
+  }
+</script>
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = request.origin | append: routes.search_url | append: "?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ request.origin | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "header-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": false,
+      "label": "Make section full width"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Enable sticky header",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "400 x 68 px .png recommended."
+    },
+    {
+      "type": "range",
+      "id": "logo_height_range",
+      "min": 20,
+      "max": 120,
+      "step": 1,
+      "unit": "px",
+      "label": "Logo height",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "logo_height_range_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile logo height",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Desktop logo position",
+      "default": "style1",
+      "options": [
+        {
+          "value": "style1",
+          "label": "Logo left, menu center"
+        },
+        {
+          "value": "style2",
+          "label": "Logo left, menu left"
+        },
+        {
+          "value": "style3",
+          "label": "Logo center, menu left"
+        },
+        {
+          "value": "style4",
+          "label": "Logo center, menu center"
+        }
+      ],
+      "info": "Position is always center for mobile."
+    },
+    {
+      "type": "select",
+      "id": "header_shadow",
+      "label": "Sticky header shadow",
+      "default": "header--shadow-small",
+      "options": [
+        {
+          "value": "header--shadow-none",
+          "label": "None"
+        },
+        {
+          "value": "header--shadow-small",
+          "label": "Small"
+        },
+        {
+          "value": "header--shadow-medium",
+          "label": "Medium"
+        },
+        {
+          "value": "header--shadow-large",
+          "label": "Large"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Menu"
+    },
+    {
+      "type": "text",
+      "id": "menu_label1",
+      "label": "Menu label 1",
+      "default": "Fashion & Accessories"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu",
+      "info": "Learn how to set up [mega menus](https://documentation.fuelthemes.net/kb/how-do-i-set-up-mega-menus-for-reformation-theme/)."
+    },
+    {
+      "type": "text",
+      "id": "menu_label2",
+      "label": "Menu label 2",
+      "default": "Lifestyle"
+    },
+    {
+      "type": "link_list",
+      "id": "menu2",
+      "default": "main-menu",
+      "label": "Menu 2",
+      "info": "Learn how to set up [mega menus](https://documentation.fuelthemes.net/kb/how-do-i-set-up-mega-menus-for-reformation-theme/)."
+    },
+    {
+      "type": "checkbox",
+      "id": "hamburger_menu",
+      "label": "Hamburger menu",
+      "info": "The hamburger menu only works when the logo is centered and the menu is on the left."
+    },
+    {
+      "type": "checkbox",
+      "id": "use_icon_account",
+      "label": "Use icon for account page",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "wishlist",
+      "label": "Show Wishlist",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Transparent header"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header",
+      "label": "Enable on homepage",
+      "default": true,
+      "info": "Ensure that you have a Slideshow, Video background, Image with text overlay section as the first section on your homepage."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_light",
+      "label": "Logo image",
+      "info": "Displayed when transparent header is enabled. Uses the dimensions set on your main logo."
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header_border",
+      "label": "Show border under transparent header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_header_background",
+      "label": "Show gradient background",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "transparent_header_background_gradient",
+      "label": "Background gradient",
+      "default": "linear-gradient(180deg, rgba(0, 0, 0, 0.8), rgba(0,0,0, 0.01) 60%)"
+    },
+    {
+      "type": "header",
+      "content": "Language / country switcher"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language_switcher",
+      "label": "Enable language switcher",
+      "default": false,
+      "info": "To add a language, go to your [language settings](/admin/settings/languages)."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_switcher",
+      "label": "Enable currency switcher",
+      "default": true,
+      "info": "To add a country/region, go to your [payment settings](/admin/settings/payments)."
+    },
+    {
+      "type": "header",
+      "content": "Mobile menu"
+    },
+    {
+      "type": "link_list",
+      "id": "mobile_secondary_menu",
+      "label": "Secondary menu",
+      "info": "Secondary menu is shown under the main menu."
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_promo_image",
+      "label": "Promotion image",
+      "info": "375 x 370 px .jpg recommended."
+    },
+    {
+      "type": "text",
+      "id": "mobile_promo_heading",
+      "default": "Promotion heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "mobile_promo_link_label",
+      "label": "Promotion button label",
+      "default": "Shop",
+      "info": "Leave the label blank to hide the text button."
+    },
+    {
+      "type": "url",
+      "id": "mobile_promo_link",
+      "label": "Promotion button link"
+    },
+    {
+      "type": "header",
+      "content": "Link"
+    },
+    {
+      "type": "text",
+      "id": "first_label",
+      "label": "First label"
+    },
+    {
+      "type": "url",
+      "id": "first_url",
+      "label": "First url"
+    },
+    {
+      "type": "text",
+      "id": "second_label",
+      "label": "Second label"
+    },
+    {
+      "type": "url",
+      "id": "second_url",
+      "label": "Second url"
+    },
+    {
+      "type": "text",
+      "id": "accessiblity_label",
+      "label": "Accessibility label",
+      "default": "Accessibility: Better Contrast"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "megamenu",
+      "name": "Mega menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "parent_handle",
+          "label": "Parent Menu Name",
+          "info": "Exact name of the main menu item (case insensitive)"
+        },
+        {
+          "type": "select",
+          "id": "image_column",
+          "label": "Images Column",
+          "default":"2",
+          "info": "This option works only for the submenu dropdown",
+          "options": [
+            {
+              "label": "One Column",
+              "value": "1"
+            },
+            {
+              "label": "Two Column",
+              "value": "2"
+            },
+            {
+              "label": "Three Column",
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Promotion 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_1_image",
+          "label": "Image",
+          "info": "360 x 420 px .jpg recommended."
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "Video URL (YouTube · Vimeo · MP4 · Cloudinary)"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "default":false,
+          "label": "Autoplay"
+        },
+        {
+          "type": "text",
+          "id": "promo_1_heading",
+          "default": "Promotion heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "promo_1_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_1_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_2_image",
+          "label": "Image",
+          "info": "360 x 420 px .jpg recommended."
+        },
+        {
+          "type": "url",
+          "id": "video_url2",
+          "label": "Video URL (YouTube · Vimeo · MP4 · Cloudinary)"
+        },
+        {
+          "type": "video",
+          "id": "video2",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay2",
+          "default":false,
+          "label": "Autoplay"
+        },
+        {
+          "type": "text",
+          "id": "promo_2_heading",
+          "default": "Promotion heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "promo_2_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_2_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_3_image",
+          "label": "Image",
+          "info": "360 x 420 px .jpg recommended."
+        },
+        {
+          "type": "url",
+          "id": "video_url3",
+          "label": "Video URL (YouTube · Vimeo · MP4 · Cloudinary)"
+        },
+        {
+          "type": "video",
+          "id": "video3",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay3",
+          "default":false,
+          "label": "Autoplay"
+        },
+        {
+          "type": "text",
+          "id": "promo_3_heading",
+          "default": "Promotion heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "promo_3_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_3_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_4_image",
+          "label": "Image",
+          "info": "360 x 420 px .jpg recommended."
+        },
+        {
+          "type": "url",
+          "id": "video_url4",
+          "label": "Video URL (YouTube · Vimeo · MP4 · Cloudinary)"
+        },
+        {
+          "type": "video",
+          "id": "video4",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay4",
+          "default":false,
+          "label": "Autoplay"
+        },
+        {
+          "type": "text",
+          "id": "promo_4_heading",
+          "default": "Promotion heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "promo_4_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_4_link",
+          "label": "Button link"
+        }
+      ]
+    },
+    {
+      "type": "megamenu_promotions",
+      "name": "Mega menu promotions",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Link position in main menu",
+          "default": "1",
+          "options": [
+            {
+              "value": "1",
+              "label": "Item 1"
+            },
+            {
+              "value": "2",
+              "label": "Item 2"
+            },
+            {
+              "value": "3",
+              "label": "Item 3"
+            },
+            {
+              "value": "4",
+              "label": "Item 4"
+            },
+            {
+              "value": "5",
+              "label": "Item 5"
+            },
+            {
+              "value": "6",
+              "label": "Item 6"
+            },
+            {
+              "value": "7",
+              "label": "Item 7"
+            },
+            {
+              "value": "8",
+              "label": "Item 8"
+            },
+            {
+              "value": "9",
+              "label": "Item 9"
+            },
+            {
+              "value": "10",
+              "label": "Item 10"
+            },
+            {
+              "value": "11",
+              "label": "Item 11"
+            },
+            {
+              "value": "12",
+              "label": "Item 12"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Promotion 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_1_image",
+          "label": "Image",
+          "info": "360 x 120 px .jpg recommended."
+        },
+        {
+          "type": "text",
+          "id": "promo_1_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_1_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_2_image",
+          "label": "Image",
+          "info": "360 x 120 px .jpg recommended."
+        },
+        {
+          "type": "text",
+          "id": "promo_2_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_2_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_3_image",
+          "label": "Image",
+          "info": "360 x 120 px .jpg recommended."
+        },
+        {
+          "type": "text",
+          "id": "promo_3_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_3_link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Promotion 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_4_image",
+          "label": "Image",
+          "info": "360 x 120 px .jpg recommended."
+        },
+        {
+          "type": "text",
+          "id": "promo_4_link_label",
+          "label": "Button label",
+          "default": "Shop",
+          "info": "Leave the label blank to hide the text button."
+        },
+        {
+          "type": "url",
+          "id": "promo_4_link",
+          "label": "Button link"
+        }
+      ]
+    },
+    {
+      "type": "megamenu_sidebar",
+      "name": "Mega menu sidebar",
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Link position in main menu",
+          "default": "1",
+          "options": [
+            {
+              "value": "1",
+              "label": "Item 1"
+            },
+            {
+              "value": "2",
+              "label": "Item 2"
+            },
+            {
+              "value": "3",
+              "label": "Item 3"
+            },
+            {
+              "value": "4",
+              "label": "Item 4"
+            },
+            {
+              "value": "5",
+              "label": "Item 5"
+            },
+            {
+              "value": "6",
+              "label": "Item 6"
+            },
+            {
+              "value": "7",
+              "label": "Item 7"
+            },
+            {
+              "value": "8",
+              "label": "Item 8"
+            },
+            {
+              "value": "9",
+              "label": "Item 9"
+            },
+            {
+              "value": "10",
+              "label": "Item 10"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Content links"
+        },
+        {
+          "type": "checkbox",
+          "id": "content_collection_image",
+          "label": "Show collection images",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "content_product_image",
+          "label": "Show product images",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "menu_badge",
+      "name": "Menu badge",
+      "settings": [
+        {
+          "type": "select",
+          "id": "badge_position",
+          "label": "Badge position in main menu",
+          "default": "1",
+          "options": [
+            {
+              "value": "1",
+              "label": "Item 1"
+            },
+            {
+              "value": "2",
+              "label": "Item 2"
+            },
+            {
+              "value": "3",
+              "label": "Item 3"
+            },
+            {
+              "value": "4",
+              "label": "Item 4"
+            },
+            {
+              "value": "5",
+              "label": "Item 5"
+            },
+            {
+              "value": "6",
+              "label": "Item 6"
+            },
+            {
+              "value": "7",
+              "label": "Item 7"
+            },
+            {
+              "value": "8",
+              "label": "Item 8"
+            },
+            {
+              "value": "9",
+              "label": "Item 9"
+            },
+            {
+              "value": "10",
+              "label": "Item 10"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "color_bg",
+          "label": "Background",
+          "default": "#D3ECE2"
+        },
+        {
+          "type": "color",
+          "id": "color_text",
+          "label": "Text",
+          "default": "#272422"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

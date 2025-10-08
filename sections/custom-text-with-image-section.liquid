@@ -1,0 +1,104 @@
+<div
+  class="row guest-story {% unless section.settings.keep_for_both %} {% if section.settings.hide_on_mobile %}hide-on-mobile{% else %}hide-on-desktop{% endif %} {% endunless %}"
+  id="{{ section.settings.css_id }}"
+>
+  <div class="small12 columns">
+    <div class="welcome-guest">
+      <div class="welcome-guest-heading">{{ section.settings.guest_title }}</div>
+      {% if section.settings.guest_description %}
+        <div class="sign-desc">{{ section.settings.guest_description }}</div>
+      {% endif %}
+      {% if section.settings.letter_image %}
+        <img
+          src="{{ section.settings.letter_image | img_url: 'master' }}"
+          width="100%"
+          height="100%"
+          class="letter_image"
+        >
+      {% endif %}
+      <div class="flex">
+        {% if section.settings.button_text != blank %}
+          <a href="{{ section.settings.button_link }}" class="letter-btn" target="_blank">
+            {{ section.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+      <div class="sign-letter-main">
+        <div class="sign-letter">
+          {% if section.settings.letter_sign_image %}
+            <img
+              src="{{ section.settings.letter_sign_image | img_url: 'master' }}"
+              width="auto"
+              height="auto"
+              class="letter-sign"
+            >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Welcome Guest Section",
+  "settings": [
+            {
+      "type":"checkbox",
+      "id":"keep_for_both",
+      "label": "Keep for both",
+      "info":"It will show both mobile and desktop",
+      "default":false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide Section On Mobile"
+    },
+    {
+      "type": "text",
+      "id": "css_id",
+      "label": "CSS ID"
+    },
+    {
+      "type": "text",
+      "id": "guest_title",
+      "label": "Guest Title",
+      "default": "Dear Guest"
+    },
+    {
+      "type": "textarea",
+      "id": "guest_description",
+      "label": "Guest Title",
+      "default": "Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "letter_image",
+      "label": "Letter Image"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Learn about the heritage"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "letter_sign_image",
+      "label": "Letter Sign Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Welcome Guest Section",
+      "category": "Custom Sections"
+    }
+  ]
+}
+{% endschema %}

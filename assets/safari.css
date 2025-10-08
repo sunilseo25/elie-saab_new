@@ -1,0 +1,12 @@
+.custom-slider,
+.custom-slick-slider {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s ease;
+  -webkit-transition: opacity 1s ease;
+}
+.custom-slider.slick-initialized,
+.custom-slick-slider.slick-initialized {
+  visibility: visible;
+  opacity: 1;
+}

@@ -1,0 +1,856 @@
+{% comment %}
+  <style>
+    .country-flag-box .country-flag {
+      background: url({{'flags.png' | asset_url }}) no-repeat;
+    }
+    .custom-account-menu > h3{
+      font-size:20px;
+    }
+    </style>
+  {{ 'country-flag.css' | asset_url | stylesheet_tag }}
+{% endcomment %}
+
+{{ 'drawer-wishlist.js' | asset_url | script_tag | replace: ' src' , ' d-src' | replace: ' type="text/javascript"' , ' type="lload"'}}
+{{ 'wishlist-tab.css' | asset_url | stylesheet_tag }}
+
+{%- if settings.cart_drawer -%}
+  {%- liquid
+    assign free_shipping = settings.free_shipping
+    assign free_shipping_minimum = settings.free_shipping_minimum | times: 100
+    assign total = cart.total_price
+
+    if customer
+      assign profile_link = routes.account_url
+      assign profile_text = 'sections.header.my_account' | t
+    else
+      assign profile_link = routes.account_login_url
+      assign profile_text = 'sections.header.login' | t
+    endif
+  -%}
+
+  <cart-drawer class="side-panel cart-drawer" id="Cart-Drawer" tabindex="-1">
+    <div class="side-panel-inner">
+      <div class="side-panel-header">
+        <side-panel-close class="side-panel-close">{%- render 'svg-icons' with 'close' -%}</side-panel-close>
+        <ul class="nav nav-tabs cart_drawer_tab">
+          <li>
+            <h4 class="nav-link" data-bs-toggle="pill" data-bs-target="#search">{{ 'sections.header.search' | t }}</h4>
+          </li>
+          <li>
+            <h4 class="nav-link" data-bs-toggle="pill" data-bs-target="#wishlist">
+              <button class="st-wishlist-details-button" data-type="manually"></button>
+            </h4>
+          </li>
+          {%- if shop.customer_accounts_enabled -%}
+            <li>
+              <h4 class="nav-link" data-bs-toggle="pill" data-bs-target="#login_account">{{ profile_text }}</h4>
+            </li>
+          {%- endif -%}
+          <li>
+            <h4 class="nav-link active" data-bs-toggle="pill" data-bs-target="#cart-tabs">
+              <span>Bag</span>
+              <span id="cart_count" class="thb-item-count thb-itemcount">{%- if cart.item_count > 99 -%}{%- render 'svg-icons' with 'thb-asterisk' -%}{%- else -%}<span data-count="{{ cart.item_count }}">({{ cart.item_count }})</span>{%- endif -%}</span>
+            </h4>
+          </li>
+        </ul>
+        <div class="underline-progress"><div class="cart__underline under_progress"></div></div>
+      </div>
+      <div class="side-panel-content" id="search">
+        <div class="product-cart-item--container">
+          <predictive-search class="searchcontainer">
+            <form role="search" method="get" class="searchform" action="{{ routes.search_url }}">
+              <fieldset>
+                <div class="custom-search-wrapper">
+                  <input type="search" class="search-field" name="q" autocomplete="off">
+                  <div class="custom-placeholder">What are you looking for<span class="different-font">?</span></div>
+                  <button type="submit" class="button-submit"></button>
+                </div>
+                <!--<input type="search" class="search-field" placeholder="{{ 'sections.header.search_for' | t }}" value="{{ search.terms | replace: '*', '' }}" name="q" autocomplete="off">-->
+              </fieldset>
+            </form>
+            <div class=" side-panel-content--has-tabs"></div>
+          </predictive-search>
+          {% render 'recently-viewed-products' %}
+          {% render 'suggested' %}
+        </div>
+      </div>
+      <div class="side-panel-content" id="wishlist">
+        <div class="product-cart-item--container" id="wishlist_drawer">
+            <div class="drawer-wishlist">
+             <wishlist-component class="nav nav-tabs wishlist-tabs">
+                  <li class="nav-item carousel">
+                    <a class="nav-link active" data-bs-toggle="tab" data-bs-target="ready-to-wear" href="javascript:void(0);" >Ready-to-wear</a >
+                  </li>
+                  <li class="nav-item carousel">
+                    <a class="nav-link column-3" data-bs-toggle="tab" data-bs-target="haute-couture" href="javascript:void(0);" >Haute Couture</a >
+                  </li>
+                  <li class="nav-item carousel">
+                    <a class="nav-link column-3" data-bs-toggle="tab" data-bs-target="bridal" href="javascript:void(0);" >Bridal</a >
+                  </li>
+                  <div class="slide-btn flickity-nav flickity-prev" tabindex="0">
+                    {%- render 'svg-icons' with 'arrow-left' -%}
+                  </div>
+                  <div class="slide-btn flickity-nav flickity-next" tabindex="0">
+                    {%- render 'svg-icons' with 'arrow-right' -%}
+                  </div>
+                </wishlist-component>
+                 <div class="underline-progress">
+                  <div class="wishlistprogress under_progress"></div>
+                </div>
+           <ul page-wishlist id="wishlist_page" data-id="{{ section.id }}" class="products collection row small-up-2 medium-up-4"></ul>
+          </div>       
+          <div class="all_products" id="wishlist-container" grid-wishlist></div>
+        </div>
+        <div style="margin-top: 3rem; text-align: center;" class="mob_only">
+             <style>
+            @media  (max-width:749px){
+                .mobile-show{
+                      display: inline-block !important;
+
+                }
+  .btn-redirect{
+  margin-bottom:20px;
+  }
+            }
+          
+            </style>
+          <side-panel-close class="side-panel-close btn-redirect accent2 text-button mobile-show">Continue shopping</side-panel-close> 
+  
+          <div class="field add-btn-bulk">
+            <button type="button" class="button  full" data-bulk-add-btn><span>Add to bag</span></button>
+          </div>
+          
+          <style>
+              .wish-menu {
+                display: flex;
+                justify-content: space-between;
+                padding: 15px 0;
+                border-bottom: 1px solid #d5d5d4;
+                font-weight: 400;
+                position:relative;
+                width:100%;
+            }
+       
+              .wish-menu span.icon-arrow {
+                width: 20px;
+                height: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                   position:absolute;
+                right:10px;
+                    top: 50%;
+                transform: translateY(-50%);
+            }
+                .wish-menu span.icon-arrow svg{
+                      width: 10px;
+                height: 10px;
+                      transform: rotate(270deg);
+                  --color-body:#acacac;
+                }
+          </style>
+     <div class="wisthlist-box-wrapper">
+            <div class="wishlist-wrapper">
+              <button type="text" class="wish-menu" data-handle="ready-to-wear" data-tab-wishlist>
+                <span class="text-option">Ready-to-wear</span>
+                <span class="icon-arrow">
+                  {{ 'icon-caret.svg' | inline_asset_content }}
+                </span>
+              </button>
+              <button type="text" class="wish-menu" data-handle="haute-couture"  data-tab-wishlist>
+                <span class="text-option">Haute Couture</span>
+                <span class="icon-arrow">
+                  {{ 'icon-caret.svg' | inline_asset_content }}
+                </span>
+              </button>
+              <button type="text" class="wish-menu"  data-handle="bridal" data-tab-wishlist>
+                <span class="text-option">Bridal</span>
+                <span class="icon-arrow">
+                  {{ 'icon-caret.svg' | inline_asset_content }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <style>
+                    @media screen and (max-width: 767px) {
+                      slider-component.wishlist-box-inline .small-6{
+                        max-width: 75%;
+                        padding:0 3px;
+                      }
+                          .wisthlist-box-wrapper {
+                margin-top: 40px;
+            }
+                          .wishlist-wrapper-box {
+                margin: 0 -15px;
+                                    padding-top: 20px;
+            }
+                             .wishlist-image{
+                                         /* min-height:200px; */
+                             }
+                        .wishlist-image img{
+                          width:100%;
+                         object-fit: cover;
+                        }
+                .wishlist-box h3{
+                font-size:13px;
+                color:#fff;
+                position:absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                                }
+              .wishlist-box-inline {
+                overflow: hidden;
+              }
+              .wishlist-box-inline .wish-menu {
+                width: 80%; /* or adjust as needed */
+                margin-right: 10px;
+              }
+                          .text-ibox {
+                color: #919191;
+                font-size: 15px;
+                margin-top: 30px;
+                            margin-bottom:0;
+                            font-weight:400;
+            }
+            }
+          </style>
+          <div class="wishlist-wrapper-box">
+            <slider-component class="wishlist-box-inline products row no-padding">
+              <div class="small-6 medium-6 large-3 columns carousel_slide wishlist-inner-wrap">
+                <div class="wishlist-box" data-handle="ready-to-wear" data-tab-wishlist>
+                  <div class="wishlist-image">
+                    <img
+                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/ready-to-wear.jpg?v=1749242005"
+                      role="presentation"
+                      alt="image"
+                      class=""
+                    />
+                  </div>
+                  <h3>Ready-to-wear</h3>
+                </div>
+              </div>
+              <div class="small-6 medium-6 large-3 columns carousel_slide wishlist-inner-wrap">
+                <div class="wishlist-box" data-handle="haute-couture"  data-tab-wishlist>
+                  <div class="wishlist-image">
+                    <img
+                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/wish-haute-couture.jpg?v=1749241961"
+                      role="presentation"
+                      alt="image"
+                      class=""
+                    />
+                  </div>
+                  <h3>Haute Couture</h3>
+                </div>
+              </div>
+              <div class="small-6 medium-6 large-3 columns carousel_slide wishlist-inner-wrap">
+                <div class="wishlist-box"  data-handle="bridal" data-tab-wishlist>
+                  <div class="wishlist-image">
+                    <img
+                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/wishlist-bridal.jpg?v=1749241640"
+                      role="presentation"
+                      data-ac-alt-type="image"
+                    />
+                  </div>
+                  <h3>Bridal</h3>
+                </div>
+              </div>
+            </slider-component>
+          </div>
+          {% comment %}
+          <p class="light text-ibox">If you want to view your wishlist later</p>
+
+     
+          {% unless customer %}
+            <div class="thb-login-form text-center login-cart-drawer">
+              {% form 'customer_login', novalidate: 'novalidate',id:'customerLogin' %}
+                <div class="field">
+                  <button
+                    type="button"
+                    class="button create_account full"
+                    onclick="switchTabinLogin()"
+                    style="height: 44px;"
+                  >
+                    <span>Login or Create an account</span>
+                  </button>
+                </div>
+                <div class="line-or" style="margin-top: 0.9rem;"><span>or</span></div>
+                <div name="hiko-container" type="login" app="">
+                  <div class="h_wizard">
+                    <div name="hiko-err"></div>
+                    <div class="h_buttons">
+                      <div class="h_google_button h_google_center" data="google">
+                        <p class="png-google" alt=""></p>
+                        <span class="h_google_text">Google</span>
+                      </div>
+                      <div class="h_facebook_button h_facebook_center" data="facebook">
+                        <i style="font-family: social_logo; color: #4267B2;" class="fax fax-facebook-square"></i
+                        ><span class="h_facebook_text">Facebook</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endform %}
+            </div>
+          {% endunless %}
+  {% endcomment %}
+        </div>
+      </div>
+      <div class="side-panel-footer">
+        <div class="cart-drawer-footer">
+          <div class="cart-drawer-buttons">
+            <a href="/pages/wishlist-v" class="text-button view-cart-button" title="View wishlist">View your wishlist</a>
+          </div>
+        </div>
+      </div>
+      <div class="side-panel-content" id="login_account" data-active-tab="login">
+          <div class="temporary-account"> 
+            <div class="arriving-soon">
+              Arriving Soon
+            </div>
+     
+            <div class="custom-nav-bar">
+              <div class="nav-item">Overview</div>
+              <div class="nav-item">Wishlist</div>
+              <div class="nav-item">Events</div>
+              <div class="nav-item">Account</div>
+              <div class="nav-item">Settings</div>
+            </div>
+    
+    
+            <div class="temp-text">
+              <div class="temp1">
+                We are delighted to announce that soon you will be able to create your exclusive account, where you can track your orders, save your favorite pieces to your personal wishlist, and enjoy a tailored shopping experience. 
+              </div>
+              <br>
+              <div class="temp2">
+                Stay tuned for an elevated experience designed just for you.
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="side-panel-content active cart_drawer_main" id="cart-tabs">
+        <div id="cart_drawer_inner">
+          {%- if cart != empty -%}
+            <div class="product-cart-item--container cart__form__items2">
+              {%- liquid
+                if free_shipping and settings.free_shipping_minimum != blank
+                  render 'free-shipping', free_shipping_minimum: free_shipping_minimum, total: total
+                endif
+              -%}
+              <div class="all_products">
+                {%- for item in cart.items -%}
+                  <div class="product-cart-item main_item" id="CartDrawerItem-{{ item.index | plus: 1 }}">
+                    <div class="product-cart-item-image cover_img">
+                      {% if item.image %}
+                        {%- render 'responsive-image', image: item.image, sizes: '900x0', priority: 'low' -%}
+                      {% else %}
+                        <div class="thb-placeholder">
+                          {{ 'product-1' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                      <div class="loading-overlay">
+                        {% render 'svg-icons' with 'thb-loading' %}
+                      </div>
+                    </div>
+                    <div class="product-cart-item-info">
+                      <div>
+                        <a href="{{ item.url }}" title="{{ item.product.title | escape }}" class="cart-product-link">
+                          {{- item.product.title -}}
+                        </a>
+                        {% if item.selling_plan_allocation %}
+                          <div class="properties">
+                            <span class="selling-plan">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+                          </div>
+                        {% endif %}
+                        {% unless item.variant.title contains 'Default' %}
+                          <div class="product-cart-item-options">
+                            {%- for option in item.product.options_with_values -%}
+                              {% render 'product-option',
+                                option_type: 'dropdown',
+                                color_picker_size: 'large',
+                                product: item.product,
+                                option: option,
+                                forloop: forloop.index0,
+                                product_form_id: item.id,
+                                item: item
+                              %}
+                            {% endfor %}
+                          </div>
+                        {% endunless %}
+                        {%- for property in item.properties -%}
+                          {%- assign property_first_char = property.first | slice: 0 -%}
+                          {%- if property.last != blank and property_first_char != '_' -%}
+                            <div class="product-cart-item-options">
+                              <span>{{ property.first }}: </span>
+                              {%- if property.last contains '/uploads/' -%}
+                                <a href="{{ property.last }}" class="link" target="_blank">
+                                  {{ property.last | split: '/' | last }}
+                                </a>
+                              {%- else -%}
+                                {{ property.last }}
+                              {%- endif -%}
+                              <br>
+                            </div>
+                          {%- endif -%}
+                        {%- endfor -%}
+                        {%- if item.discounts != blank -%}
+                          <ul class="discounts" role="list">
+                            {%- for discount in item.discounts -%}
+                              <li class="discounts__discount">
+                                {%- render 'svg-icons' with 'discount' -%}
+                                {{ discount.title }} (-{{ discount.amount | money }})
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}                 
+                        <quantity-selector class="quantity cart-update small-qty" data-id="{{ item.key | escape }}">
+                          <button class="minus" type="button" aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title | escape }}">{% render 'svg-icons' with 'minus' %}</button>
+                          <input type="number" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}" min="0" {% if item.variant.quantity_rule.max != null %} max="{{ item.variant.quantity_rule.max }}"{% elsif item.variant.inventory_management != null and item.variant.inventory_quantity > 0 %} max="{{ item.variant.inventory_quantity }}" {% endif %} step="{{ item.variant.quantity_rule.increment }}" class="qty" data-index="{{ item.index | plus: 1 }}" aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}">
+                          <button {% if item.variant.inventory_management and item.variant.inventory_quantity > 0 and item.quantity >= item.variant.inventory_quantity %}tooltip="Last piece available"{% endif %} class="plus" type="button" aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title | escape }}">{% render 'svg-icons' with 'plus' %}</button>
+                        </quantity-selector>
+                      </div>
+                      <div class="product-cart-item-price">
+                        <span class="price">
+                          {%- if item.original_line_price != item.final_line_price -%}
+                            <del>
+                              <span class="amount">
+                                <div class="pn-total-line-item" data-id="{{ item.key }}">
+                                  {{ item.original_line_price | money }}
+                                </div>
+                              </span>
+                            </del>
+                            <ins><span class="amount">{{ item.final_line_price | money }}</span></ins>
+                          {%- else -%}
+                            <ins>
+                              <span class="amount">
+                                <div class="pn-total-line-item" data-id="{{ item.key }}">
+                                  {{ item.original_line_price | money }}
+                                </div>
+                              </span>
+                            </ins>
+                          {%- endif -%}
+                          {%- if item.variant.available and item.unit_price_measurement -%}
+                            <small class="unit-price">
+                              {{ item.variant.unit_price | money }}
+                              <span class="unit-price-separator">/</span>
+                              {%- if item.variant.unit_price_measurement.reference_value != 1 -%}
+                                {{- item.variant.unit_price_measurement.reference_value -}}
+                              {%- endif -%}
+                              {{ item.variant.unit_price_measurement.reference_unit }}
+                            </small>
+                          {%- endif -%}
+                        </span>
+                        <div class="bottom_button">
+                          <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" class="remove remove-product text-button" data-index="{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">Remove</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%- endfor -%}
+                {% comment %}
+                  {%- if cart.items.size > 1 -%}
+                    <remove-all class="remove-all">
+                      <div class="loading-overlay">
+                        {% render 'svg-icons' with 'thb-loading' %}
+                      </div>
+                      <span class="text-button remove-all--text">{{ 'general.cart_drawer.remove_all' | t }}</span>
+                    </remove-all>
+                  {%- endif -%}
+                {% endcomment %}
+              </div>
+            </div>
+            <div class="cart_sidebar_totals d-none">
+              <div id="cart__totals2">
+                <table id="cart__totals" class="table mini_cart">
+                  <tr>
+                    <td>Subtotal</td>
+                    <td>{{ cart.total_price | money_without_trailing_zeros }}</td>
+                  </tr>
+                  <tr>
+                    <td>Shipping</td>
+                    <td>Free</td>
+                  </tr>
+                  <tr>
+                    <td>Total</td>
+                    <td class="total-price" data-checkout-payment-due-target="{{ cart.total_price }}" data-checkout-payment-total-target="{{ cart.total_price | money_without_currency | replace: ',', '' }}">
+                      {{ cart.total_price | money_without_trailing_zeros }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="proceed-to-checkout">
+                <p>Free shipping will be applied at checkout.</p>
+                {%- if settings.cart_drawer_cart_button -%}
+                  <a href="{% if settings.default_checkout %}/checkout{% else %}{{ routes.cart_url }}{% endif %}" class="button full checkout-button" name="checkout" title="{{ 'general.cart_drawer.checkout' | t | escape }}">
+                    <span>Proceed to checkout</span>
+                  </a>
+                  <a href="{{ '/collections/ready-to-wear-all' }}" class="text-button view-cart-button" title="{{ 'general.cart_drawer.view_cart' | t | escape }}">
+                    Continue shopping
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- else -%}
+            <div class="cart-drawer__empty-cart">
+              <p class="h6">{{ 'general.cart_drawer.cart_empty' | t }}</p>
+              <a class="accent2 text-button" href="{{ '/collections/ready-to-wear-all' }}"><span>{{ 'general.cart_drawer.start_shopping' | t }}</span></a>
+              {% comment %}
+              {% unless customer %}
+                <div class="thb-login-form text-center login-cart-drawer" style="margin-top:5rem;">
+                  <div class="field">
+                    <button type="button" class="button full" onclick="changetoAccount();switchTabinLogin();">
+                      <span>{{ 'customer.login_page.sign_in' | t }}</span>
+                    </button>
+                  </div>
+                  <div class="switch-login-section text-center" style="order: unset; margin-top: 0.5rem;">
+                    <button
+                      type="button"
+                      class="button create_account full"
+                      onclick="changetoAccount();switchTabinAccount();">
+                      <span>{{- 'customer.login_page.create_account' | t -}}</span>
+                    </button>
+                  </div>
+                  <div class="line-or" style="margin-top: 0.9rem;"><span>or</span></div>
+                  {% form 'customer_login', novalidate: 'novalidate',id:"CustomerLoginDesktop" %}
+                    <div name="hiko-container" type="login" app="">
+                      <div class="h_wizard">
+                        <div name="hiko-err"></div>
+                        <div class="h_buttons">
+                          <div class="h_google_button h_google_center" data="google">
+                            <p class="png-google" alt=""></p>
+                            <span class="h_google_text">Google</span>
+                          </div>
+                          <div class="h_facebook_button h_facebook_center" data="facebook">
+                            <i style="font-family: social_logo; color: #4267B2;" class="fax fax-facebook-square"></i
+                            ><span class="h_facebook_text">Facebook</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endform %}
+                </div>
+              {% endunless %}
+            {% endcomment %}
+            </div>
+          {%- endif -%}
+        </div>
+        {%- if settings.cart_recommendations and cart != empty -%}
+          <div class="cart-drawer--recommendations--container product-recommendations--parent">
+            <product-recommendations
+              class="cart-drawer--recommendations"
+              data-url="{{ routes.product_recommendations_url }}?section_id=cart-drawer&product_id={{ cart.items[0].product_id }}&limit=8"
+            >
+              {%- if recommendations.performed and recommendations.products_count > 0 -%}
+                <h6 class="cart-drawer--recommendations--heading">{{ 'general.cart_drawer.you_may_also_like' | t }}</h6>
+                <div class="cart-drawer--recommendations--products m-none">
+                  {%- for recommendation in recommendations.products -%}
+                    {%- render 'product-card-small', product_small: recommendation, quick_add: true -%}
+                  {%- endfor -%}
+                </div>
+                <slide-show class="products carousel row d-none">
+                  {%- for recommendation in recommendations.products -%}
+                    <div class="small-6 medium-6 large-3 columns carousel__slide">
+                      {% render 'product-card', product_card_product: recommendation %}
+                    </div>
+                  {%- endfor -%}
+                  {%- render 'slideshow-arrows' -%}
+                </slide-show>
+              {%- endif -%}
+            </product-recommendations>
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="side-panel-footer m-none" id="footer-cart">
+        {%- if cart != empty -%}
+          {%- if settings.cart_drawer_notes -%}
+            <button
+              type="button"
+              class="order-note-toggle mini-cart__row"
+              id="order-note-toggle"
+              aria-controls="mini-cart-note"
+            >
+              {{ 'general.cart_drawer.add_order_note' | t }}
+              <span></span>
+            </button>
+            <div class="order-note-toggle__content">
+              <label for="mini-cart__notes">{{ 'general.cart_drawer.add_order_note' | t }}</label>
+              <textarea name="note" id="mini-cart__notes" rows="5">{{ cart.note }}</textarea>
+              <button class="button full">
+                <span>{{ 'general.cart_drawer.save' | t }}</span>
+              </button>
+              <div class="order-note-toggle__content-overlay"></div>
+            </div>
+          {%- endif -%}
+          <div class="cart-drawer-footer">
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <div class="mini-cart__row mini-cart__discount">
+                  <div class="mini-cart__label">{{ discount.title }}</div>
+                  <span>(-{{ discount.total_allocated_amount | money }})</span>
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+            <div class="cart-drawer-buttons">
+              <p class="cart-policy-text">
+                {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                  {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                {%- elsif cart.taxes_included -%}
+                  {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                {%- elsif shop.shipping_policy.body != blank -%}
+                  {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link:  "javascript:void(0)"}}
+                {%- else -%}
+                  {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                {%- endif -%}
+              </p>
+              {% if settings.cart_terms_conditions_enable %}
+                {% render 'cart-terms', append: '-Drawer' %}
+              {% endif %}
+              {%- if settings.cart_drawer_cart_button -%}
+                <a
+                  href="{% if settings.default_checkout %}/checkout{% else %}{{ routes.cart_url }}{% endif %}"
+                  class="button full checkout-button"
+                  name="checkout"
+                  title="{{ 'general.cart_drawer.checkout' | t | escape }}"
+                >
+                  <span>
+                    {{- 'general.cart_drawer.checkout' | t }}
+                  </span>
+                </a>
+                <a
+                  href="{{ routes.cart_url }}"
+                  class="text-button view-cart-button"
+                  title="{{ 'general.cart_drawer.view_cart' | t | escape }}"
+                >
+                  {{- 'general.cart_drawer.view_cart' | t -}}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        {% else %}
+          <div class="cart-drawer-footer-product">
+            <slider-component class="products carousel row no-padding suggested_card">
+              <div class="carousel_slide column small-6 medium-6 carousel__slide">
+                <div class="thumb_product cover_img">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/rtw.jpg?v=1747864627">
+                </div>
+                <a href="/collections/ready-to-wear-all">
+                  <span>Shop</span>
+                  <p class="text-button">Ready to Wear</p>
+                </a>
+              </div>
+              <div class="carousel_slide column small-6 medium-6 carousel__slide">
+                <div class="thumb_product cover_img">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/bags_cart.jpg?v=1747864720">
+                </div>
+                <a href="/collections/handbags">
+                  <span>Shop</span>
+                  <p class="text-button">Bags</p>
+                </a>
+              </div>
+              {% unless localization.country.iso_code == 'US' %}
+              <div class="carousel_slide column small-6 medium-6 carousel__slide">
+                <div class="thumb_product cover_img">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/kids.jpg?v=1747864940">
+                </div>
+                <a href="/collections/kids">
+                  <span>Shop</span>
+                  <p class="text-button">Kids</p>
+                </a>
+              </div>
+              {% endunless %}
+  <div class="carousel_slide column small-6 medium-6 carousel__slide">
+                <div class="thumb_product cover_img">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/ES_L_Homme_1800x1000_3.jpg?v=1744150705">
+                </div>
+                <a href="https://eliesaab.com/pages/lhomme">
+                  <span>View</span>
+                  <p class="text-button">L'Homme</p>
+                </a>
+              </div>
+          
+
+              <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                <img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}">
+              </div>
+              <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+              </div>
+            </slider-component>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </cart-drawer>
+  {%- if settings.cart_drawer_clear -%}
+    <script type="load" d-src="{{ 'remove-all.js' | asset_url }}"></script>
+  {%- endif -%}
+{%- endif -%}
+<script type="load" d-src="{{ 'custom-predictive-search.js' | asset_url }}"></script>
+<script type="load">
+  function switchTabinLogin() {
+    let tab_main = document.querySelector("#login_account");
+    if (tab_main) {
+      tab_main.dataset.activeTab = "login";
+    }
+  }
+  function switchTabinAccount() {
+    let tab_main = document.querySelector("#login_account");
+    if (tab_main) {
+      tab_main.dataset.activeTab = "register";
+    }
+  }
+  function changetoAccount() {
+    document.querySelector('[data-bs-target="#login_account"]').click()
+  }
+  document.querySelectorAll(".view_password").forEach(button => {
+    button.addEventListener("click", function () {
+      let passwordField = this.previousElementSibling; // Get input field
+      passwordField.type = passwordField.type === "password" ? "text" : "password";
+    });
+  });
+
+function toggleDropdown(element) {
+  let dropdown = element.closest(".size-custom-dropdown");
+  let dropdownList = dropdown.querySelector(".size-dropdown-list");
+  let arrow = dropdown.querySelector(".select-arrow");
+
+  if (!dropdownList) return;
+  $(arrow).toggleClass("rotate");
+  $(dropdownList).toggleClass("_active");
+}
+
+function selectOption(element, value, id) {
+  let dropdown = element.closest(".size-custom-dropdown");
+  let btn = dropdown.querySelector(".size-dropdown-btn");
+  let dropdownList = dropdown.querySelector(".size-dropdown-list");
+
+  if (!element || !dropdown || !btn) {
+    console.error("Error: Dropdown element missing!");
+    return;
+  }
+
+  let allOptions = dropdown.querySelectorAll(".size-dropdown-list li");
+  allOptions.forEach(option => option.classList.remove("selected"));
+  btn.innerText = value;
+  element.classList.add("selected");
+  $(dropdownList).toggleClass("_active");
+  dropdown.querySelector(".select-arrow").classList.remove("rotate");
+}
+$("body").on(".size-dropdown-list li", function(e) {
+  if (!$(e.target).closest(".size-custom-dropdown").length) {
+    $(".size-dropdown-list").removeClass("_active");
+    $(".select-arrow").removeClass("rotate");
+  }
+});
+</script>
+
+<style>
+  #Cart-Drawer .product-cart-item-options .size-dropdown-btn {
+    cursor: pointer;
+    display: flex;
+    font-size: calc(var(--font-heading-scale)* 13px);
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 4px;
+    font-weight:300;
+  }
+  .size-custom-dropdown{
+    position: relative;
+  }
+  #Cart-Drawer .product-cart-item-options .size-dropdown-list {
+    list-style: none;
+    padding: 0;
+    display: none;
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    z-index: 10;
+  }
+  #Cart-Drawer .product-cart-item-options .size-dropdown-list li {
+    padding: 0px;
+    cursor: pointer;
+    text-align: center;
+  }
+  #Cart-Drawer .product-cart-item-options .size-dropdown-list li:hover {
+    background-color: #f0f0f0;
+  }
+  #Cart-Drawer .product-cart-item-options .rotate {
+    transform: rotate(180deg);
+  }
+  #Cart-Drawer .product-cart-item-options .product-form__input{
+    display: flex;
+  }
+  #Cart-Drawer .product-cart-item-options .select-arrow{
+    position: relative;
+    right: initial;
+  }
+  #Cart-Drawer .product-cart-item-options .product-form__input{
+    column-gap: 6px;
+  }
+  .product-cart-item .price {
+    font-size: calc(var(--font-heading-scale) * 13px) !important;
+  }
+  .phone-group select {
+    border: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    text-align: left;
+    position: absolute;
+    left: 0;
+    height: 100%;
+    padding: 0 10px;
+  }
+  .country_number svg {
+    margin-left: 6px;
+    position: absolute;
+    right: 9px;
+    pointer-events: none;
+  }
+  .country_number {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    position: absolute;
+    min-width: 90px;
+    justify-content: center;
+    color: #100f0d !important;
+    font-size: .65rem;
+    cursor: pointer;
+  }
+  .country_number {
+    border: 0;
+    border-right: 1px solid #f0f0f0;
+  }
+  .selected_country-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    width: 42px;
+    z-index: 1;
+    height: 100%;
+    cursor: pointer;
+    text-align: center;
+    padding: 0;
+    pointer-events: none;
+  }
+  span.country-flag {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    position: relative;
+    top: -1px;
+  }
+  @media(max-width:767px){
+    #Cart-Drawer .product-cart-item-options .size-dropdown-btn {
+      font-size: calc(var(--font-heading-scale)* 14px);
+    }
+  }
+</style>

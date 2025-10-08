@@ -1,0 +1,325 @@
+<localization-form class="thb-localization-forms default_country {{ class }}" style="display:none;">
+	{%- form 'localization', id: id -%} 
+		{%- if show_currency_switcher -%} 
+		<div class="select">
+			<label for="thb-currency-code-{{ id }}" class="visually-hidden">{{ 'localization.update_country' | t }}</label>
+			<select id="thb-currency-code-{{ id }}" name="country_code" class="thb-currency-code resize-select">
+		    {%- for country in localization.available_countries -%}
+		      <option value="{{ country.iso_code }}" {%- if country.iso_code == localization.country.iso_code %} selected="selected"{% endif %}>{{ country.name }}</option>
+		    {%- endfor -%}
+		  </select>
+			<div class="select-arrow">{%- render 'svg-icons' with 'thb-select' -%}</div>
+		</div>
+		{%- endif -%}
+		<noscript>
+			<button class="text-button">{{ 'localization.update_country' | t }}</button>
+		</noscript>
+	{%- endform -%}
+</localization-form> 
+{%- if show_language_switcher or show_currency_switcher -%}
+{% assign currency_map = 'AED:د.إ:AE,AFN:؋:AF,ALL:L:AL,AMD:֏:AM,ANG:ƒ:NL,AOA:Kz:AO,ARS:$:AR,AUD:$:AU,AWG:ƒ:AW,AZN:₼:AZ,
+BAM:KM:BA,BBD:$:BB,BDT:৳:BD,BGN:лв:BG,BHD:ب.د:BH,BMD:$:BM,BND:$:BN,BOB:Bs:BO,BRL:R$:BR,
+BSD:$:BS,BTN:Nu.:BT,BWP:P:BW,BYN:Br:BY,BZD:$:BZ,CAD:$:CA,CDF:FC:CD,CHF:Fr:CH,CNY:¥:CN,
+COP:$:CO,CRC:₡:CR,CUC:$:CU,CUP:$:CU,CVE:$:CV,CZK:Kč:CZ,DKK:kr:DK,DOP:$:DO,DZD:دج:DZ,
+EGP:£:EG,ERN:Nfk:ER,ETB:Br:ET,EUR:€:EU,FJD:$:FJ,FKP:£:FK,FOK:kr:FO,GBP:£:GB,GEL:₾:GE,GGP:£:GG,
+GHS:₵:GH,GIP:£:GI,GMD:D:GMB,GTQ:Q:GT,GYD:$:GY,HNL:L:HND,HRK:€:HR,HTG:G:HT,
+HUF:Ft:HU,IDR:Rp:ID,ILS:₪:IL,IMP:£:IM,INR:₹:IN,IQD:ع.د:IQ,IRR:﷼:IR,ISK:kr:IS,JEP:£:JE,JMD:$:JM,
+JOD:د.ا:JO,KES:KSh:KE,KGS:с:KG,KHR:៛:KH,KID:$:KI,KWD:د.ك:KW,KYD:$:KY,
+KZT:₸:KZ,LAK:₭:LA,LBP:ل.ل:LB,LKR:Rs:LKA,LRD:$:LR,LSL:L:LS,LYD:ل.د:LY,MAD:د.م.:MA,MDL:lei:MD,
+MKD:ден:MK,MMK:K:MM,MNT:₮:MN,MOP:P:MO,MRU:UM:MR,MUR:₨:MU,MVR:Rf:MV,MWK:MK:MW,MXN:$:MX,
+MYR:RM:MY,MZN:MTn:MZ,NAD:$:NA,NGN:₦:NG,NIO:C$:NI,NOK:kr:NO,NPR:₨:NP,NZD:$:NZ,OMR:ر.ع.:OM,PAB:B:PA,
+PEN:S/:PE,PGK:K:PG,PHP:₱:PH,PKR:₨:PK,PLN:zł:PL,QAR:ر.ق:QA,RON:lei:RO,RSD:дин.:RS,RUB:₽:RU,
+SAR:﷼:SA,SBD:$:SB,SCR:₨:SC,SDG:ج.س:SD,SEK:kr:SE,SGD:$:SG,SHP:£:SH,SLE:Le:SLE,SLL:Le:SLE,
+SOS:Sh:SO,SRD:$:SR,SSP:£:SS,STN:Db:ST,SYP:£:SY,SZL:L:SZ,THB:฿:TH,TJS:ЅМ:TJ,TMT:m:TMM,TND:د.ت:TN,
+TOP:T$:TO,TRY:₺:TR,TTD:$:TT,TVD:$:TV,TWD:NT$:TW,TZS:Sh:TZA,UAH:₴:UA,USD:$:US,UYU:$:UY,
+UZS:soʻm:UZ,VES:Bs.:VE,WST:T:WS,XCD:$:AG,
+YER:﷼:YE,ZAR:R:ZA,ZMW:ZK:ZM,ZWL:$:ZW' | split: ',' %}
+  
+  {% assign symbol = '€' %}
+  {% assign country_symbol = 'EUR' %}
+  {% for entry in currency_map %}
+    {% assign parts = entry | strip | split: ':' %}
+    {% assign country_code = parts[2] %}
+    {% if localization.country.iso_code == country_code %}
+      {% assign symbol = parts[1] %}
+      {% assign country_symbol = parts[0] %}
+    {% endif %}
+  {% endfor %}
+ 
+    <div class="shopify-localization-form _currency {{ id }}" style="display: none !important;">
+      {%- if show_currency_switcher -%}
+        <div class="select" class="countrycurrency"> 
+        <div class="doubly-wrapper" style="display:none !important"></div>
+          <details class="coutnryselector toggle-option is_currency_selector"> 
+            <summary class="country-title is_currency_selector_inner">
+              <span class="inner-class currency_image_symbol">{{ country_symbol | replace:"LBP","USD" }} ({{ symbol | replace:"ل.ل","$" }})</span>
+              <div class="select_arrow">
+                {% comment %} {%- render 'svg-icons' with 'custom-caret' %} {% endcomment %}
+                {%- render 'svg-icons' with 'custom-caret' %}
+              </div>
+            </summary>
+            <div class="country-options">
+              <button class="parent-link-back--button">{%- render 'svg-icons' with 'custom-caret' %}</button>
+              <div class="input-wrapper-box">
+                <div class="search-inline">
+                  <button type="submit" class="searchButton">
+                    {%- render 'svg-icons' with 'search' %}
+                  </button>
+                  <input
+                    type="text"
+                    class="searchTerm search-field currencyInput"
+                    id="currencyInput"
+                    placeholder="Change your currency"
+                  >
+                </div>
+              </div>
+
+              <div class="country-options-wrapper">
+                <div class="popularcountry">
+                  <p class="title-wrap">Popular currencies</p>
+                  {% assign currency_map_popular = 'AED:د.إ:AE,EUR:€:FR,GBP:£:GB,CHF:Fr:CH,SAR:﷼:SA,USD:$:US' | split: ',' %}
+                  {% assign ordered_country_codes = 'US,FR,GB,CH,SA,AE' | split: ',' %}
+                  
+                  {% for iso in ordered_country_codes %}
+                    {% assign symbol = '' %}
+                    {% assign country_symbol = '' %}
+                    {% for entry in currency_map_popular %}
+                      {% assign parts = entry | strip | split: ':' %}
+                      {% if parts[2] == iso %}
+                        {% assign symbol = parts[1] %}
+                        {% assign country_symbol = parts[0] %}
+                      {% endif %}
+                    {% endfor %}
+                  
+                    {% for country in localization.available_countries %}
+                      {% if country.iso_code == iso %}
+                        <div class="country-inline">
+                          <input type="radio" data-code="{{- country_symbol | replace:"LBP","USD" -}}"  id="{{ country.name | handle }}" name="country_code" value="{{ country.iso_code }}" onclick="switchCurrency('{{ country.iso_code }}','{{ country_symbol | replace: "LBP", "USD" }}')">
+                          <label for="{{ country.name | handle }}" class="labelwrapper">                         
+                            {{ country_symbol }} ({{ symbol }})
+                          </label>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </div>
+                <div class="countrylist">
+                  <p class="title-wrap">Other currencies</p>
+                  {% assign eur_val = 0 %}
+                  {%- for country in localization.available_countries -%}
+                   {% unless ordered_country_codes contains country.iso_code %}
+                       {% assign symbol = '€' %}
+                        {% assign country_symbol = 'EUR' %}
+                        {% for entry in currency_map %}
+                          {% assign parts = entry | strip | split: ':' %}
+                          {% assign country_code = parts[2] %}
+                          {% if country.iso_code == country_code %}
+                            {% assign symbol = parts[1] %}
+                            {% assign country_symbol = parts[0] %}
+                          {% endif %}
+                        {% endfor %} 
+                    {% if  country_symbol == "EUR" %}
+                      {% assign eur_val = eur_val | plus: 1 %}
+                    {% endif %}  
+                    {% if country_symbol == "EUR" and eur_val > 1 %}
+                      {% continue %}
+                    {% endif %}  
+                      {% if country_symbol != "LBP" and country_symbol != "EUR" and country_symbol != "USD" and country_symbol != "GBP"  and country_symbol != "CHF" and country_symbol != "SAR"  and country_symbol != "AED" %}
+                     <div class="country-inline">
+                      <input data-code="{{- country_symbol | replace:"LBP","USD" -}}" type="radio" id="{{ country.name | handle }}" name="country_code" value="{{ country.iso_code }}" onclick="switchCurrency('{{ country.iso_code }}','{{- country_symbol | replace:"LBP","USD" -}}')" >
+                      <label for="{{ country.name | handle }}" class="labelwrapper">                       
+                        {{ country_symbol | replace:"LBP","USD" }} ({{ symbol | replace:"ل.ل","$" }})
+                      </label>
+                    </div>
+                                                {% endif %}
+                  {% endunless %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      {%- endif -%} 
+    </div>
+  
+  {%- if show_language_switcher -%}
+    <localization-form class="thb-localization-forms {{ class }}" data-code="{{ localization.country.iso_code }}">
+     {%- form 'localization', id: id, class:id -%}
+      <input
+        type="hidden"
+        class="selected-currency-input"
+        id="selected-currency-input"
+        name="currency"
+        value="INR"
+      >
+    <div class="select countrylanguage customCountryOption">
+      <details class="coutnryselector  is_country_selector">
+        <summary class="country-title language-selector is_country_selector_inner">
+          <span class="m-none text-small d-none">Country/Region:</span><span class="inner-class custom-selected">India</span>
+          <div class="select_arrow">
+            {%- render 'svg-icons' with 'custom-caret' %}
+          </div>
+        </summary>
+        <div class="country-options" id="currencySelector">
+          <button class="parent-link-back--button">{%- render 'svg-icons' with 'custom-caret' %}</button>
+          <div class="input-wrapper-box">
+            <div class="search-inline">
+              <button type="submit" class="searchButton">
+                {%- render 'svg-icons' with 'search' %}
+              </button>
+              <input
+                type="text"
+                class="searchTerm search-field countryInput customcountryInput"
+                id="countryInput"
+                placeholder="Change your country"
+              >
+            </div>
+          </div>
+          <div class="country-options-wrapper">
+           {% for country in localization.available_countries %}
+            <div class="country-inline">
+              <input type="radio" id="{{ country.name | handleize }}-custom" name="country_code1" value="{{ country.iso_code }}" data-country="+355">
+              <label for="{{ country.name | handleize }}-custom" class="labelwrapper">{{ country | image_url: width: 32, height: 20 | image_tag | replace: ' src="' , ' src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" data-li="st" d-src="' | replace: ' srcset="' , ' dt="' }} {{ country.name }}</label>
+            </div>
+           {% endfor %}  
+          </div>
+        </div>
+      </details>
+    </div>
+ {%- endform -%}
+    </localization-form>
+    <style>
+    .coutnryselector.toggle-option>summary>* {
+      pointer-events: none;
+    }
+    
+    .FooterLocalization .select {
+      margin-bottom: 0px;
+      position: static;
+    }
+    
+    .sub-footer .country_currency {
+      column-gap: 0px;
+      position: relative;
+    }
+    
+    .sub-footer .FooterLocalization .country-options {
+      width: 350px;
+    }
+    
+    .country-inline {
+      cursor: pointer;
+    }
+    
+    .mobile-menu-drawer .no-js-hidden.localization-option {
+      display: flex;
+      flex-direction: row;
+    }
+    
+    .mobile-menu-drawer .localization-option {
+      border-radius: 3px;
+      position: relative;
+    }
+    
+    .thb-mobile-menu-footer .thb-localization-forms {
+      width: 100%;
+    }
+    
+    .mobile-menu-drawer .select.countrylanguage.customCountryOption {
+      margin-bottom: 0;
+    }
+    
+    .mobile-menu-drawer span.m-none.text-small {
+      display: none;
+    }
+    
+    .country-inline .labelwrapper {
+      cursor: pointer;
+    }
+    
+    {% comment %} .template-page-haute-couture-home .customCountryOption details,
+    .template-page-haute-couture-home .coutnryselector[open] summary.country-title,
+    .template-page-haute-couture-home .mobile-menu-drawer .select.countrylanguage.customCountryOption,
+    .template-page-haute-couture-home .country-options {
+      background: #231f20;
+    } {% endcomment %}
+    
+    .template-page-haute-couture-home .country-options {
+      color: #fff;
+      border-color: #231f20;
+    }
+    
+    .template-page-haute-couture-home .searchButton svg path {
+      stroke: #fff;
+    }
+    
+    .template-page-haute-couture-home .parent-link-back--button svg path {
+      stroke: #fff;
+    }
+    
+    .search-inline input.searchTerm:placeholder {
+      color: #b2b2b2;
+    }
+    
+    .search-inline input.searchTerm {
+      color: #000;
+    }
+    .popularcountry .title-wrap,
+    .countrylist .title-wrap {
+      color: #000000;
+    }
+    .countrylist {
+      margin-top: 15px;
+    }
+    @media screen and (max-width: 767px) {
+      .sub-footer .FooterLocalization .country-options {
+        width: 98%;
+        margin: auto;
+      }
+    
+      localization-form.thb-localization-forms {
+        width: 100%;
+        position: static !important;
+      }
+    
+      .sub-footer .country_currency {
+        display: flex;
+        flex-direction: row;
+        column-gap: 15px;
+        position: relative;
+      }
+    
+      details.coutnryselector.toggle-option {
+        width: 140px;
+      }
+    
+      summary.country-title {
+        padding: 5px 0px 5px 10px;
+      }
+    
+      .sub-footer .coutnryselector .select_arrow {
+        right: 5px;
+      }
+    }                                
+    </style>
+  {% endif %}
+{%- endif -%}
+<script type="load">
+  $('#countryInput').keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+    $(".is_country_selector .country-options-wrapper [data-class='is_active']:first input").click();
+    return false;  
+  }
+});
+
+    $('#currencyInput').keypress(function (e) {
+ var key = e.which;
+ if(key == 13)  // the enter key code
+  {
+    $(".is_currency_selector .countrylist [data-class='is_active']:first input").click();
+    return false;  
+  }
+});
+</script>

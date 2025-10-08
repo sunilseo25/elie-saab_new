@@ -1,0 +1,102 @@
+.row.full-width-row {
+  width: 100%;
+}
+.store-locations {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
+  margin-top: 4rem;
+}
+
+.store-locations .col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.store-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.store-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.store-overlay {
+  text-align: center;
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translate(-50%);
+  color: white;
+}
+
+.store-name {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 0px;
+}
+
+.store-location {
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.store-location::after {
+  background-color: #fff;
+  border-radius: 4px;
+  content: " ";
+  display: block;
+  margin: 3px auto 0;
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  width: 100%;
+  height: 1px;
+  transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+}
+
+.store-location:hover::after {
+  width: 0;
+  right: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #231f2033;
+  transition: background 0.3s ease;
+}
+.stockist-title {
+  margin-top: 50px;
+  border-top: 1px solid #d5d5d4;
+  padding-top: 40px;
+}
+@media screen and (min-device-width: 769px) and (max-device-width: 1023px) {
+  .video-collection-tabs__list {
+    gap: 4%;
+  }
+
+  .video-collection-tabs__list:after {
+    width: 92%;
+  }
+}
+
+@media (max-width: 767px) {
+  .store-locations .col-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .store-name {
+    display: block;
+  }
+}

@@ -1,0 +1,414 @@
+{{ 'account-slider.css' | asset_url | stylesheet_tag }}
+
+<div class=" no-space-mobile account-slider">
+  <div class="small-12 " id="account-detail">
+    <div class="account-box-wrapper">Welcome, {{ customer.first_name }}</div>
+  </div>
+
+  <div class="accound-page-wrapper  no-space-mobile">
+    <div class="account-wrapper">
+      <div class="account-progress nav__tabs">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'block' %}
+              {% if block.settings.title != blank %}
+                <div
+                  class="progress-single {% if forloop.first %} active{% endif %}"
+                  data-button="{{ block.settings.title | handle }}"
+                >
+                  <button type="text" class="button-wrap" data-hash="#{{ block.settings.title | handle }}">{{ block.settings.title }}</button>
+                </div>
+              {% endif %}
+            {% when 'dropdown' %}
+              <div class="progress-single dropdown-menu-box-container">
+                <details class="dropdown-menu-box">
+                  <summary data-hash="#profile">
+                   
+                    <span class="summary-text">{{ block.settings.title }}</span>
+                    <span>
+                      {% render 'svg-icons' with 'thb-caret-right' %}
+                    </span>
+                         
+                  </summary>
+                  <div class="dropdown-wrapper">
+                    <div class="dropdown-wrapper-box">
+                      <div class="droplink mobile-hide  border-bottom" >
+                        <button type="text" class="link-wrap" data-hash="profile">Profile</button>
+                      </div>
+                      <div class="droplink border-bottom" >
+                        <button type="text" class="link-wrap" data-hash="appointment">Appointment</button>
+                      </div>
+
+                      <div class="droplink large-hide border-bottom" >
+                        <button type="text" class="link-wrap" data-hash="events">Events</button>
+                      </div>
+                      <div class="droplink large-hide " >
+                        <button type="text" class="link-wrap" data-hash="wishlist">Wishlist</button>
+                      </div>
+                      <div class="droplink mobile-hide">
+                        <a
+                          href="{{ routes.account_logout_url }}"
+                          title="{{ 'customer.account.log_out' | t | escape }}"
+                          class="myaccount--link"
+                        >
+                          Sign out
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+      <div class="underline-progress ">
+        <div class=" under_progress"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+
+//     let sliders = [];
+
+//         function initFlickity() {
+        
+//             var screenWidth = window.innerWidth;
+
+//             var elements = document.querySelectorAll('.js-slider-mobile');
+
+//             elements.forEach((elem, index) => {
+//                 if (screenWidth < 768) {
+//                     if (!elem.classList.contains('flickity-enabled')) {
+//                         sliders[index] = new Flickity(elem, {
+//                      cellAlign:"center",
+//                             contain: true,
+                  
+//                             prevNextButtons: true,
+//            pageDots: false,
+                     
+//                             wrapAround: true
+//                         });
+//                     }
+//                 } else {
+//                     // Destroy Flickity if it exists on larger screens
+//                     if (elem.classList.contains('flickity-enabled')) {
+//                         sliders[index].destroy();
+//                     }
+//                 }
+//             });
+//         }
+
+//         // Run on page load & window resize
+//         window.addEventListener('load', initFlickity);
+//         window.addEventListener('resize', initFlickity);
+  
+// function enableCurrentSlider(activeTab){
+
+//   document.querySelectorAll("[data-account-tab]").forEach((ele)=>{ele.style.display="none"})
+//   const currenthandle = activeTab.dataset.button;
+  
+//   const currenttab = document.querySelector(`[data-account-tab=${currenthandle}]`)
+
+//   currenttab.style.display = "block";
+ 
+//     initFlickity()
+
+// }
+
+//   const dataButtonElements  = document.querySelectorAll("[data-button]");
+// dataButtonElements.forEach((element) => {
+//    element.addEventListener("click",function(event){
+//            dataButtonElements.forEach((item) => item.classList.remove("active"));
+//     const activeTab = event.currentTarget;
+//      activeTab.classList.add("active");
+//     enableCurrentSlider(activeTab)
+//   })
+// });
+
+    
+ 
+  
+// const optionTabs = document.querySelectorAll(".nav__tabs .progress-single");
+
+// optionTabs.forEach((tab) => {
+//     tab.addEventListener("click", function (event) {
+//         // Remove 'active' class from all tabs
+  
+
+//         // Add 'active' class to the clicked tab
+//         const activeTab = event.currentTarget;
+//         activeTab.classList.add("active");
+
+//         // Find the underline element
+//         const underlineEle = document.querySelector(".account-wrapper .under_progress");
+//         if (!underlineEle) return; // Safeguard if underline element is missing
+
+//         // Get bounding rectangles for calculations
+//         const parentRect = activeTab.closest(".account-wrapper")?.getBoundingClientRect();
+//         if (!parentRect) return; // Safeguard if parent element is not found
+//         const tabRect = activeTab.getBoundingClientRect();
+
+//         const width = tabRect.width; // Set the width of the underline
+//         const offsetX = tabRect.left - parentRect.left; // Calculate offset relative to the parent
+//         underlineEle.style.width = `${width}px`;
+//         underlineEle.style.transform = `translateX(${offsetX}px)`;
+
+
+//     });
+// });
+//   document.addEventListener("DOMContentLoaded", function () {
+//     document.querySelectorAll("[data-account-tab]").forEach((ele)=>{ele.style.display="none"})
+    
+//   document.querySelector("[data-account-tab='overview']").style.display="block"
+//   })
+
+
+
+
+
+function initFlickity(container) {
+
+    const screenWidth = window.innerWidth;
+    const elements = container.querySelectorAll('.js-slider-mobile');
+ $('slider-component').each(function() {
+    const flkty = Flickity.data(this);
+    if (flkty) flkty.resize();
+  });
+    elements.forEach((elem) => {
+
+   if (screenWidth < 768) {
+            if (!elem.flickityInstance) {
+                elem.flickityInstance = new Flickity(elem, {
+                    cellAlign: "center",
+                    contain: true,
+                    prevNextButtons: true,
+                    pageDots: false,
+                    wrapAround: true,
+                });
+            }
+        } else {
+            if (elem.flickityInstance) {
+                elem.flickityInstance.destroy();
+                elem.flickityInstance = null;
+            }
+        }
+
+    });
+}
+
+// Run on page load & window resize
+
+window.addEventListener('resize', initFlickity);
+
+// function enableCurrentSlider(activeTab) {
+//   document.querySelectorAll("[data-account-tab]").forEach(ele => ele.style.display = "none");
+//     const currentHandle = activeTab.dataset.hash.slice(1);;
+
+//       if(currentHandle=='overview'){
+//            document.querySelector("#account-detail").classList.remove("m-none")
+//          }
+//       else{
+//               document.querySelector("#account-detail").classList.add("m-none")
+//       }
+// const currentTabs = document.querySelectorAll(`[data-account-tab=${currentHandle}]`);
+
+// currentTabs.forEach((tabEle) => {
+//   if (tabEle) {
+//     tabEle.style.display = "block";
+//     initFlickity(tabEle);
+//   }
+// });
+
+// }
+
+// Main function to handle tab switching
+function handleTabChange() {
+  // Get hash without #
+  const hash = window.location.hash.slice(1);
+  
+  // Hide all tab contents
+  document.querySelectorAll('[data-account-tab]').forEach(tab => {
+    tab.style.display = 'none';
+  });
+
+  // Determine which tab to show (default to overview if no hash)
+  const tabToShow = hash || 'overview';
+  const targetTabs = document.querySelectorAll(`[data-account-tab="${tabToShow}"]`);
+
+  // Show and initialize target tabs
+  targetTabs.forEach(tabEle => {
+    if (tabEle) {
+      tabEle.style.display = "block";
+      
+      $('slider-component').each(function() {
+    const flkty = Flickity.data(this);
+    if (flkty) flkty.resize();
+  });
+    }
+  });
+}
+
+// Set up event listeners
+window.addEventListener('hashchange', handleTabChange);
+window.addEventListener('load', handleTabChange);
+
+// Optional: Trigger initial load if needed
+if (document.readyState === 'complete') {
+  handleTabChange();
+} else {
+  window.addEventListener('load', handleTabChange);
+}
+  
+  document.addEventListener('DOMContentLoaded', function() {
+  // Select all buttons inside nav__tabs
+  const buttons = document.querySelectorAll('.nav__tabs button[data-hash], .nav__tabs summary[data-hash]');
+  
+  buttons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      // e.preventDefault();
+    // Prevent default behavior (if needed)
+          const activeTab = e.currentTarget;
+      // Get the hash value from data attribute
+      const hashValue = button.getAttribute('data-hash');
+      
+      // Update the URL hash without reloading the page
+      window.location.hash = hashValue;
+      
+      // Optional: Highlight the active tab (if needed)
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+        // enableCurrentSlider(activeTab);
+             if (activeTab.tagName.toLowerCase() === 'summary') {
+      const formboxes = document.querySelectorAll('.box-form');
+      formboxes.forEach(box => box.classList.remove('active'));
+    }
+    });
+  });
+});
+// document.querySelectorAll("[data-button]").forEach(element => {
+//     element.addEventListener("click", event => {
+//         const activeTab = event.currentTarget;
+     
+//         document.querySelectorAll("[data-button]").forEach(item => item.classList.remove("active"));
+//         activeTab.classList.add("active");
+//         enableCurrentSlider(activeTab);
+//     });
+// });
+
+// document.querySelectorAll(".nav__tabs .progress-single").forEach(tab => {
+//     tab.addEventListener("click", event => {
+//         const activeTab = event.currentTarget;
+//         activeTab.classList.add("active");
+
+//         const underlineEle = document.querySelector(".account-wrapper .under_progress");
+//         const parentRect = activeTab.closest(".account-wrapper")?.getBoundingClientRect();
+//         const tabRect = activeTab.getBoundingClientRect();
+
+//         if (underlineEle && parentRect && tabRect) {
+//             underlineEle.style.width = `${tabRect.width}px`;
+//             underlineEle.style.transform = `translateX(${tabRect.left - parentRect.left}px)`;
+//         }
+//     });
+// });
+// document.addEventListener("DOMContentLoaded", () => {
+//   const tabs = document.querySelectorAll(".nav__tabs .progress-single");
+//   const underlineEle = document.querySelector(".account-wrapper .under_progress");
+//   const accountWrapper = document.querySelector(".account-wrapper");
+
+//   const updateUnderline = (activeTab) => {
+//     // Remove "active" from all, then add to selected
+//     tabs.forEach(t => t.classList.remove("active"));
+//     activeTab.classList.add("active");
+
+//     const parentRect = accountWrapper?.getBoundingClientRect();
+//     const tabRect = activeTab.getBoundingClientRect();
+
+//     if (underlineEle && parentRect && tabRect) {
+//       underlineEle.style.width = `${tabRect.width}px`;
+//       underlineEle.style.transform = `translateX(${tabRect.left - parentRect.left}px)`;
+//     }
+//   };
+
+//   // Set initial underline on page load
+//   const defaultTab = document.querySelector(".nav__tabs .progress-single.active") || tabs[0];
+//   if (defaultTab) {
+//     updateUnderline(defaultTab);
+//   }
+
+//   // Update underline on tab click
+//   tabs.forEach(tab => {
+//     tab.addEventListener("click", (event) => {
+//       updateUnderline(event.currentTarget);
+//     });
+//   });
+// });
+
+
+
+  
+document.addEventListener("DOMContentLoaded", () => {
+    // document.querySelectorAll("[data-account-tab]").forEach(ele => ele.style.display = "none");
+    // const overviewTab = document.querySelector("[data-account-tab='overview']");
+    // if (overviewTab) {overviewTab.style.display = "block";
+    //                initFlickity(overviewTab)  
+    //                  }
+
+  document.addEventListener('click', function (e) {
+      const dropdown = document.querySelector('details.dropdown-menu-box');
+      if (!dropdown.contains(e.target)) {
+        dropdown.removeAttribute('open');
+      }
+    });
+  
+});
+
+    const summaryText = document.querySelector('.dropdown-menu-box summary .summary-text');
+  const buttons = document.querySelectorAll('.dropdown-menu-box .droplink button');
+
+  const isMobile = () => window.innerWidth <= 768;
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      if (isMobile() && summaryText) {
+        summaryText.textContent = button.textContent.trim();
+      }
+    });
+  });
+</script>
+{% schema %}
+{
+  "name": "Account slider",
+  "settings": [],
+  "blocks":[
+    {
+      "name":"Block",
+      "type":"block",
+      "settings":[
+        {
+          "type":"text",
+          "id":"title",
+          "label":"Title"
+        }
+      ]
+    },
+    {
+      "name":"Dropdown",
+      "type":"dropdown",
+      "settings":[
+        {
+          "type":"text",
+          "id":"title",
+          "label":"Title"
+        }
+      ]
+    }
+  ],
+  "presets":[
+    {
+      "name":"Account slider"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,122 @@
+{{ 'custom-store-locations.css' | asset_url | stylesheet_tag }}
+
+<div class="store-locations">
+  <div class="row full-width-row">
+    <div class="columns col-grid">
+      {% for block in section.blocks %}
+        {% assign tags = '' %}
+        {% if block.settings.flagship %}{% assign tags = tags | append: 'flagship-boutiques ' %}{% endif %}
+        {% if block.settings.haute_couture %}{% assign tags = tags | append: 'haute-couture-boutiques ' %}{% endif %}
+        {% if block.settings.ready_to_wear %}{% assign tags = tags | append: 'ready-to-wear ' %}{% endif %}
+        {% if block.settings.accessories %}{% assign tags = tags | append: 'accessories ' %}{% endif %}
+        {% if block.settings.maison %}{% assign tags = tags | append: 'maison-boutiques ' %}{% endif %}
+        {% if block.settings.bridal %}{% assign tags = tags | append: 'bridal-boutiques ' %}{% endif %}
+        {% if block.settings.kids %}{% assign tags = tags | append: 'kids' %}{% endif %}
+        {% assign tags = tags | strip | rstrip: ' ' %}
+        <div class="store-card" data-attr="{{ tags }}">
+          {% if block.settings.store_image %}
+            <a class="store-url" href="{{ block.settings.store_url }}"
+   {% if block.settings.maison %}target="_blank" rel="noopener"{% endif %}>
+              <img
+                src="{{ block.settings.store_image | img_url: 'master' }}"
+                alt="{{ block.settings.store_name }}"
+                height="100%"
+                width="100%"
+              >
+              <div class="overlay"></div>
+            </a>
+          {% endif %}
+          <div class="store-overlay">
+             <a class="store-url" href="{{ block.settings.store_url }}"
+   {% if block.settings.maison %}target="_blank" rel="noopener"{% endif %}>
+              <div class="store-name">{{ block.settings.store_name }}</div>
+              <div class="store-location">{{ block.settings.store_location }}</div>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Store Locations",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "store",
+      "name": "Store",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "store_image",
+          "label": "Store Image"
+        },
+        {
+          "type": "text",
+          "id": "store_name",
+          "label": "Store Name"
+        },
+        {
+          "type": "text",
+          "id": "store_location",
+          "label": "Store Location"
+        },
+        {
+          "type": "url",
+          "id": "store_url",
+          "label": "Store Url"
+        },
+        {
+      "type": "checkbox",
+      "id": "flagship",
+      "label": "Flagship Boutique",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "haute_couture",
+      "label": "Haute Couture",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "ready_to_wear",
+      "label": "Ready-to-Wear",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "accessories",
+      "label": "Accessories",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "maison",
+      "label": "Maison",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "bridal",
+      "label": "Bridal",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "kids",
+      "label": "Kids",
+      "default": false
+    }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store Locations",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

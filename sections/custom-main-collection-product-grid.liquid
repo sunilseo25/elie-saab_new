@@ -1,0 +1,822 @@
+{{- 'facets.css' | asset_url | stylesheet_tag -}}
+{{- 'product-grid.css' | asset_url | stylesheet_tag -}}
+{{ 'custom-js-rtw.js' | asset_url | script_tag }}
+
+{%- liquid
+  assign full_width = section.settings.full_width
+  assign enable_filtering = section.settings.enable_filtering
+  assign enable_sorting = section.settings.enable_sorting
+  assign show_counts = section.settings.show_counts
+  assign sidebar_size = section.settings.sidebar_size
+  assign filter_color_swatches = section.settings.filter_color_swatches
+  assign pagination_type = section.settings.pagination_type
+  assign products_per_page = section.settings.products_per_page
+  assign columns_desktop = section.settings.columns_desktop
+  assign facets_desktop = section.settings.facets_desktop
+  assign max_container = section.settings['max-container']
+
+  unless enable_filtering
+    assign facets_desktop = 'drawer'
+  endunless
+-%}
+
+<style> 
+  .template-collection-custom-collection #custom-menu .dropdown_card {
+    background: #f8f8f9;
+  }
+
+  #Facets-Toggle,
+  #CollectionMenuList{
+    display:none
+  }  
+  .facet-box-wrapper {
+    margin-left: 0;
+    margin-right: 0;
+  }
+.submenu-list{
+    display: flex;
+  flex-wrap: nowrap;
+  font-size: 13px;
+  font-weight: 400;
+  width: 100%;
+  gap: 0;
+}
+  @media(max-width:767px) {
+
+
+        .submenu-list{
+grid-template-columns: repeat(2, minmax(0px, 1fr));
+    display: grid;
+    gap: 5px;
+    margin: 0px;
+    padding-top: 5px !important;
+    padding-bottom: 10px !important;
+    position: relative;
+    }
+    #product-grid .product-card button.st-wishlist-button svg.st-wishlist-icon{
+      --color-footer-text:#fff
+    }
+    #product-grid .product-card-title, 
+    #product-grid .price {
+      color: #fff !important;
+      font-weight: 600 !important;
+    }
+    #product-grid .product-card .product-card-info {
+      margin-top: -46px;
+      position: static;
+      z-index: 9;
+      padding: 10px 20px;
+      margin-bottom: 6.5px;
+      flex-direction: row;
+    }
+    .promotion-column {
+      grid-column: span 1;
+      grid-row:calc(var(--position) * 2);
+    }
+    #product-grid .progress_slider ol.flickity-page-dots,
+    #product-grid .flickity-progress {
+      background: #acacac !important;
+    }
+    #product-grid .flickity-progress--bar {
+      background: #fff !important;
+    }
+    #product-grid {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .facet-box-wrapper{
+      display:none
+    }
+  }
+  #product-grid .grid__item.no-price .price,
+  #product-grid .grid__item.no-price .product-price,
+  #product-grid .grid__item.no-price [class*="price"],
+  #product-grid .grid__item.no-price .money {
+    display: none !important;
+  }
+</style>
+
+{% assign collection_menu = section.settings.collection_menu %}
+<div id="custom-menu" class="row full-width-row">
+  <div class="submenu-list columns" id="SubCollectionList">
+    {% if collection_menu.links != blank %}
+      <div class="collection-menu">
+      <div class=" dropdown-collection">
+        <button class=" dropbtn">
+          <span id="current_collection_title" class=" m-none"> 
+      {{ collection.title }}
+      </span>
+            <span id="current_collection_title" class="d-none"> 
+              {% assign collection_mobile_title = collection.metafields.custom.mobile_title.value %}
+      {% if collection_mobile_title != blank %}
+        {{ collection_mobile_title }}
+        {% else %}
+      {{ collection.title }}
+        {% endif %}
+      </span>
+      
+        <div id="select-arrow" class="select-arrow">
+                <svg viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </div>
+        </button>
+           <div id="dropdown-content" class="dropdown-content " data-js-page-menu>
+            <div class="dropdown-list-wrapper">
+
+    <a href="/pages/{{ collection.handle }}#press-release" data-title="Press Release" class="dropmenuoption custom-page-menu">
+      <span>
+        
+                    Press Release
+      </span>
+                  </a>
+                  <a href="/pages/{{ collection.handle }}#film" data-title="Film" class="dropmenuoption custom-page-menu">
+                    <span>
+                          Film
+                    </span>
+               
+                  </a>
+                   <a href="/pages/{{ collection.handle }}#appointments" data-title="Appointment" class="dropmenuoption custom-page-menu">
+                     <span>
+                          Appointment   
+                     </span>
+             
+                  </a>
+                  </div>
+                  </div>
+      </div>
+      </div>
+      <div class="submenu_collection">
+        <div class="dropdown_button d-none">
+          {% assign found_match = false %}
+          {% for link in collection_menu.links %}
+            {% if link.url == request.path %}
+              <span id="updated_text">{{ link.title }}</span>
+              {% assign found_match = true %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+          {% unless found_match %}
+            <span id="updated_text">{{ collection.title }}</span>
+          {% endunless %}
+          <div class="select-arrow">
+            <svg viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </div>
+        </div>
+        <div class="dropdown_card" id="dropdownCard">
+          <div class="drop_child">
+            {% for link in collection_menu.links %}
+              <div class="link js-link-collection {% if link.object.handle == collection.handle %}active{% endif %}" data-title="{{- link.title -}}"  data-collection="{{ collection.handle }}" >{{- link.title -}}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div
+  class="row full-width-row"
+  {% if max_container != blank %}
+    style="max-width: {{ max_container }}px"
+  {% endif %}
+  id="CollectionMenuList"
+>
+  {% assign collection_menu = section.settings.collection_menu %}
+  <div class="subcollection-list columns" id="SubCollectionList">
+    {% if collection_menu.links != blank %}
+      <div class="collection-menu">
+        <div class="dropdown-collection">
+          <button class="dropbtn" type="text">
+            <span id="current_collection_title">
+              {{ collection.title }}
+            </span>
+            <div id="select-arrow" class="select-arrow">
+              <svg viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+          </button>
+          <div id="dropdown-content" class="dropdown-content">
+            <div class="dropdown-list-wrapper">
+              {% if collection.metafields.custom.collection_list.value != blank %}
+                {% for link in collection.metafields.custom.collection_list.value %}
+                  <a href="{{ link.url }}" data-title="{{- link.title -}}" class="dropmenuoption js-link-collection">
+                    {{- link.title -}}
+                  </a>
+                {% endfor %}
+              {% else %}
+                {% for link in collection_menu.links %}
+                  <a href="{{ link.url }}" data-title="{{- link.title -}}" class="dropmenuoption js-link-collection">
+                    {{- link.title -}}
+                  </a>
+                {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    <div class="dropdown_card">
+      <div class="dropdown_item">
+        <div class="subcollection_dropdown">
+          <span id="subcollection_dropdown_val">All</span>
+          <div id="select-arrow" class="select-arrow">
+            <svg viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+        </div>
+        {% if true %}
+          <div class="collection-meta-size">
+            <div class="collection-list-menu-wrapper">
+              <div class="collection-slider-wrap">
+                {%- for filter in collection.filters -%}
+                  {% if filter.label contains 'Product type' %}
+                    <div
+                      class="collection-title"
+                      data-menu-options="all"
+                    >
+                      <a data-val="all" href="?filter.p.product_type=" class="link js-link-collection"> All </a>
+                    </div>
+                    {% for value in filter.values limit: 8 %}
+                      {% if value.count > 0 %}
+                        {% if value.label != 'Jackets And Blazers'
+                          or value.label != 'Pants And Shorts'
+                          or value.label != 'Tops And Blouses'
+                        %}
+                          <div
+                            class="collection-title {% if value.active %}  active-menu{% endif %}"
+                            data-menu-options="{{ value.label | handle }}"
+                          >
+                            <a
+                              data-val="{{ value.label | escape }}"
+                              href="?filter.p.product_type={{ value.value }}"
+                              class="link js-link-collection _inner"
+                            >
+                              {{ value.label | escape }}
+                            </a>
+                          </div>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <div class="underline"></div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="filter_btn">
+        <svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 28" width="15">
+          <path fill-rule="evenodd" class="s0" d="m23 0.8c2.9 0 5.4 2.2 6 5h2.6c0.7 0 1.2 0.5 1.2 1.2 0 0.7-0.5 1.3-1.2 1.3l-2.6-0.1c-0.6 2.9-3.1 5-6 5-3 0-5.5-2.1-6.1-5h-14.9c-0.7 0-1.3-0.5-1.3-1.2 0-0.7 0.6-1.2 1.3-1.2h14.9c0.6-2.8 3.1-5 6.1-5zm-3.7 6.2c0 2.1 1.6 3.7 3.7 3.7 2 0 3.7-1.6 3.7-3.7 0-2-1.7-3.7-3.7-3.7-2.1 0-3.7 1.7-3.7 3.7z"/>
+          <path fill-rule="evenodd" class="s0" d="m10.6 15.7c3 0 5.5 2.1 6.1 4.9h14.9c0.7 0 1.2 0.6 1.2 1.2 0 0.7-0.5 1.3-1.2 1.3h-14.9c-0.6 2.8-3.1 4.9-6.1 4.9-3 0-5.5-2.1-6-4.9h-2.6c-0.7 0-1.3-0.6-1.3-1.3 0-0.6 0.6-1.2 1.3-1.2h2.6c0.5-2.8 3-4.9 6-4.9zm-3.7 6.1c0 2.1 1.7 3.7 3.7 3.7 2.1 0 3.7-1.6 3.7-3.7 0-2-1.6-3.7-3.7-3.7-2 0-3.7 1.7-3.7 3.7z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+{%- for filter in collection.filters limit: 1 -%}
+{%- endfor -%}
+{%- comment -%} This is just to get rid of the "this theme does not support filters" message in the shopify admin {%- endcomment -%}
+
+<div class="row  {% if full_width %}full-width-row{% endif %}">
+  <div class="small-12 columns collection-with-grid">
+    {%- paginate collection.products by products_per_page -%}
+      <div class="collection-container section-spacing-bottom">
+        <div id="ProductGridContainer">
+          <div class="sidebar-container facets--{{ facets_desktop }} facets--sidebar-{{ sidebar_size }} results--{{ collection.products.size }}">
+            {%- if facets_desktop == 'sidebar' -%}
+              {%- render 'facets-desktop',
+                results: collection,
+                enable_filtering: enable_filtering,
+                enable_sorting: enable_sorting,
+                show_counts: show_counts,
+                filter_color_swatches: filter_color_swatches
+              -%}
+            {%- endif -%}
+            <div>
+              <div class="facet-box-wrapper">
+                <div class="inner-box-facets">
+                  {%- render 'facets-bar',
+                    results: collection,
+                    enable_filtering: enable_filtering,
+                    enable_sorting: enable_sorting,
+                    facets_desktop: facets_desktop,
+                    filter_color_swatches: filter_color_swatches
+                  -%}
+                  {%- render 'facets-mobile',
+                    results: collection,
+                    enable_filtering: enable_filtering,
+                    enable_sorting: enable_sorting,
+                    show_counts: show_counts,
+                    filter_color_swatches: filter_color_swatches
+                  -%}
+                </div>
+              </div>
+              {%- if collection.products.size == 0 -%}
+                <div class="collection-empty collection" id="product-grid" data-id="{{ section.id }}">
+                  {% render 'svg-icons' with 'thb-no-products' %}
+                  <p>
+                    {{ 'sections.collection_template.empty' | t -}}
+                    <br>
+                    {%- if collection.terms -%}
+                      {{ 'sections.collection_template.use_fewer_filters_html' | t: link: collection.url }}
+                    {%- endif -%}
+                  </p>
+                </div>
+              {%- else -%}
+                <ul
+                  id="product-grid"
+                  data-id="{{ section.id }}"
+               data-pagination = "{{ section.settings.infinite-pagination }}"
+                  class="products collection row small-up-2 medium-up-{{ columns_desktop }} pagination--{{ pagination_type }}"
+                >
+                    {%- assign promotion_rendered = false -%}
+                  {%- for product in collection.products -%}
+                    {%- assign product_loop = forloop -%}
+                    {%- for block in section.blocks -%}
+                      {%- liquid
+                        assign display_promotion = false
+                        if product_loop.index == block.settings.promotion_position
+                          assign display_promotion = true
+                        endif
+
+                        if block.settings.promotion_collection != blank
+                          if  product_loop.index == block.settings.promotion_position and  promotion_rendered == false and paginate.current_page == 1
+                            assign display_promotion = true
+                          else
+                            assign display_promotion = false
+                          endif
+                        endif
+                      -%}
+                      {%- if display_promotion -%}
+                        {{- 'gallery.css' | asset_url | stylesheet_tag -}}
+                        <li
+                          style="--position:{{ block.settings.promotion_position_mobile }}"
+                          class="promotion-column column promotion-column-width--{{ block.settings.promotion_width }} product-columns-{{ columns_desktop }}"
+                        >
+                          {%- render 'product-promotion', block: block -%}
+                        </li>
+                       {%- assign promotion_rendered = true -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+<li class="column grid__item {% if localization.country.iso_code == 'US' and product.vendor == 'Bridal' %}no-price{% endif %}">
+  {%- render 'product-card-v1', product_card_product: product -%}
+</li>
+                  {%- endfor -%}
+                </ul>
+                {% render 'pagination', paginate: paginate, pagination_type: pagination_type, id: section.id %}
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- endpaginate -%}
+  </div>
+</div>
+{%- if enable_filtering or enable_sorting -%}
+  {%- if enable_filtering -%}
+    {{ 'nouislider.js' | asset_url | script_tag }}
+  {%- endif -%}
+  <script type="load" d-src="{{ 'facets.js' | asset_url }}"></script>
+{%- endif -%}
+
+<script type="load"> 
+  $(document).ready(function() {
+    const menu = document.querySelector(".collection-list-menu-wrapper,#dropdownCard");
+    menu.addEventListener("mouseover", (event) => {
+      if (event.target.classList.contains("link")) {
+        menu.style.setProperty(
+          "--underline-width",
+          `${event.target.offsetWidth}px`
+        );
+        menu.style.setProperty(
+          "--underline-offset-x",
+          `${event.target.offsetLeft}px`
+        );
+      }
+    });
+    menu.addEventListener("mouseleave", () =>
+      menu.style.setProperty("--underline-width", "0")
+    );
+  });
+  function applySorting(input) {
+    $("#temp_facet_filter input[value='" + input + "']").prop("checked", true);
+    $(".mobile-filters-apply").click();
+  }
+  $(document).ready(function() {
+  
+    $(window).on('scroll', function() {
+      var currentPosition = $(window).scrollTop();
+      var stickyElement = $('.facet-box-wrapper');
+  
+  
+      if (currentPosition >= 1) {
+        if ($("body").hasClass("filter-active")) {
+          stickyElement.removeClass('elementStickyScroll');
+        } else {
+          stickyElement.addClass('elementStickyScroll');
+        }
+      } else {
+        stickyElement.removeClass('elementStickyScroll');
+      }
+    });
+  });
+  $("#FacetFiltersForm-bar a").on("click", function() {
+    $('.facet-box-wrapper').removeClass('elementStickyScroll');
+  });
+  // $("body").on("click", ".js-link-collection", function(e) {
+  //   e.preventDefault();
+  //   let val = $(this).data("val");
+  //   $("facet-filters-form input[type='checkbox']").prop("checked", false);
+  //   $('[data-type="Product type"] .collapsible__content input[value="' + val + '"]').prop("checked", true);
+  //   $(".collection-title").removeClass("active-menu");
+  //   $(this).parent().addClass("active-menu");
+  //    $(".mobile-filters-apply").click();
+  
+  // })
+  // $("body").on("click", ".resetFilters", function(e){
+  //     e.preventDefault();
+  //   $('facet-filters-form [type="checkbox"]').prop("checked", false);
+  //   if($("facet-remove").length != 0)
+  //   $(".mobile-filters-apply").click();
+  // });
+</script>
+<script>
+  function toSlug(title) {
+    return 'bridal-' + title.toLowerCase().replace(/\s+/g, '-');
+  }
+  // On page load: set active class
+  window.addEventListener('DOMContentLoaded', () => {
+    const currentURL = window.location.href;
+    document.querySelectorAll('#custom-menu div').forEach(item => {
+      const title = item.dataset.title;
+
+      if (title) {
+        const slug = toSlug(title);
+
+        if (currentURL.includes(slug)) {
+          // Remove active from all
+          document.querySelectorAll('#custom-menu div').forEach(div => div.classList.remove('active'));
+          // Add active to matched item
+          item.classList.add('active');
+        }
+      }
+    });
+  });
+
+  // On click: simulate and set active
+  // document.querySelectorAll('#custom-menu div').forEach(item => {
+  //   item.addEventListener('click', function () {
+  //     const title = this.dataset.title;
+
+  //     if (title) {
+  //       const targetLink = document.querySelector(`.dropmenuoption[data-title="${title}"]`);
+
+  //       if (targetLink) {
+  //         targetLink.click();
+
+  //         // Remove active from all
+  //         document.querySelectorAll('#custom-menu div').forEach(div => div.classList.remove('active'));
+
+  //         // Add active to clicked item
+  //         this.classList.add('active');
+
+  //         // Optional: close dropdown
+  //         // document.getElementById('dropdown-content').style.display = 'none';
+  //       }
+  //     }
+  //   });
+  // });
+</script>
+<script>
+  $("body").on("click", ".resetFilters", function(e){
+      e.preventDefault();
+    $('facet-filters-form [type="checkbox"]').prop("checked", false);
+    if($("facet-remove").length != 0)
+    $(".mobile-filters-apply").click();
+  });
+</script>
+{% schema %}
+{
+  "name": "Product grid",
+  "class": "product-grid-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": false,
+      "label": "Make section full width"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 2,
+      "max": 48,
+      "step": 1,
+      "label": "Number of products",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Number of columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "link_list",
+      "id": "collection_menu",
+      "label": "Collection menu"
+    },
+    {
+      "type": "select",
+      "id": "pagination_type",
+      "options": [
+        {
+          "value": "paginated",
+          "label": "Paginated"
+        },
+        {
+          "value": "loadmore",
+          "label": "Click to load"
+        },
+        {
+          "value": "infinite",
+          "label": "Infinite"
+        }
+      ],
+      "default": "paginated",
+      "label": "Pagination",
+      "info": "Choose how additional pages of products are navigated."
+    },
+              {
+      "type": "range",
+      "id": "infinite-pagination",
+      "min": 2,
+      "max": 48,
+      "step": 1,
+      "label": "Pagination items",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Filtering and sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable filtering",
+      "info": "Customize [filters](/admin/menus)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "default": true,
+      "label": "Show filter values count"
+    },
+    {
+      "type": "checkbox",
+      "id": "filter_color_swatches",
+      "default": true,
+      "label": "Show color swatches"
+    },
+    {
+      "type": "select",
+      "id": "facets_desktop",
+      "options": [
+        {
+          "value": "sidebar",
+          "label": "Sidebar"
+        },
+        {
+          "value": "drawer",
+          "label": "Drawer"
+        }
+      ],
+      "default": "sidebar",
+      "label": "Desktop position",
+      "info": "Position of filters on desktop"
+    },
+    {
+      "type": "select",
+      "id": "sidebar_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "medium",
+      "label": "Sidebar size",
+      "info": "Changes the width of the sidebar"
+    },
+    {
+      "type": "text",
+      "id": "max-container",
+      "label": "Max container width"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promotion",
+      "name": "Promotion",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "promotion_collection",
+          "label": "Collection",
+          "info": "Show on specific collection only"
+        },
+        {
+          "type": "range",
+          "id": "promotion_position",
+          "min": 1,
+          "max": 24,
+          "step": 1,
+          "label": "Show in position on desktop",
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "promotion_position_mobile",
+          "min": 1,
+          "max": 24,
+          "step": 1,
+          "label": "Show in position on mobile",
+          "default": 1
+        },
+        {
+          "type": "select",
+          "id": "promotion_width",
+          "options": [
+            {
+              "value": "1",
+              "label": "1 column"
+            },
+            {
+              "value": "2",
+              "label": "2 columns"
+            }
+          ],
+          "default": "1",
+          "label": "Width"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Promotion",
+          "label": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "Advertise a promotion or a sale",
+          "label": "Description"
+        },
+        {
+          "id": "link_label",
+          "type": "text",
+          "label": "Button label",
+          "default": "Explore",
+          "info": "Leave the label blank to hide the button."
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_text_button",
+          "label": "Use text button",
+          "default": false
+        },
+        {
+          "id": "block_link",
+          "type": "url",
+          "label": "Link",
+          "info": "This will allow you to set a link to the promotion"
+        },
+        {
+          "type": "header",
+          "content": "Layout"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "Content position",
+          "options": [
+            {
+              "value": "top-left",
+              "label": "Top left"
+            },
+            {
+              "value": "top-center",
+              "label": "Top center"
+            },
+            {
+              "value": "top-right",
+              "label": "Top right"
+            },
+            {
+              "value": "middle-left",
+              "label": "Middle left"
+            },
+            {
+              "value": "middle-center",
+              "label": "Middle center"
+            },
+            {
+              "value": "middle-right",
+              "label": "Middle right"
+            },
+            {
+              "value": "bottom-left",
+              "label": "Bottom left"
+            },
+            {
+              "value": "bottom-center",
+              "label": "Bottom center"
+            },
+            {
+              "value": "bottom-right",
+              "label": "Bottom right"
+            }
+          ],
+          "default": "middle-center"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center",
+          "label": "Content alignment"
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 70
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

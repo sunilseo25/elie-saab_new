@@ -1,0 +1,474 @@
+<div class="" data-account-tab="profile">
+  {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+  {{ 'customer.js' | asset_url | script_tag }}
+  <div class="accound-page-wrapper">
+<style>
+  .edit-formbox input[disabled]{
+    opacity: 0.7;
+    background-color: #e8e8e8;
+  }
+  .custom_select_option svg {
+  position: absolute;
+  top: 21px;
+  right: 10px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+  @media only screen and (min-width: 1068px) {
+.fields.col-2-box{
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+  }
+</style>
+    <div id="recover" class="box-form">
+   <div class="password-form">
+             {% form 'reset_customer_password' %}
+			
+					<p class="title-head">Change your password</p>
+					{% if form.errors %}
+					<div class="form-notification error">
+						{% render 'svg-icons' with 'thb-error' %} {{ form.errors | default_errors }}
+					</div>
+					{% endif %}
+          <div class="field">
+            <input type="password" value="" id="password" name="customer[password]" class="full" size="16" placeholder="{{ 'customer.reset_password.password' | t }}" />
+
+          </div>
+          <div class="field">
+            <input type="password" value="" id="password_confirmation" name="customer[password_confirmation]" class="full" size="16" placeholder="{{ 'customer.reset_password.password_confirm' | t }}" />
+	       
+          </div>
+          <div class="field">
+            <button type="submit" class="button"><span>Save</span></button>
+          </div>
+        {% endform %}
+   </div>
+    </div>
+    <div class="profile-wrap-box">
+    <div class=" border-bottom space-around ">
+      <div class="space-container profile-box ">
+        <p class="title-head">Login</p>
+        <div class="list-contain">
+          <span class="title-light">{{ customer.email }}</span>
+          <span>
+            <a href="javascript:void(0)" class="link link-underline" onclick="changepassword();">Change password</a>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="information-wrapper space-around border-bottom">
+      <div class="space-container">
+        <p class="title-head">Your Information</p>
+        <div id="edit-information"  class="box-form">
+          <div class="edit-formbox form-box">
+            {%- form 'customer_address', customer.default_address, aria-labelledBy: 'AddressNewHeading' -%}
+              <div class="fields">
+                <div class="field">
+                  <input
+                    type="text"
+                    id="AddressFirstNameNew"
+                    name="address[first_name]"
+                    value="{{ form.first_name }}"
+                    autocomplete="given-name"
+                    placeholder="{{ 'customer.addresses.first_name' | t }}"
+                    class="full"
+                  >
+                </div>
+                <div class="field">
+                  <input
+                    type="text"
+                    id="AddressLastNameNew"
+                    name="address[last_name]"
+                    value="{{ form.last_name }}"
+                    autocomplete="family-name"
+                    placeholder="{{ 'customer.addresses.last_name' | t }}"
+                    class="full"
+                  >
+                </div>
+              </div>
+
+              <div class="fields">
+                <div class="field">
+                  <input
+                    type="text"
+                    id="AddressEmailNew"
+                    name="address[email]"
+                    value="{{ customer.email }}"
+                    autocomplete="family-name"
+                    placeholder="Email Address "
+                    class="full"
+                    disabled
+                  >
+                </div>
+                <div class="field">
+                  <input
+                    type="tel"
+                    id="AddressPhoneNew"
+                    name="address[phone]"
+                    value="{{ form.phone }}"
+                    autocomplete="tel"
+                    placeholder="Phone Number"
+                    class="full"
+                  >
+                </div>
+              </div>
+              <div class="field addres-submit">
+                <button class="button "><span>Save</span></button>
+              </div>
+            {%- endform -%}
+          </div>
+        </div>
+        <div class="inbox-inline">
+          <div class="flex-btw">
+            <div class="wrap-profile ">
+              <p class="title-light">{{ customer.first_name }}</p>
+              <p class="title-light">{{ customer.email }}</p>
+              {% if customer.phone != blank %}
+                <p class="title-light">{{ customer.phone }}</p>
+              {% endif %}
+            </div>
+
+            <div class="box-link">
+              <a href="javascript:void(0);" class="link link-underline" onclick="openInfo();">Edit</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="addres-info space-around">
+      <div class="address-wrapper-box box-form" id="change-address">
+        <div class="space-container">
+          <div class="address-wrapper form-box" id="shippingAddress">
+            <p class="title-head">Shipping Address</p>
+            {%- form 'customer_address', customer.default_address, aria-labelledBy: 'AddressNewHeading' -%}
+              <div class="fields">
+                <div class="field">
+                  <input
+                    type="text"
+                    id="AddressAddress1_{{ form.id }}"
+                    name="address[address1]"
+                    value="{{ form.address1 }}"
+                    autocomplete="address-line1"
+                    placeholder="Addresses"
+                    class="full"
+                  >
+                </div>
+                <div class="field">
+                  <input
+                    type="text"
+                    id="AddressAddress2_{{ form.id }}"
+                    name="address[address2]"
+                    value="{{ form.address2 }}"
+                    autocomplete="address-line2"
+                    placeholder=" Apartment, Suite, etc... (Optional)"
+                    class="full"
+                  >
+                </div>
+              </div>
+
+              <div class="fields">
+                <div class="field">
+                  <div class="fields mobile-col">
+                    <div class="field">
+                      <input
+                        type="text"
+                        id="AddressZip_{{ form.id }}"
+                        name="address[zip]"
+                        value="{{ form.zip }}"
+                        autocapitalize="characters"
+                        autocomplete="postal-code"
+                        placeholder="{{ 'customer.addresses.zip' | t }}"
+                        class="full"
+                      >
+                    </div>
+                    <div class="field">
+                      <input
+                        type="text"
+                        id="AddressProvince_{{ form.id }}"
+                        name="address[province]"
+                        value="{{ form.province }}"
+                        autocapitalize="characters"
+              autocomplete="address-level1"
+                        placeholder=" State "
+                        class="full"
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="fields mobile-col col-2-box">
+                    <div class="field">
+                      <input
+                        type="text"
+                        id="AddressCity_{{ form.id }}"
+                        name="address[city]"
+                        value="{{ form.city }}"
+                        autocomplete="address-level2"
+                        placeholder="{{ 'customer.addresses.city' | t }}"
+                        class="full"
+                      >
+                    </div>
+                    <div class="field custom_select_option">
+                      {% comment %}
+                      <input
+                        type="text"
+                        id="AddressCountry_{{ form.id }}"
+                        name="address[country]"
+                        value="{{ form.country }}"
+                        autocapitalize="characters"
+                        autocomplete="country"
+                        placeholder="Country "
+                        class="full"
+                      >
+{% endcomment %}
+                                   <select
+                    id="AddressCountry_{{ form.id }}"
+                    name="address[country]"
+                    data-address-country-select
+                    data-default="{{ form.country }}"
+                    data-form-id="{{ form.id }}"
+                    value="{{ form.country  }}"
+                    autocomplete="country"
+                  >
+                    {{ all_country_option_tags }}
+                  </select>
+                        <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  
+                    </div>
+
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="field addres-submit">
+                <button class="button "><span>Save</span></button>
+              </div>
+            {%- endform -%}
+          </div>
+        </div>
+        <div class="bill-address">
+          <div class="space-container">
+            <p class="title-head">Billing Address</p>
+            <div class="checkbox-wrapper">
+              <div class="box-check">
+                <input type="radio" id="checkbox1" name="checkbox-group" checked>
+                <label for="checkbox1">
+                  <span class="check-box"></span>
+
+                  <span>Same as Shipping Address </span>
+                </label>
+              </div>
+              <div class="box-check">
+                <input type="radio" id="checkbox2" name="checkbox-group" >
+                <label for="checkbox2" class="billing-checkbox">
+                  <span class="check-box"></span>
+
+                  <span>Use a different billing address </span>
+                </label>
+              </div>
+            </div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const wrapper = document.querySelector(".checkbox-wrapper");
+  const billingAddress = document.getElementById("address-billing");
+
+  if (!wrapper || !billingAddress) {
+    console.error("Required elements not found!");
+    return;
+  }
+
+  function handleClick(e) {
+    // Check if click was on a label or radio button
+    if (e.target.matches('input[type="radio"], label')) {
+      setTimeout(() => {
+        billingAddress.classList.toggle("active", 
+          document.getElementById("checkbox2").checked
+        );
+      }, 10);
+    }
+  }
+
+  wrapper.addEventListener("click", handleClick);
+  
+  // Initialize
+  billingAddress.classList.toggle("active", 
+    document.getElementById("checkbox2").checked
+  );
+});
+</script>
+
+            <div class="address-wrapper form-box " id="address-billing">
+              {%- form 'customer_address', customer.default_address, aria-labelledBy: 'AddressNewHeading' -%}
+                <div class="fields">
+                  <div class="field">
+                    <input
+                      type="text"
+                      id="AddressAddress1_{{ form.id }}-bill"
+                      name="address[address1]"
+                      value="{{ form.address1 }}"
+                      autocomplete="address-line1"
+                      placeholder="Addresses"
+                      class="full"
+                    >
+                  </div>
+                  <div class="field">
+                    <input
+                      type="text"
+                      id="AddressAddress2_{{ form.id }}-bill"
+                      name="address[address2]"
+                      value="{{ form.address2 }}"
+                      autocomplete="address-line2"
+                      placeholder=" Apartment, Suite, etc... (Optional)"
+                      class="full"
+                    >
+                  </div>
+                </div>
+
+                <div class="fields">
+                  <div class="field">
+                    <div class="fields mobile-col ">
+                      <div class="field">
+                        <input
+                          type="text"
+                          id="AddressZip_{{ form.id }}-bill"
+                          name="address[zip]"
+                          value="{{ form.zip }}"
+                          autocapitalize="characters"
+                          autocomplete="postal-code"
+                          placeholder="{{ 'customer.addresses.zip' | t }}"
+                          class="full"
+                        >
+                      </div>
+                      <div class="field">
+                        <input
+                          type="text"
+                          id="AddressProvince_{{ form.id }}-bill"
+                          name="address[province]"
+                          value="{{ form.province }}"
+                          autocapitalize="characters"
+                          autocomplete="postal-code"
+                          placeholder=" State "
+                          class="full"
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="fields mobile-col col-2-box">
+                      <div class="field">
+                        <input
+                          type="text"
+                          id="AddressCity_{{ form.id }}-bill"
+                          name="address[city]"
+                          value="{{ form.city }}"
+                          autocomplete="address-level2"
+                          placeholder="{{ 'customer.addresses.city' | t }}"
+                          class="full"
+                        >
+                      </div>
+                      <div class="field rel custom_select_option ">
+                        {% comment %}
+                        <input
+                          type="text"
+                          id="AddressCountry_{{ form.id }}"
+                          name="address[country]"
+                          value="{{ form.country }}"
+                          autocapitalize="characters"
+                          autocomplete="country"
+                          placeholder="Country "
+                          class="full"
+                        >
+                {% endcomment %}
+                          <select
+                    id="AddressCountry_{{ form.id }}-bill"
+                    name="address[country]"
+                    data-address-country-select
+                    data-default="{{ form.country }}"
+                    data-form-id="{{ form.id }}"
+                    autocomplete="country"
+                                         value="{{ form.country  }}"
+                  >
+                    {{ all_country_option_tags }}
+                  </select>
+                        <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+     <span id="AddressProvinceContainer_{{ form.id }}}-sell"></span>
+                <div class="field addres-submit">
+                  <button class="button "><span>Save</span></button>
+                </div>
+              {%- endform -%}
+            </div>
+          </div>
+        </div>
+        <script>
+   window.addEventListener('load', () => {
+
+      const billingCountry = document.getElementById("address-billing");
+    if (billingCountry) {
+        setTimeout(function() {
+            const countrySelect = billingCountry.querySelector("select[data-default]");
+            if (countrySelect) {
+                const defaultCountry = countrySelect.getAttribute("data-default");
+                countrySelect.value = defaultCountry;
+            }
+        }, 200);
+    }
+
+
+
+});
+        </script>
+        <!-- Billing address -->
+      </div>
+      <div class="address-container">
+        <div class="space-container">
+          <div
+            class="flex-btw"
+          >
+            <div class="flex-start">
+              <div class="wrap-start">
+                <p class="title-head">Shipping Address</p>
+                <div class="title-light">{{ customer.default_address | format_address }}</div>
+              </div>
+              <div class="wrap-start">
+                <p class="title-head">Billing Address</p>
+                <div class="title-light">{{ customer.default_address | format_address }}</div>
+              </div>
+            </div>
+            <div class="box-link">
+              <a href="javascript:void(0);" class="link link-underline" onClick="openAddress()">Edit</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<script>
+  function openAddress(){
+    document.querySelector("#change-address").classList.add("active")
+  }
+  function openInfo(){
+     document.querySelector("#edit-information").classList.add("active")
+  }
+  function changepassword(){
+      document.querySelector("#recover").classList.add("active")
+  }
+</script>
+{% schema %}
+{
+  "name": "Profile account",
+  "settings": [],
+  "presets":[
+    {
+      "name":"Profile account"
+    }
+  ]
+}
+{% endschema %}

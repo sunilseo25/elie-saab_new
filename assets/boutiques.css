@@ -1,0 +1,265 @@
+.custom-sticky-style {
+  position: sticky;
+  top: 60px;
+  background: #fbfbfb;
+  z-index: 2;
+}
+.dire-title {
+  margin-top: 15x;
+  margin-bottom: 15px;
+  font-size: 13px;
+  color: #000;
+  font-weight: 500;
+  justify-content: center;
+}
+.gdir {
+  border: none;
+  position: relative;
+}
+.gdir::after {
+  background-color: #000;
+  border-radius: 4px;
+  content: " ";
+  display: block;
+  margin: 3px auto 0;
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 2px;
+  transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+}
+.gdir:hover:after {
+  width: 0;
+  right: 0;
+}
+
+.template-page-monaco-boutique .text-size-regular p,
+.template-page-elie-saab-maison-milan .text-size-regular p {
+  font-size: 15px;
+  font-weight: 500;
+  font-family: "Futura";
+  margin: 15px 0;
+  text-align: center;
+}
+.template-page-monaco-boutique #borderBottom .rich-text,
+.template-page-elie-saab-maison-milan #borderBottom .rich-text {
+  border-bottom: 1px solid #d5d5d4;
+}
+.template-page-monaco-boutique .text-slideshow,
+.template-page-elie-saab-maison-milan .text-slideshow {
+  padding: 20px 0px;
+}
+.template-page-monaco-boutique .text-slideshow .row,
+.template-page-elie-saab-maison-milan .text-slideshow .row {
+  padding: unset;
+  margin: unset;
+  width: 100%;
+  max-width: 100%;
+}
+.template-page-elie-saab-maison-milan .text-slideshow .row .columns,
+.template-page-monaco-boutique .text-slideshow .row .columns {
+  padding: unset;
+}
+button.flickity-nav.slick_prev,
+.template-page-boutiques-home
+  .text-slideshow
+  .row
+  .columns
+  i.fa.fa-chevron-left,
+.template-page-monaco-boutique
+  .text-slideshow
+  .row
+  .columns
+  i.fa.fa-chevron-left,
+.template-page-elie-saab-maison-milan
+  .text-slideshow
+  .row
+  .columns
+  i.fa.fa-chevron-left,
+.template-page-monaco-boutique .text-slideshow .slick-prev1 svg,
+.text-slideshow .slick-prev1 svg {
+  left: 100px;
+}
+button.flickity-nav.slick_next,
+.template-page-boutiques-home
+  .text-slideshow
+  .row
+  .columns
+  i.fa.fa-chevron-right,
+.template-page-monaco-boutique
+  .text-slideshow
+  .row
+  .columns
+  i.fa.fa-chevron-right,
+.template-page-elie-saab-maison-milan
+  .text-slideshow
+  .row
+  .columns
+  i.fa.fa-chevron-right,
+.template-page-monaco-boutique .text-slideshow .slick-next1 svg,
+.text-slideshow .slick-next1 svg {
+  right: 100px;
+}
+
+@media (min-width:770px){
+
+  .flickity-prev{
+
+left: 15px;
+
+  }
+
+    .flickity-next{
+
+right: 15px;
+
+  }
+
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1280px) {
+  .template-page-boutiques-home
+    .text-slideshow
+    .row
+    .columns
+    i.fa.fa-chevron-left,
+  .template-page-monaco-boutique
+    .text-slideshow
+    .row
+    .columns
+    i.fa.fa-chevron-left,
+  .template-page-elie-saab-maison-milan
+    .text-slideshow
+    .row
+    .columns
+    .slick-prev1
+    svg {
+    left: 7%;
+  }
+  .template-page-boutiques-home
+    .text-slideshow
+    .row
+    .columns
+    i.fa.fa-chevron-right,
+  .template-page-monaco-boutique
+    .text-slideshow
+    .row
+    .columns
+    i.fa.fa-chevron-right,
+  .template-page-elie-saab-maison-milan
+    .text-slideshow
+    .row
+    .columns
+    .slick-next1
+    svg {
+    right: 7%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .template-page-boutiques-home
+    .text-slideshow
+    .row
+    .columns
+    i.fa.fa-chevron-left,
+  .template-page-boutiques-home
+    .text-slideshow
+    .row
+    .columns
+    i.fa.fa-chevron-left {
+    display: none;
+  }
+  .template-page-elie-saab-maison-milan
+    .text-slideshow
+    .row
+    .columns
+    .slick-prev1
+    svg,
+  .template-page-elie-saab-maison-milan
+    .text-slideshow
+    .row
+    .columns
+    .slick-next1
+    svg {
+    display: none;
+  }
+  .template-page-monaco-boutique .text-size-regular p,
+  .template-page-elie-saab-maison-milan .text-size-regular p {
+    font-weight: 600;
+  }
+  .template-page-monaco-boutique
+    #shopify-section-template--19270376587506__rich_text_JCNBwW
+    .rich-text
+    .rte {
+    margin-bottom: 50px;
+  }
+  .template-page-elie-saab-maison-milan
+    #shopify-section-template--19313269571826__rich_text_JCNBwW
+    .rich-text
+    .rte {
+    margin-bottom: 35px;
+  }
+  .template-page-elie-saab-maison-milan
+    #shopify-section-template--19313269571826__rich_text_JCNBwW
+    p {
+    font-weight: 400;
+    text-align: justify;
+  }
+  .custom-map google-map {
+    border-bottom: unset;
+  }
+  .google-map .google-map--container {
+    margin-bottom: 0px;
+  }
+  .template-page-monaco-boutique .dire-desc,
+  .template-page-elie-saab-maison-milan .dire-desc {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .template-page-elie-saab-maison-milan .google-map--information {
+    order: 1;
+    padding: 0;
+    padding-bottom: 30px;
+  }
+  .google-map .mobile-height-350 {
+    order: 2;
+  }
+  .template-page-boutiques-home .text-slideshow {
+    padding: unset !important;
+    margin-top: 4rem !important;
+  }
+  .template-page-boutiques-home .video-collection-tabs__list:after {
+    width: 100%;
+  }
+  #shopify-section-template--19270376587506__rich_text_JCNBwW .rich-text {
+    padding: 0 10px;
+  }
+  .template-page-elie-saab-maison-milan
+    #shopify-section-template--19313269571826__rich_text_JCNBwW
+    p {
+    padding: 0 10px;
+  }
+  .rich-text .rte p:last-child {
+    font-weight: 100;
+    text-align: justify;
+  }
+
+  div#borderBottom p {
+    text-align-last: center;
+    font-weight: 500;
+  }
+  .store-details {
+    padding-bottom: 11px;
+  }
+  section.custom-slider-section .row {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  section.custom-slider-section .row .columns {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .template-page-monaco-boutique .dire-details {
+    text-align: center;
+  }
+}

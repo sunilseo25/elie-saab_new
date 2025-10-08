@@ -1,0 +1,205 @@
+<style>
+  @media screen and (max-width:749px){
+    .variant-selects--sticky{
+      display:none;
+    }
+   product-add-to-cart-sticky .product-add-to-cart-sticky--content{
+      display: block;
+    overflow: visible;
+    padding-top: 0px;
+
+    }
+    product-add-to-cart-sticky{
+      padding:0 !important;
+      border-radius:5px;
+      left:15px;
+      max-width:unset !important;
+      overflow:hidden;
+           transform:unset !important;
+      visibility:hidden;
+      opacity:0;
+          /* transition: bottom 0.5s ease-in; */
+ 
+    }
+.product-add-to-cart-sticky.sticky--visible{
+      visibility: visible;
+    opacity: 1;
+  bottom:50px
+}
+
+    .product-add-to-cart-sticky.product-over{
+      bottom:var(--bottom);
+      /* transition:bottom 0.5s ease-in; */
+    }
+    product-add-to-cart-sticky .product-form{
+      margin-top:0px;
+    }
+    .product-add-to-cart-sticky.form-visible{
+      bottom:unset;
+      top:-100px;
+            transition: top 0.5s ease-in;
+    }
+        .product-add-to-cart-sticky.sticky-top{
+           top: 70px;
+        bottom: unset;
+      transition: top 0.5s ease-in;
+  
+    }
+  }
+</style>
+
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+<product-add-to-cart-sticky class="product-add-to-cart-sticky no-js-hidden" data-section="{{ section.id }}">
+  {% comment %}
+	<button class="product-add-to-cart-sticky--inner">
+		<div class="product-add-to-cart-sticky--image" id="product-image-{{ section.id }}--sticky">
+			{%- if media -%}
+				{%- render 'responsive-image', image: media, sizes: '96x96', priority: 'low' -%}
+			{%- endif -%}
+		</div>
+		<div class="product-add-to-cart-sticky--info">
+			<div class="product-add-to-cart-sticky--title">{{ product.title }}</div>
+			<div id="price-{{ section.id }}--sticky">
+				{% render 'product-price', product: product, use_variant: true, show_badges: false %}
+			</div>
+		</div>
+		<span class="plus"></span>
+	</button>
+ {% endcomment %}
+	<div class="product-add-to-cart-sticky--content">
+		{%- unless product.has_only_default_variant  -%}
+		<variant-selects id="variant-selects-{{ section.id }}--sticky" class="no-js-hidden variant-selects--sticky" data-section="{{ section.id }}" data-url="{{ product.url }}" data-sticky="1" data-is-disabled="{{ is_disabled }}">
+			<div class="variations">
+				{%- for option in product.options_with_values -%}
+					{%- liquid
+						assign option_name = option.name | downcase | escape
+						assign option_type = picker_type
+						if color_picker
+							if option_name contains 'color' or option_name contains 'colour' or option_name contains 'couleur' or option_name contains 'farbe'
+								assign option_type = 'color'
+							endif
+							# Additional swatch variant options set inside theme settings
+							assign color_swatches_variant_option = settings.color_swatches_variant_option | downcase | split: ', '
+
+							if color_swatches_variant_option contains option_name
+								assign option_type = 'color'
+							endif
+						endif
+					-%}
+                      {%- capture country_size -%}
+                      <div class="dropdown">
+                        <div class="dropdown-toggle">{% render 'svg-icons' with 'thb-dropdown-bottom' %}<span>EU</span></div>
+                        <div class="dropdown-menu">
+                          <button class="country-btn active" data-country="EU">EU</button>
+                          <button class="country-btn" data-country="US">US</button>
+                          <button class="country-btn" data-country="IT">EU</button>
+                          <button class="country-btn" data-country="UK">UK</button>
+                          <button class="country-btn" data-country="JP">JP</button>
+                          <button class="country-btn" data-country="AU">AU</button>
+                        </div>
+                      </div>
+                    {%- endcapture -%}
+					{% render 'product-option', option_type: option_type, product: product, option: option, forloop: forloop, product_form_id: product_form_id, sticky: true,country_size: country_size %}
+				{%- endfor -%}
+			</div>
+			<script type="application/json">
+				{{ product.variants | json }}
+			</script>
+		</variant-selects>
+		{%- endunless -%}
+		{%- if product != blank -%}
+          {%- liquid
+            assign product_template = product.template_suffix | escape 
+            if product.metafields.theme.preorder and product.available
+              assign product_template = 'pre-order'
+            endif
+          -%}
+		  <product-form class="product-form" data-sticky="1" data-section="{{ section.id }}" template="{{ product_template | escape }}">
+            <div class="product-form__error-message-wrapper form-notification error" role="alert" hidden>
+		      {% render 'svg-icons' with 'thb-error' %}
+		      <span class="product-form__error-message"></span>
+		    </div>
+            <div class="product-add-to-cart-container">
+              <div class="form-notification error" style="display:none;"></div>
+              <div class="add_to_cart_holder">
+                {% unless product.has_only_default_variant %}
+                  {% for option in product.options_with_values %}
+                    {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}
+                      <button
+                        type="button"
+                        name="add"
+                        id="AddToCartSticky"
+                        class="select_variant single-add-cart-button button{% if block.settings.outline_button %} outline{% endif %} {% unless product.selected_or_first_available_variant.available %}sold-out{% endunless %}"
+                        {% if product.selected_or_first_available_variant.available == false %}
+                          disabled
+                        {% endif %}
+                      >
+                        <span class="single-add-to-cart-button--text">
+                          {%- liquid
+                            if product.selected_or_first_available_variant.available == false
+                              assign button_content = 'products.product.sold_out' | t
+                            else
+                              if product_template == 'pre-order'
+                                assign button_content = 'products.product.pre_order' | t
+                              else
+                                assign button_content = 'products.product.add_to_cart' | t
+                              endif
+                            endif
+                          -%}
+                          {{- button_content -}}
+                        </span>
+                      </button>
+                    {% endif %}
+                  {% endfor %}
+                {% endunless %}
+                <button type="submit" name="add" id="AddToCartSticky" class="single-add-to-cart-button button{% if outline_button %} outline{% endif %} {% unless product.selected_or_first_available_variant.available %}sold-out{% endunless %}" {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %} form="{{ product_form_id }}">
+                  <span class="single-add-to-cart-button--text">
+                    {%- liquid
+                      if product.selected_or_first_available_variant.available == false
+                        assign button_content = 'products.product.sold_out' | t
+                      else
+                        if product.template_suffix contains 'pre-order'
+                          assign button_content = 'products.product.pre_order' | t
+                        else
+                          assign button_content = 'products.product.add_to_cart' | t
+                        endif
+                      endif
+                    -%}
+                    {{- button_content -}}
+                  </span>
+                  <span class="loading-overlay">
+                    {% render 'svg-icons' with 'thb-loading' %}
+                  </span>
+                  <span class="added_bag">
+                    {% render 'svg-icons' with 'thb-availability-check' %}
+                  </span>
+                </button>
+                <div class="notify_card">
+                  <button class="notify_btn button" type="button">Notify when size is available</button>
+                  <div id="custom_notify" class="custom_notify">
+                    <input type="email" class="external-email" id="external-email" placeholder="Enter your email to be notified"/>
+                    <div class="external-button-box" >
+                      <span class="submit-button-box"><svg viewBox="0 0 10 6" width="14" class="icon-caret"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path></svg></span>
+                    </div>
+                    <span class="success_message"> <span class="added_bag">{% render 'svg-icons' with 'thb-availability-check' %}</span> We’ll notify you</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </product-form>
+		{%- else -%}
+	    <div class="product-form">
+	      <div class="product-form__buttons form">
+	        <button
+	          type="submit"
+	          name="add"
+	          class="single_add_to_cart_button button sold-out"
+	          disabled
+	        >
+	          <span class="single-add-to-cart-button--text">{{ 'products.product.sold_out' | t }}</span>
+	        </button>
+	      </div>
+	    </div>
+	  {%- endif -%}
+	</div>
+</product-add-to-cart-sticky>

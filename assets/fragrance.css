@@ -1,0 +1,129 @@
+.custom-sticky-style {
+  position: sticky;
+  top: 70px;
+  background: #fbfbfb;
+  z-index: 2;
+}
+.template-page-fragrance-homme #lhomme {
+  padding: unset;
+}
+.template-page-fragrance-homme #lhomme .row {
+  padding: unset;
+  max-width: 100%;
+}
+.template-page-fragrance-homme #lhomme .text-with-line {
+  margin: 0 auto;
+  padding: 0 35px;
+  max-width: 1440px;
+}
+.template-page-fragrance-homme #lhomme i.fa.fa-chevron-left {
+  left: 100px;
+}
+.template-page-fragrance-homme #lhomme i.fa.fa-chevron-right {
+  right: 100px;
+}
+@media screen and (min-width: 1441px) and (max-width: 1537px) {
+  .template-page-fragranceshome #rose-petal,
+  .template-page-fragranceshome #lovely {
+    margin: unset;
+  }
+  .template-page-fragranceshome #rose-petal .row,
+  .template-page-fragranceshome #lovely .row {
+    max-width: 100%;
+  }
+  .template-page-fragranceshome #rose-petal .row i.fa.fa-chevron-left,
+  .template-page-fragranceshome #lovely .row i.fa.fa-chevron-left {
+    left: 100px;
+  }
+  .template-page-fragranceshome #rose-petal .row i.fa.fa-chevron-right,
+  .template-page-fragranceshome #lovely .row i.fa.fa-chevron-right {
+    right: 100px;
+  }
+  .template-page-fragrance-homme #lhomme .row {
+    max-width: 100%;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1280px) {
+  .template-page-fragranceshome #rose-petal .row i.fa.fa-chevron-left,
+  .template-page-fragranceshome #lovely .row i.fa.fa-chevron-left {
+    left: 7%;
+  }
+  .template-page-fragranceshome #rose-petal .row i.fa.fa-chevron-right,
+  .template-page-fragranceshome #lovely .row i.fa.fa-chevron-right {
+    right: 7%;
+  }
+}
+@media screen and (max-width: 768px) {
+  /* .template-page-fragranceshome #girl-of-now .text-with-line,
+  .template-page-fragranceshome #girl-of-now .text-slideshow-description,
+  .template-page-fragranceshome #rose-petal .text-with-line,
+  .template-page-fragranceshome #rose-petal .text-slideshow-description,
+  .template-page-fragranceshome #lovely .text-with-line,
+  .template-page-fragranceshome #lovely .text-slideshow-description,
+  .template-page-fragranceshome #shine .text-with-line,
+  .template-page-fragranceshome #shine .text-slideshow-description,
+  .template-page-fragranceshome #forever .text-with-line,
+  .template-page-fragranceshome #forever .text-slideshow-description {
+    padding: 0 15px;
+  } */
+  .template-page-fragranceshome .customHide {
+    height: 550px;
+    margin-bottom: unset !important;
+  }
+  .template-page-fragrance-le-parfum #le-parfum .row,
+  .template-page-fragrance-le-parfum #le-parfum .row .columns,
+  .template-page-fragrance-le-parfum #bridal .row,
+  .template-page-fragrance-le-parfum #bridal .row .columns,
+  .template-page-fragrance-le-parfum #lumiere .row,
+  .template-page-fragrance-le-parfum #lumiere .row .columns,
+  .template-page-fragrance-le-parfum #royal .row,
+  .template-page-fragrance-le-parfum #royal .row .columns,
+  .template-page-fragrance-le-parfum #white .row,
+  .template-page-fragrance-le-parfum #white .row .columns,
+  .template-page-fragrance-le-parfum #essentiel .row,
+  .template-page-fragrance-le-parfum #essentiel .row .columns,
+  .template-page-fragrance-elixir #elixir .row,
+  .template-page-fragrance-elixir #elixir .row .columns,
+  .template-page-fragrance-elixir #elixir-love .row,
+  .template-page-fragrance-elixir #elixir-love .row .columns {
+    padding: unset;
+  }
+  .template-page-fragrance-le-parfum #bridal .custom-slideshow1,
+  .template-page-fragrance-le-parfum #le-parfum .custom-slideshow1,
+  .template-page-fragrance-le-parfum #lumiere .custom-slideshow1,
+  .template-page-fragrance-le-parfum #royal .custom-slideshow1,
+  .template-page-fragrance-le-parfum #white .custom-slideshow1,
+  .template-page-fragrance-le-parfum #essentiel .custom-slideshow1,
+  .template-page-fragrance-elixir #elixir .custom-slideshow1,
+  .template-page-fragrance-elixir #elixir-love .custom-slideshow1 {
+    padding: 0 16px;
+  }
+  .template-page-fragranceshome .text-with-line,
+  .template-page-fragrance-le-parfum .text-with-line {
+    padding: 20px 15px;
+  }
+  .template-page-fragrance-le-parfum .customHide,
+  .template-page-fragrance-homme .customHide,
+  .template-page-fragrance-elixir .customHide {
+    margin-bottom: unset !important;
+  }
+  .template-page-fragrance-homme #lhomme .text-with-line,
+  .template-page-fragrance-elixir .text-with-line {
+    padding: 20px 15px;
+    margin-bottom: 1rem !important;
+  }
+  a.rdmore {
+    font-size: 16px !important;
+    font-weight: 500 !important;
+  }
+  a.rdmore:after {
+    height: 1px !important;
+    bottom: -5px !important;
+  }
+  .custom-sticky-style {
+    position: relative !important;
+    top: unset !important;
+    z-index: 1 !important;
+  }
+}

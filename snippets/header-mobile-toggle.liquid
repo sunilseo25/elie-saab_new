@@ -1,0 +1,346 @@
+<style>
+  #MobileMenuLocalization .language-selector .text-small{
+    display:none;
+  }
+  @media (min-width:768px){
+    details.mobile-toggle-wrapper{
+      overflow:visible;
+    }
+    .mobile-toggle-wrapper .mobile-toggle{
+      position:relative;
+    }
+  }
+  .mobile-toggle-wrapper.active .mobile-toggle:after{
+    display: inline-block;
+    font-size: 15px;
+    font-weight: 500;
+    content: "Close";
+    color: #33383c;
+    opacity: 1;
+    transition: opacity 0.3s ease 0.3s;
+  }
+</style>
+
+<div class="mobile-toggle-wrapper">
+  <summary class="mobile-toggle">
+    <svg class="horizontal" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="8" width="14" height="1.4" rx="0.7" class="rect1" fill="currentColor"></rect><rect x="5" y="14.2" width="14" height="1.4" rx="0.7" class="rect2" fill="currentColor"></rect></svg>
+  </summary>
+  <nav id="mobile-menu" class="mobile-menu-drawer" role="dialog" tabindex="-1">
+    <div class="close-toggle">
+      <summary class="mobile-toggle" id="custom-toggle-button">
+        <svg class="cross" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="8" width="14" height="1.4" rx="0.7" class="rect1" fill="currentColor"></rect><rect x="5" y="14.2" width="14" height="1.4" rx="0.7" class="rect2" fill="currentColor"></rect></svg>
+      </summary>
+    </div>
+    <div class="mobile-menu-drawer--inner">
+      <div class="mobile-menu main-tab-section">
+        <ul class="nav nav-tabs main-header-tab">
+          <li>
+            <div class="link-container parent-menu active nav-link" data-bs-toggle="tab" data-bs-target="#firstoption">
+              <span class="parent-link">{{ header_settings.menu_label1 }}</span>
+            </div>
+          </li>
+          <li>
+            <a class="link-container parent-menu nav-link" data-bs-toggle="tab" data-bs-target="#secondoption">
+              <span class="parent-link">{{ header_settings.menu_label2 }}</span>
+            </a>
+          </li>
+        </ul>
+        <div class="underline-progress" style="--color-footer-border: #c9c9c9;"><div class="underline__offset under_progress"></div></div>
+      </div>
+      
+      <div class="drawer-body">
+        <ul class="mobile-menu">
+            <li class="menu-ontent firstoption active" id="firstoption">
+                <ul class="sub-menu outersubmenu">
+                  {%- render 'header-mobile-menu',
+                    header_settings: header_settings,
+                    menu: header_settings.menu,
+                    blocks: blocks
+                  -%}
+                </ul>
+            </li>
+            <li class="menu-ontent secondoption" id="secondoption">
+                <ul class="sub-menu outersubmenu">
+                  {%- render 'header-mobile-menu',
+                    header_settings: header_settings,
+                    menu: header_settings.menu2,
+                    blocks: blocks
+                  -%}
+                </ul>
+            </li>
+        </ul>
+        <div class="thb-mobile-menu-footer">
+          {% if header_settings.first_label != blank %}
+            <div class="menu-option">
+              <a href="{{ header_settings.first_url }}" class="link">
+                {{ header_settings.first_label }}
+              </a>
+            </div>
+          {% endif %}
+          {% if header_settings.second_label != blank %}
+            <div class="menu-option">
+              <a href="{{ header_settings.second_url }}" class="link">
+                {{ header_settings.second_label }}
+              </a>
+            </div>
+          {% endif %}
+
+          <div class="switch-mobile-btn aa">
+            <span class="text-wrapp">{{ header_settings.accessiblity_label }}</span>
+            <span class="switch-button">
+              <label class="switch-btn" for="switch-access">
+                <input type="checkbox" id="switch-access">
+                <span class="slider-switch round"></span>
+              </label>
+              <button type="text" class="accessibility-btn" style="display:none;"></button>
+              <script>
+                const switchWrapper = document.querySelector("#switch-access");
+                const accessibilityBtn = document.querySelector(".accessibility-btn");
+
+                switchWrapper.addEventListener("change", function () {
+                  console.log("change event")
+                  accessibilityBtn.click();
+                });
+              </script>
+            </span>
+          </div>
+          {% comment %}
+            {%- if shop.customer_accounts_enabled -%}
+              {%- if customer -%}
+                {%- assign profile_link = routes.account_url -%}
+                {%- capture profile_text -%}
+                  {{ 'sections.header.my_account' | t }}
+                {%- endcapture -%}
+              {%- else -%}
+                {%- assign profile_link = routes.account_login_url -%}
+                {%- capture profile_text -%}
+                  {{ 'sections.header.login' | t }}
+                {%- endcapture -%}
+              {%- endif -%}
+              <a class="thb-mobile-account-link" href="{{ profile_link | escape }}" title="{{ profile_text | escape }}">{%- render 'svg-icons' with 'myaccount' %} {{ profile_text }}</a>
+            {%- endif -%}
+          {% endcomment %}
+          <div class="no-js-hidden localization-option">
+            <div class="local_option">
+              {%- render 'drawer-localization',
+                id: 'MobileMenuLocalization',
+                show_language_switcher: header_settings.show_language_switcher,
+                show_currency_switcher: header_settings.show_currency_switcher
+              -%}
+            </div>
+          </div>
+        </div>
+      </div>
+      <link rel="stylesheet" href="{{ 'mobile-menu.css' | asset_url }}">
+      <noscript>{{ 'mobile-menu.css' | asset_url | stylesheet_tag }}</noscript>
+    </div>
+  </nav>
+  <div class="white_bg"></div>
+  <div class="Overlay_overlay"></div>
+</div>
+<a class="thb-secondary-area-item d-none" href="{{ routes.search_url }}" title="{{ 'sections.header.search' | t }}">
+  <img class="icon-item" width="20" height="20" src="{{ '8.png' | asset_url }}">
+</a>
+
+<script>
+/* ===========================
+   SAVE: remember menu path
+   =========================== */
+(function () {
+  function getHandle(el) {
+    return el?.getAttribute('data-handle') || '';
+  }
+
+  function savePathFromAnchor(a) {
+    if (!a.closest('.mobile-menu')) return;
+
+    const activeMenuId = a.closest('.menu-ontent')?.id || ''; // firstoption / secondoption
+    const path = [];
+
+    // TOP (sub-category summary) or top link
+    const topSummary = a.closest('.link-container.sub-category')
+      ?.querySelector('summary.parent-link[data-handle]');
+    if (topSummary) {
+      path.push(getHandle(topSummary));
+    } else if (a.dataset.handle) {
+      path.push(a.dataset.handle);
+    }
+
+    // SECOND (child-category summary or details variant)
+    const secondSummary =
+      a.closest('.child-category')?.querySelector('summary.parent-link[data-handle]') ||
+      a.closest('details.link-container')?.querySelector('summary.parent-link[data-handle]');
+    if (secondSummary) {
+      const secondHandle = getHandle(secondSummary);
+      if (secondHandle && path[path.length - 1] !== secondHandle) path.push(secondHandle);
+    }
+
+    // THIRD (the clicked link itself)
+    const thirdHandle = a.dataset.handle || '';
+    if (thirdHandle && path[path.length - 1] !== thirdHandle) path.push(thirdHandle);
+
+    localStorage.setItem('menuActiveId', activeMenuId);
+    localStorage.setItem('menuPathHandles', JSON.stringify(path));
+  }
+
+  // Delegate clicks so we capture all menu anchors
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('a[href]');
+    if (!a) return;
+    savePathFromAnchor(a);
+  }, true);
+})();
+</script>
+
+<script>
+/* ===========================
+   RESTORE: open saved path
+   =========================== */
+(function () {
+  // Helper: click a summary so theme JS runs (back buttons, etc.)
+  function clickSummary(summary) {
+    if (!summary) return;
+    summary.click();
+  }
+
+  // Helper: find the correct submenu-1 UL for a given top summary
+  function getTopBlockSubmenu1(topSummary) {
+    if (!topSummary) return null;
+    const topBlock = topSummary.closest('.link-container.sub-category');
+    if (!topBlock) return null;
+    return topBlock.querySelector(':scope > ul.sub-menu.submenu-1');
+  }
+
+  // Apply correct promo visibility
+  function applyPromoState({ topSummary, secondSummary, hasThirdLevel, thirdHandle }) {
+    const submenu1 = getTopBlockSubmenu1(topSummary);
+    if (!submenu1) return;
+
+    // Always clear promos first
+    const topBlock = topSummary.closest('.link-container.sub-category');
+    topBlock?.querySelectorAll(':scope > ul.sub-menu.submenu-1')
+      .forEach(ul => ul.classList.remove('show-promotion'));
+
+    // Case 1: only 2 levels deep
+    if (!hasThirdLevel && secondSummary) {
+      submenu1.classList.add('show-promotion');
+      return;
+    }
+
+    // Case 2: 3rd level exists
+    if (hasThirdLevel && thirdHandle) {
+      const inSameBlock = submenu1.querySelector(`a[data-handle="${CSS.escape(thirdHandle)}"]`);
+      if (inSameBlock) {
+        // ✅ Ready To Wear case → keep promo visible
+        submenu1.classList.add('show-promotion');
+      }
+      // else (third menu in deeper screen) → promo stays hidden
+    }
+  }
+
+  function restoreMenu() {
+    const activeMenuId = localStorage.getItem('menuActiveId') || '';
+    const path = JSON.parse(localStorage.getItem('menuPathHandles') || '[]');
+
+    if (!activeMenuId && !path.length) return;
+
+    // Reset base state
+    document.querySelectorAll('.menu-ontent').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.submenu-1').forEach(el => el.classList.remove('show-promotion'));
+
+    // Activate the correct column (firstoption/secondoption)
+    let container = document;
+    if (activeMenuId) {
+      const side = document.getElementById(activeMenuId);
+      if (side) {
+        // switch visible panel
+        document.querySelectorAll('.menu-ontent').forEach(el => el.classList.remove('active'));
+        side.classList.add('active');
+        container = side;
+
+        // switch active tab in nav
+        document.querySelectorAll('.main-tab-section .nav-link').forEach(tab => {
+          tab.classList.remove('active');
+          tab.setAttribute('aria-selected', 'false');
+        });
+
+        const activeTab = document.querySelector(
+          `.main-tab-section .nav-link[data-bs-target="#${activeMenuId}"]`
+        );
+        if (activeTab) {
+          activeTab.classList.add('active');
+          activeTab.setAttribute('aria-selected', 'true');
+        }
+
+        // adjust underline-progress if present
+        const underline = document.querySelector('.main-tab-section .underline__offset');
+        if (underline && activeTab) {
+          const rect = activeTab.getBoundingClientRect();
+          const parentRect = activeTab.parentElement.getBoundingClientRect();
+          underline.style.width = rect.width + 'px';
+          underline.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+        }
+      }
+    }
+
+    // ---- TOP ----
+    const topHandle = path[0];
+    let topSummary = null;
+    if (topHandle) {
+      topSummary = container.querySelector(`summary.parent-link[data-handle="${CSS.escape(topHandle)}"]`);
+      clickSummary(topSummary);
+    }
+
+    // ---- SECOND ----
+    const secondHandle = path[1];
+    let secondSummary = null;
+    if (secondHandle && topSummary) {
+      const topBlock = topSummary.closest('.link-container.sub-category') || container;
+      secondSummary =
+        topBlock.querySelector(`.child-category summary.parent-link[data-handle="${CSS.escape(secondHandle)}"]`) ||
+        topBlock.querySelector(`details.link-container summary.parent-link[data-handle="${CSS.escape(secondHandle)}"]`);
+      clickSummary(secondSummary);
+    }
+
+    // ---- THIRD ----
+    const thirdHandle = path[2];
+
+    // Wait a tick so the theme’s own JS finishes, then enforce promo visibility
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        applyPromoState({
+          topSummary,
+          secondSummary,
+          hasThirdLevel: Boolean(thirdHandle),
+          thirdHandle
+        });
+
+        // Highlight third-level link if present
+        if (thirdHandle) {
+          const scope =
+            (secondSummary && secondSummary.closest('.child-category, details.link-container')) ||
+            (topSummary && topSummary.closest('.link-container.sub-category')) ||
+            container;
+
+          const targetLink = scope?.querySelector(`a[data-handle="${CSS.escape(thirdHandle)}"]`);
+          if (targetLink) {
+            targetLink.classList.add('menu-remember-highlight');
+            //setTimeout(() => targetLink.classList.remove('menu-remember-highlight'), 1500);
+          }
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', restoreMenu);
+})();
+</script>
+
+<style>
+/* Optional: quick visual cue so users see where they left off */
+._active {
+  color: inherit !important;
+}
+</style>
+
+

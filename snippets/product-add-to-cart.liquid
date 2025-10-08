@@ -1,0 +1,211 @@
+<style>
+  @media only screen and (min-width: 768px) {
+    .product-add-to-cart-sticky{
+      display:none;
+    }
+  }
+</style>
+
+<div class="product-sticky-add-button" {{ block.shopify_attributes }}>
+  {%- if product != blank -%}
+    {%- liquid
+      assign gift_card_recipient_feature_active = false
+      if block.settings.show_gift_card_recipient and product.gift_card?
+        assign gift_card_recipient_feature_active = true
+      endif
+
+      assign show_dynamic_checkout = false
+      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
+        assign show_dynamic_checkout = true
+      endif
+
+      assign product_template = product.template_suffix
+
+      if product.metafields.theme.preorder and product.available
+        assign product_template = 'pre-order'
+      endif
+    -%}
+    <product-form
+      class="product-form"
+      data-section="{{ section.id }}"
+      data-hide-errors="{{ gift_card_recipient_feature_active }}"
+      template="{{ product_template }}"
+    >
+      <div class="product-form__error-message-wrapper form-notification error" role="alert" hidden>
+        {% render 'svg-icons' with 'thb-error' %}
+        <span class="product-form__error-message"></span>
+      </div>
+      {%- form 'product',
+        product,
+        id: product_form_id,
+        class: 'form',
+        novalidate: 'novalidate',
+        data-type: 'add-to-cart-form'
+      -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled>
+        {%- if gift_card_recipient_feature_active -%}
+          {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+        {%- endif -%}
+        <div class="product-add-to-cart-container">
+          <div class="form-notification error" style="display:none;"></div>
+          <div class="add_to_cart_holder">
+            {%- if block.settings.show_quantity_selector -%}
+              <div
+                id="quantity-{{ section.id }}"
+                {{ block.shopify_attributes }}
+              >
+                <quantity-selector class="quantity">
+                  <button
+                    class="minus"
+                    type="button"
+                    aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}"
+                  >
+                    {% render 'svg-icons' with 'minus' %}
+                  </button>
+                  <input
+                    type="number"
+                    id="Quantity-{{ section.id }}"
+                    name="quantity"
+                    class="qty"
+                    value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+                      max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                    {% endif %}
+                    step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
+                    form="{{ product_form_id }}"
+                    aria-label="{{ 'products.product.quantity.input_label' | t: product: product.title | escape }}"
+                  >
+                  <button
+                    class="plus"
+                    type="button"
+                    aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}"
+                  >
+                    {% render 'svg-icons' with 'plus' %}
+                  </button>
+                </quantity-selector>
+              </div>
+            {%- endif -%}
+
+            {% unless product.has_only_default_variant %}
+              {% for option in product.options_with_values %}
+                {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}
+                  <button
+                    type="button"
+                    name="add"
+                    id="AddToCart"
+                    class="select_variant single-add-cart-button button{% if block.settings.outline_button %} outline{% endif %} {% unless product.selected_or_first_available_variant.available %}sold-out{% endunless %}">
+                    <span class="single-add-to-cart-button--text">
+                      {%- liquid
+                        if product.selected_or_first_available_variant.available == false
+                          assign button_content = 'products.product.add_to_cart' | t
+                        else
+                          if product_template == 'pre-order'
+                            assign button_content = 'products.product.add_to_cart' | t
+                          else
+                            assign button_content = 'products.product.add_to_cart' | t
+                          endif
+                        endif
+                      -%}
+                      {{- button_content -}}
+                    </span>
+                  </button>
+                {% endif %}
+              {% endfor %}
+            {% endunless %}
+
+            <button
+              type="submit"
+              name="add"
+              id="AddToCart"
+              class="single-add-to-cart-button button{% if block.settings.outline_button %} outline{% endif %} {% unless product.selected_or_first_available_variant.available %}sold-out{% endunless %}"
+              {% if product.selected_or_first_available_variant.available == false %}
+                disabled
+              {% endif %}
+            >
+              <span class="single-add-to-cart-button--text">
+                {%- liquid
+                  if product.selected_or_first_available_variant.available == false
+                    assign button_content = 'products.product.sold_out' | t
+                  else
+                    if product_template == 'pre-order'
+                      assign button_content = 'products.product.pre_order' | t
+                    else
+                      assign button_content = 'products.product.add_to_cart' | t
+                    endif
+                  endif
+                -%}
+                {{- button_content -}}
+              </span>
+              <span class="loading-overlay">
+                {% render 'svg-icons' with 'thb-loading' %}
+              </span>
+              <span class="added_bag">
+                {% render 'svg-icons' with 'thb-availability-check' %}
+              </span>
+            </button>
+            <div class="notify_card">
+              <button class="notify_btn button" type="button">Notify when size is available</button>
+              <div id="custom_notify" class="custom_notify">
+                <input type="email" class="external-email" id="external-email" placeholder="Enter your email to be notified"/>
+                <div class="external-button-box" >
+                  <span class="submit-button-box"><svg viewBox="0 0 10 6" width="14" class="icon-caret"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path></svg></span>
+                </div>
+                <span class="success_message"> <span class="added_bag">{% render 'svg-icons' with 'thb-availability-check' %}</span> We’ll notify you</span>
+              </div>
+            </div>
+            <!-- Notify custom button end -->
+            <button class='st-wishlist-button button' button-wishlist data-product-handle="{{ product.handle }}"  data-type='details' data-handle='{{ product.handle }}'></button>
+            {%- if show_dynamic_checkout -%}
+              {{ form | payment_button }}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endform -%}
+    </product-form>
+  {%- else -%}
+    <div class="product-form">
+      <div class="product-form__buttons form">
+        <button
+          type="submit"
+          name="add"
+          class="single_add_to_cart_button button sold-out"
+          disabled
+        >
+          <span class="single-add-to-cart-button--text">{{ 'products.product.sold_out' | t }}</span>
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+  {%- if product != blank -%}
+    {%- form 'product', product, id: 'product-form-installment', class: 'installment' -%}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {{ form | payment_terms }}
+    {%- endform -%}
+  {%- endif -%}
+</div>
+{%- if pickup -%}
+  {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities
+    | where: 'pick_up_enabled', true
+  -%}
+  <pickup-availability
+    class="pickup-availability-wrapper"
+    {% if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 %}
+      available
+    {% endif %}
+    data-root-url="{{ routes.root_url }}"
+    data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+    data-has-only-default-variant="{{ product.has_only_default_variant }}"
+  >
+    {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities
+      | where: 'pick_up_enabled', true
+    -%}
+    {%- if pick_up_availabilities.size > 0 -%}
+      {% render 'product-pickup-availability', pick_up_availabilities: pick_up_availabilities %}
+    {% endif %}
+  </pickup-availability>
+  <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
+  <script>
+    // const producutSticky = document.querySelector(".prodcut-sticky-add-button")
+  </script>
+{%- endif -%}

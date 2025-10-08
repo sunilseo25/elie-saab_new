@@ -1,0 +1,1052 @@
+{% if section.settings.enable_countdown %}
+  {{ 'custom-video-tab.css' | asset_url | stylesheet_tag }}
+  {% liquid
+    assign timer_year = section.settings.timer_year
+	assign timer_month = section.settings.timer_month
+	assign timer_day = section.settings.timer_day
+	assign timer_hour = section.settings.timer_hour
+	assign timer_minute = section.settings.timer_minute
+  assign countdown_color = section.settings.countdown_color
+  assign timer_align = section.settings.timer_align
+
+	assign timezone = 1 | date: '%z'
+
+	capture date
+		echo timer_day | append: '-' | append: timer_month | append: '-' | append: timer_year
+	endcapture
+
+	capture time
+		echo timer_hour | append: ':' | append: timer_minute
+	endcapture
+  %}
+{% endif %}
+
+<div class="video-main-multi-tab-section {{ section.settings.tab_class }} {% if section.settings.hide_on_mobile %}hide-on-mobile{% else %}hide-on-desktop{% endif %}">
+  <div class="row">
+    <div class="small-12 columns {% if section.settings.enable_countdown %} relative{% endif %}">
+      {% for block in section.blocks %}
+        {% if block.type == 'tab' %}
+          <div class="video-tab-content" data-tab-id="{{ block.settings.tab_id }}">
+            {% for media in section.blocks %}
+              {% if media.type == 'media' and media.settings.tab_id == block.settings.tab_id %}
+                <div class="video-tab-slide">
+                  {% case media.settings.media_type %}
+                    {% when 'image' %}
+                      <a href="{{ media.settings.media_url }}">
+                        <img
+                          src="{{ media.settings.media_image | img_url: 'master' }}"
+                          width="100%"
+                          height="520px"
+                          alt="Slide Image"
+                        >
+                      </a>
+                      {% when 'video_url' %}
+                        {%- assign url = media.settings.media_video_url | strip -%}
+                      
+                      <div class="video-wrapper {{ block.settings.tab_collection }}">
+                          <video
+                            id="{{ block.settings.tab_id }}"               
+                            src="{{ url }}"
+                            class="single-video-tab"
+                            autoplay                                          
+                            muted playsinline
+                            preload="auto"
+                            style="width:100%;height:520px;object-fit:cover"
+                            controlslist="nodownload noremoteplayback"
+                            crossorigin="anonymous"
+                          ></video>
+                      
+                        {% if url contains 'youtu.be' or url contains 'youtube.com' %}
+                          {%- assign id = url
+                               | replace: 'https://youtu.be/', ''
+                               | replace: 'https://www.youtube.com/watch?v=', ''
+                               | split: '&'
+                               | first -%}
+                          <iframe
+                            src="https://www.youtube.com/embed/{{ id }}?autoplay=1&loop=1&mute=1&playlist={{ id }}&controls=0&modestbranding=1"
+                            frameborder="0"
+                            allow="autoplay; encrypted-media"
+                            allowfullscreen
+                            
+                            class="single-video-tab"
+                          ></iframe>
+                      
+                        {% elsif url contains 'vimeo.com' %}
+                          {%- assign id = url | split: '/' | last -%}
+                          <iframe
+                            src="https://player.vimeo.com/video/{{ id }}?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0"
+                            frameborder="0"
+                            allow="autoplay; fullscreen; picture-in-picture"
+                            allowfullscreen
+                            style="width:100%;height:520px"
+                            class="single-video-tab"
+                          ></iframe>
+                        {% endif %}
+                       {% if media.settings.media_collection_url != blank %}
+                        <a href="{{ media.settings.media_collection_url }}" class="overlay-content"></a>
+                      {% endif %}
+                      </div>
+                    {% when 'video_file' %}
+                      <div class="video-wrapper">
+                        {%- assign tab_id_attribute = block.settings.tab_id -%}
+
+                        {{
+                          media.settings.media_video_file
+                          | video_tag:
+                            autoplay: true,
+                            loop: false,
+                            controls: false,
+                            muted: true,
+                            image_size: sizes,
+                            class: 'single-video-tab',
+                            id: tab_id_attribute,
+                            attributes: "playsinline controlslist='nodownload noremoteplayback' "
+                        }}
+                      {% if  media.settings.media_collection_url != blank %}
+                    <a href="{{ media.settings.media_collection_url }}" class="overlay-content">
+                    </a>
+                        {% endif %}
+                      </div>
+                  {% endcase %}
+                  <div class="text-abs-section">
+                    <div class="image-text">{{ media.settings.media_text }}</div>
+                    {% if media.settings.media_collection_text != blank %}
+                      <a href="{{ media.settings.media_collection_url }}">
+                        <div class="image-collection-text">{{ media.settings.media_collection_text }}</div>
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="video__tabs">
+        <div class="video-tabs video-collection-tabs__list">
+          <button class="arrow-btn prev-btn-video">‹</button>
+          {% for block in section.blocks %}
+            {% if block.type == 'tab' %}
+              <button
+                class="video-tab video-collection-tabs__list-link {% if block.settings.default_active %} active{% endif %}"
+                data-collection-handel="{{ block.settings.tab_collection.handle }} "
+                data-tab-id="{{ block.settings.tab_id }}"
+              >
+                <span> {{ block.settings.tab_title }} </span>
+              </button>
+            {% endif %}
+          {% endfor %}
+          <button class="arrow-btn next-btn-video">›</button>
+        </div>
+        <div class="tab-indicator"></div>
+      </div>
+      {% if section.settings.enable_countdown %}
+        	<div class="countdown-banner--timer countdown-video-tab" style="color:{{ countdown_color }}">
+					<countdown-timer class="countdown-timer align-{{ timer_align }}" data-date="{{ date }}" data-time="{{ time }}" data-timezone="{{ timezone }}">
+						<div class="countdown-timer--column days">
+							<span class="countdown-timer--column--number">0</span>
+							<span class="countdown-timer--column--text">{{ 'sections.countdown_banner.days' | t }}</span>
+						</div>
+						<div class="countdown-timer--column hours">
+							<span class="countdown-timer--column--number">0</span>
+							<span class="countdown-timer--column--text">{{ 'sections.countdown_banner.hours' | t }}</span>
+						</div>
+						<div class="countdown-timer--column minutes">
+							<span class="countdown-timer--column--number">0</span>
+							<span class="countdown-timer--column--text">{{ 'sections.countdown_banner.minutes' | t }}</span>
+						</div>
+						<div class="countdown-timer--column seconds">
+							<span class="countdown-timer--column--number">0</span>
+							<span class="countdown-timer--column--text">{{ 'sections.countdown_banner.seconds' | t }}</span>
+						</div>
+					</countdown-timer>
+					{%- if button_text != blank -%}
+						<a class="button outline" href="{{ button_link }}" role="button" title="{{ button_text | escape }}"><span>{{ button_text }}</span></a>
+					{%- endif -%}
+				</div>
+        {% endif %}
+    </div>
+  </div>
+</div>
+<script type="load">
+    jQuery(document).ready(function($) {
+        const $videoTabs = $('.home-page .video-tab');
+        const $videoContents = $('.home-page .video-tab-content');
+            let tabs = document.querySelectorAll(".home-page .video-tab"); // Replace with actual tab selector
+      
+      let videos = document.querySelectorAll(".home-page .single-video-tab");
+      let progressBar = document.querySelector(".home-page .tab-progress-bar");
+         let prevBtn = document.querySelector(".home-page .prev-btn-video");
+         let nextBtn = document.querySelector(".home-page .next-btn-video");
+      let totalVideos = videos.length;
+       let currentIndex = 0;
+      let isPlaying = false;
+
+  $videoTabs.on('click', function() {
+    if (isPlaying) return;
+    isPlaying = true;
+
+    const tabId = $(this).data('tab-id');
+    
+    // Update UI
+   $videoTabs.removeClass('active');
+    $videoContents.removeClass('active');
+    $(this).addClass('active');
+    $(`.home-page .video-tab-content[data-tab-id="${tabId}"]`).addClass('active');
+
+    // Pause all videos
+    videos.forEach(video => video.pause());
+
+    // Play new video with error handling
+    const video = document.getElementById(tabId);
+    if (video) {
+      video.muted = true; // Improve autoplay success
+      video.play()
+        .then(() => updateTabIndicator())
+        .catch(e => console.error("Playback failed:", e))
+        .finally(() => { isPlaying = false; });
+    }
+  });
+      
+            function updateTabIndicator() {
+            const activeTab1 = document.querySelector('.home-page .video-tab.active span');
+              const activeTab = document.querySelector('.home-page .video-tab.active');
+            const indicator = document.querySelector('.tab-indicator');
+            if (activeTab && indicator) {
+              const tabRect1 = activeTab1.getBoundingClientRect();
+              const containerRect1 = activeTab1.parentElement.getBoundingClientRect();
+              const tabRect = activeTab.getBoundingClientRect();
+              const containerRect = activeTab.parentElement.getBoundingClientRect();
+           const width = window.innerWidth;
+            var left = 0;
+               var width1 = 0;
+
+        left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    // Large desktops
+
+    // Do something for large desktops
+  
+              indicator.style.left = `${left}px`;
+              indicator.style.width = `${width1}px`;
+            }
+          }
+
+      $('.home-page .video-tab').first().addClass('active').trigger('click');
+
+
+// play without focusing the <button> (focus is what scrolls)
+
+updateTabIndicator();
+      // updateTabIndicator();
+      $('.template-index .customHide').hide();
+ 
+      function playNextVideo(index) {
+        const nextIndex = (index + 1) % videos.length;
+    const nextVideo = videos[nextIndex];
+    const nextTab = tabs[nextIndex];
+
+    if (!nextVideo || !nextTab) return;
+
+    nextVideo.muted = true;
+    nextVideo.play()
+      .then(() => {
+        nextTab.click();
+        updateTabIndicator();
+      })
+      .catch(e => console.error("Next video playback failed:", e));
+
+        
+      }
+ 
+      
+   
+
+      // Start the first video automatically
+   if (videos.length > 0) {
+    videos.forEach((video, index) => {
+      video.addEventListener("timeupdate", function() {
+        if (video.duration && !isNaN(video.duration)) {
+          const progress = (video.currentTime / video.duration) * 100;
+          // updateProgressBar(index, progress);
+        }
+      });
+
+      video.addEventListener("ended", () => playNextVideo(index));
+      video.addEventListener('play', () => warmNext(index));
+    });
+  }
+
+     const tabsvideo = document.querySelectorAll(".home-page .video-tab");
+      
+   function initFirstTab() {
+    const $firstTab = $videoTabs.first();
+    const firstTabId = $firstTab.data('tab-id');
+    
+    $firstTab.addClass('active');
+    $(`.home-page .video-tab-content[data-tab-id="${firstTabId}"]`).addClass('active');
+    
+    // Attempt autoplay with user gesture fallback
+    const firstVideo = document.getElementById(firstTabId);
+    if (firstVideo) {
+      firstVideo.muted = true;
+      const playPromise = firstVideo.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          console.log("Autoplay blocked, showing fallback UI");
+          // Show play button or use IntersectionObserver to play when visible
+        });
+      }
+    }
+  }    
+ 
+  // Mobile navigation
+  if (window.innerWidth <= 768 && prevBtn && nextBtn) {
+    function updateMobileTab(index) {
+      currentIndex = index;
+      tabs[index]?.click();
+    }
+
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) updateMobileTab(currentIndex - 1);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex < tabs.length - 1) updateMobileTab(currentIndex + 1);
+    });
+  }
+      if(videos?.length >0){
+  videos?.forEach((v,i) => {
+  v.addEventListener('play',  () => warmNext(i));
+  v.addEventListener('ended', () => playNextVideo(i));
+});
+}
+
+  document
+  .querySelectorAll(".single-video-tab:not(.external)")
+  .forEach((vid, i) => vid.addEventListener("ended", () => playNextVideo(i)));
+  function warmNext(index) {
+     if (!videos?.length) return; 
+  const next = (index + 1) % videos?.length;
+  const vid  = videos[next];
+
+  if (vid.tagName === 'VIDEO' && vid.preload !== 'auto') {
+    vid.preload = 'auto';       
+  }
+}
+
+
+  initFirstTab();
+      
+    });
+
+document.querySelectorAll('.video-wrapper.preload video').forEach((vid)=>{
+  // metadata = dimensions; canplaythrough = first frame decoded
+  const show = ()=>vid.classList.add('is-ready');
+  vid.addEventListener('loadeddata', show, { once:true });
+});
+
+
+
+  
+</script>
+{% if section.settings.enable_countdown %}
+  <script src="{{ 'countdown-banner.js' | asset_url }}" defer="defer"></script>
+{% endif %}
+{% schema %}
+{
+  "name": "Video Tab",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide Section On Mobile"
+    },
+    {
+      "type": "text",
+          "id": "tab_class",
+          "label": "CSS Class"
+    },
+    {
+          "type": "image_picker",
+          "id": "default_media_image",
+          "label": "Image"
+        },
+        	{
+			"type": "header",
+			"content": "Timer"
+		},
+    {
+    "type":"checkbox",
+    "id":"enable_countdown",
+    "label": "Enable countdown",
+    "default":false
+    },
+    {
+      "type":"color",
+      "id":"countdown_color",
+      "label": "Color",
+      "default":"#000"
+    },
+    {
+			"type": "select",
+			"id": "timer_align",
+			"label": "Position",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				},
+      ],
+      "default":"center"
+    },
+		{
+		  "type": "number",
+		  "id": "timer_year",
+		  "label": "Year",
+		  "default": 2025
+		},
+		{
+			"type": "select",
+			"id": "timer_month",
+			"label": "Month",
+			"options": [
+				{
+					"value": "01",
+					"label": "January"
+				},
+				{
+					"value": "02",
+					"label": "February"
+				},
+				{
+					"value": "03",
+					"label": "March"
+				},
+				{
+					"value": "04",
+					"label": "April"
+				},
+				{
+					"value": "05",
+					"label": "May"
+				},
+				{
+					"value": "06",
+					"label": "June"
+				},
+				{
+					"value": "07",
+					"label": "July"
+				},
+				{
+					"value": "08",
+					"label": "August"
+				},
+				{
+					"value": "09",
+					"label": "September"
+				},
+				{
+					"value": "10",
+					"label": "October"
+				},
+				{
+					"value": "11",
+					"label": "November"
+				},
+				{
+					"value": "12",
+					"label": "December"
+				}
+			],
+			"default": "01"
+		},
+		{
+			"type": "select",
+			"id": "timer_day",
+			"label": "Day",
+			"options": [
+				{
+					"value": "01",
+					"label": "01"
+				},
+				{
+					"value": "02",
+					"label": "02"
+				},
+				{
+					"value": "03",
+					"label": "03"
+				},
+				{
+					"value": "04",
+					"label": "04"
+				},
+				{
+					"value": "05",
+					"label": "05"
+				},
+				{
+					"value": "06",
+					"label": "06"
+				},
+				{
+					"value": "07",
+					"label": "07"
+				},
+				{
+					"value": "08",
+					"label": "08"
+				},
+				{
+					"value": "09",
+					"label": "09"
+				},
+				{
+					"value": "10",
+					"label": "10"
+				},
+				{
+					"value": "11",
+					"label": "11"
+				},
+				{
+					"value": "12",
+					"label": "12"
+				},
+				{
+					"value": "13",
+					"label": "13"
+				},
+				{
+					"value": "14",
+					"label": "14"
+				},
+				{
+					"value": "15",
+					"label": "15"
+				},
+				{
+					"value": "16",
+					"label": "16"
+				},
+				{
+					"value": "17",
+					"label": "17"
+				},
+				{
+					"value": "18",
+					"label": "18"
+				},
+				{
+					"value": "19",
+					"label": "19"
+				},
+				{
+					"value": "20",
+					"label": "20"
+				},
+				{
+					"value": "21",
+					"label": "21"
+				},
+				{
+					"value": "22",
+					"label": "22"
+				},
+				{
+					"value": "23",
+					"label": "23"
+				},
+				{
+					"value": "24",
+					"label": "24"
+				},
+				{
+					"value": "25",
+					"label": "25"
+				},
+				{
+					"value": "26",
+					"label": "26"
+				},
+				{
+					"value": "27",
+					"label": "27"
+				},
+				{
+					"value": "28",
+					"label": "28"
+				},
+				{
+					"value": "29",
+					"label": "29"
+				},
+				{
+					"value": "30",
+					"label": "30"
+				},
+				{
+					"value": "31",
+					"label": "31"
+				}
+			],
+			"default": "01"
+		},
+		{
+			"type": "select",
+			"id": "timer_hour",
+			"label": "Hour",
+			"options": [
+				{
+					"value": "00",
+					"label": "12 AM (Midnight)"
+				},
+				{
+					"value": "01",
+					"label": "01 AM"
+				},
+				{
+					"value": "02",
+					"label": "02 AM"
+				},
+				{
+					"value": "03",
+					"label": "03 AM"
+				},
+				{
+					"value": "04",
+					"label": "04 AM"
+				},
+				{
+					"value": "05",
+					"label": "05 AM"
+				},
+				{
+					"value": "06",
+					"label": "06 AM"
+				},
+				{
+					"value": "07",
+					"label": "07 AM"
+				},
+				{
+					"value": "08",
+					"label": "08 AM"
+				},
+				{
+					"value": "09",
+					"label": "09 AM"
+				},
+				{
+					"value": "10",
+					"label": "10 AM"
+				},
+				{
+					"value": "11",
+					"label": "11 AM"
+				},
+				{
+					"value": "12",
+					"label": "12 PM (Noon)"
+				},
+				{
+					"value": "13",
+					"label": "01 PM"
+				},
+				{
+					"value": "14",
+					"label": "02 PM"
+				},
+				{
+					"value": "15",
+					"label": "03 PM"
+				},
+				{
+					"value": "16",
+					"label": "04 PM"
+				},
+				{
+					"value": "17",
+					"label": "05 PM"
+				},
+				{
+					"value": "18",
+					"label": "06 PM"
+				},
+				{
+					"value": "19",
+					"label": "07 PM"
+				},
+				{
+					"value": "20",
+					"label": "08 PM"
+				},
+				{
+					"value": "21",
+					"label": "09 PM"
+				},
+				{
+					"value": "22",
+					"label": "10 PM"
+				},
+				{
+					"value": "23",
+					"label": "11 PM"
+				}
+			],
+			"default": "00"
+		},
+		{
+			"type": "select",
+			"id": "timer_minute",
+			"label": "Minute",
+			"options": [
+				{
+					"value": "00",
+					"label": "00"
+				},
+				{
+					"value": "01",
+					"label": "01"
+				},
+				{
+					"value": "02",
+					"label": "02"
+				},
+				{
+					"value": "03",
+					"label": "03"
+				},
+				{
+					"value": "04"
+				},
+				{
+					"value": "05",
+					"label": "05"
+				},
+				{
+					"value": "06",
+					"label": "06"
+				},
+				{
+					"value": "07",
+					"label": "07"
+				},
+				{
+					"value": "08",
+					"label": "08"
+				},
+				{
+					"value": "09",
+					"label": "09"
+				},
+				{
+					"value": "10",
+					"label": "10"
+				},
+				{
+					"value": "11",
+					"label": "11"
+				},
+				{
+					"value": "12",
+					"label": "12"
+				},
+				{
+					"value": "13",
+					"label": "13"
+				},
+				{
+					"value": "14",
+					"label": "14"
+				},
+				{
+					"value": "15",
+					"label": "15"
+				},
+				{
+					"value": "16",
+					"label": "16"
+				},
+				{
+					"value": "17",
+					"label": "17"
+				},
+				{
+					"value": "18",
+					"label": "18"
+				},
+				{
+					"value": "19",
+					"label": "19"
+				},
+				{
+					"value": "20",
+					"label": "20"
+				},
+				{
+					"value": "21",
+					"label": "21"
+				},
+				{
+					"value": "22",
+					"label": "23"
+				},
+				{
+					"value": "24",
+					"label": "24"
+				},
+				{
+					"value": "25",
+					"label": "25"
+				},
+				{
+					"value": "26",
+					"label": "26"
+				},
+				{
+					"value": "27",
+					"label": "27"
+				},
+				{
+					"value": "28",
+					"label": "28"
+				},
+				{
+					"value": "29",
+					"label": "29"
+				},
+				{
+					"value": "30",
+					"label": "30"
+				},
+				{
+					"value": "31",
+					"label": "31"
+				},
+				{
+					"value": "32",
+					"label": "32"
+				},
+				{
+					"value": "33",
+					"label": "33"
+				},
+				{
+					"value": "34",
+					"label": "34"
+				},
+				{
+					"value": "35",
+					"label": "35"
+				},
+				{
+					"value": "36",
+					"label": "36"
+				},
+				{
+					"value": "37",
+					"label": "37"
+				},
+				{
+					"value": "38",
+					"label": "38"
+				},
+				{
+					"value": "39",
+					"label": "39"
+				},
+				{
+					"value": "40",
+					"label": "40"
+				},
+				{
+					"value": "41",
+					"label": "41"
+				},
+				{
+					"value": "42",
+					"label": "42"
+				},
+				{
+					"value": "43",
+					"label": "43"
+				},
+				{
+					"value": "44",
+					"label": "44"
+				},
+				{
+					"value": "45",
+					"label": "45"
+				},
+				{
+					"value": "46",
+					"label": "46"
+				},
+				{
+					"value": "47",
+					"label": "47"
+				},
+				{
+					"value": "48",
+					"label": "48"
+				},
+				{
+					"value": "49",
+					"label": "49"
+				},
+				{
+					"value": "50",
+					"label": "50"
+				},
+				{
+					"value": "51",
+					"label": "51"
+				},
+				{
+					"value": "52",
+					"label": "52"
+				},
+				{
+					"value": "53",
+					"label": "53"
+				},
+				{
+					"value": "54",
+					"label": "54"
+				},
+				{
+					"value": "55",
+					"label": "55"
+				},
+				{
+					"value": "56",
+					"label": "56"
+				},
+				{
+					"value": "57",
+					"label": "57"
+				},
+				{
+					"value": "58",
+					"label": "58"
+				},
+				{
+					"value": "59",
+					"label": "59"
+				}
+			],
+			"default": "00"
+		}
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Use a unique identifier (e.g., 'tab1', 'summer2025')"
+        },
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+      
+        {
+          "type": "collection",
+          "id": "tab_collection",
+          "label": "Select Collection"
+        },
+              {
+          "type":"checkbox",
+          "id":"default_active",
+          "label": "Default active",
+          "default":false
+        },
+      ]
+    },
+    {
+      "type": "media",
+      "name": "Media Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Enter the Tab ID this media belongs to."
+        },
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video_url", "label": "External Video" },
+            { "value": "video_file", "label": "Hosted Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image",
+          "label": "Image"
+        },
+ {
+   "type": "url",
+   "id": "media_video_url",
+   "label": "Video URL (YouTube · Vimeo · MP4 · Cloudinary)"
+ },
+        {
+          "type": "video",
+          "id": "media_video_file",
+          "label": "Hosted Video"
+        },
+        {
+          "type": "text",
+          "id": "media_text",
+          "label": "Image text"
+        },
+        {
+          "type": "text",
+          "id": "media_collection_text",
+          "label": "Collection text"
+        },
+        {
+          "type": "url",
+          "id": "media_collection_url",
+          "label": "Collection url"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Tab",
+      "blocks": [
+        {
+          "type": "tab"
+        },
+        {
+          "type": "media"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

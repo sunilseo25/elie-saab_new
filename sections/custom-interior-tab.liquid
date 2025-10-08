@@ -1,0 +1,323 @@
+<style>
+  .interior-home .video-tab-content {
+        width: 100.3%;
+    left: 1px;
+    position: relative;
+  }
+  .interior-home .video-tab-slide img {
+    border-radius: 4px;
+  }
+</style>
+<div class="interior-home video-main-multi-tab-section">
+  <div class="row" id="{{ section.settings.css_id }}">
+    <div class="small-12 columns">
+      {% for block in section.blocks %}
+        {% if block.type == 'tab' %}
+          <div class="video-tab-content" data-tab-id="{{ block.settings.tab_id }}">
+            {% for media in section.blocks %}
+              {% if media.type == 'media' and media.settings.tab_id == block.settings.tab_id %}
+                <div class="video-tab-slide">
+                  {% case media.settings.media_type %}
+                    {% when 'image' %}
+                      <a href="{{ media.settings.media_url }}">
+                        <img
+                          src="{{ media.settings.media_image | img_url: 'master' }}"
+                          width="auto"
+                          height="auto"
+                          alt="Slide Image"
+                        >
+                      </a>
+                    {% when 'video_url' %}
+                      <iframe
+                        width="100%"
+                        height="315"
+                        src="{{ media.settings.media_video_url }}"
+                        frameborder="0"
+                        allowfullscreen
+                      ></iframe>
+                    {% when 'video_file' %}
+                      <div class="video-wrapper">
+                        {%- assign tab_id_attribute = block.settings.tab_id -%}
+
+                        {{
+                          media.settings.media_video_file
+                          | video_tag:
+                            autoplay: true,
+                            loop: false,
+                            controls: false,
+                            muted: true,
+                            image_size: sizes,
+                            class: 'single-video-tab',
+                            id: tab_id_attribute,
+                            attributes: "playsinline controlslist='nodownload noremoteplayback' "
+                        }}
+                      </div>
+                  {% endcase %}
+                  <div class="text-abs-section">
+                    <div class="image-text">{{ media.settings.media_text }}</div>
+                    <a href="{{ media.settings.media_collection_url }}">
+                      <div class="image-collection-text">{{ media.settings.media_collection_text }}</div>
+                    </a>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="video-tabs video-collection-tabs__list progress-list-tab">
+        <button class="arrow-btn prev-btn-video">‹</button>
+        {% for block in section.blocks %}
+          {% if block.type == 'tab' %}
+            <button class="video-tab video-collection-tabs__list-link progress-tab-button" data-tab-id="{{ block.settings.tab_id }}">
+              <span>{{ block.settings.tab_title }}</span>
+            </button>
+          {% endif %}
+        {% endfor %}
+        <button class="arrow-btn next-btn-video">›</button>
+      </div>
+         <tab-progress class="tab-progress-bar width-90">
+          <div class="tab-progress-bar-active"></div>
+     
+        </tab-progress>
+      <!--
+        <div class="tab-progress-bar1">
+          <div class="tab-progress-bar"></div>
+          <div class="tab-progress-bar-mobile"></div>
+        </div>
+      -->
+    </div>
+  </div>
+</div>
+
+<script>
+    jQuery(document).ready(function($) {
+      $('.interior-home .video-tab').on('click', function() {
+        let tabId = $(this).data('tab-id');
+        $('.interior-home .video-tab').removeClass('active');
+        $(this).addClass('active');
+        $('.interior-home .video-tab-content').removeClass('active');
+        $('.interior-home .video-tab-content[data-tab-id="' + tabId + '"]').addClass('active');
+
+        // $(this).css('margin', 'auto');
+        let videos = document.querySelectorAll(".interior-home .single-video-tab");
+        videos.forEach((video, index) => {
+          video.pause();
+        });
+        jQuery('#'+tabId).trigger('play');
+      });
+
+      $('.interior .video-tab').first().addClass('active');
+      $('.interior-home .video-tab').first().addClass('active').trigger('click');
+      $('.template-index .customHide').hide();
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      let tabs = document.querySelectorAll(".interior .video-tab"); // Replace with actual tab selector
+      let videos = document.querySelectorAll(".interior .single-video-tab");
+      let progressBar = document.querySelector(".interior .tab-progress-bar");
+      let totalVideos = videos.length;
+      function playNextVideo(index) {
+          let nextIndex = (index + 1) % videos.length;
+          tabs[nextIndex].click(); // Simulate tab click
+          videos[nextIndex].play();
+      }
+
+     function updateProgressBar(index, progress) {
+        let percentage = ((index / totalVideos) * 100) + ((progress / 100) * (100 / totalVideos));
+
+        let currentWidth = parseFloat(progressBar.style.width) || 0;
+        let startTime;
+
+        function animate(time) {
+            if (!startTime) startTime = time;
+            let elapsedTime = time - startTime;
+            let duration = 500; // Animation duration in milliseconds
+
+            let newWidth = currentWidth + (percentage - currentWidth) * (elapsedTime / duration);
+
+            progressBar.style.width = newWidth + "%";
+
+            if (elapsedTime < duration) {
+                requestAnimationFrame(animate);
+            } else {
+                progressBar.style.width = percentage + "%"; // Ensure it reaches the final value
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+      videos.forEach((video, index) => {
+        video.addEventListener("timeupdate", function () {
+            let progress = (video.currentTime / video.duration) * 100;
+            updateProgressBar(index, progress);
+        });
+          video.addEventListener("ended", function () {
+              playNextVideo(index);
+          });
+      });
+
+      // Start the first video automatically
+      if(videos.length > 0) {
+        videos[0].play();
+      }
+
+     const tabsvideo = document.querySelectorAll(".interior .video-tab");
+      let currentIndex = 0;
+      if (window.innerWidth <= 768) {
+        function updateTabsvideo(index) {
+          tabsvideo.forEach((tab, i) => {
+            // tab.classList.remove("active");
+            // tab.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+          });
+
+          // tabsvideo[index].classList.add("active");
+          tabsvideo[index].click();
+        }
+
+      document.querySelector(".interior .prev-btn-video").addEventListener("click", () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateTabsvideo(currentIndex);
+        }
+      });
+
+      document.querySelector(".interior .next-btn-video").addEventListener("click", () => {
+        if (currentIndex < tabsvideo.length - 1) {
+          currentIndex++;
+          updateTabsvideo(currentIndex);
+        }
+      });
+
+      updateTabsvideo(currentIndex);
+         }
+
+      const tabsvideo1 = document.querySelectorAll(".interior-home .video-tab");
+      let currentIndex1 = 0;
+      if (window.innerWidth <= 768) {
+        function updatetabsvideo11(index) {
+          tabsvideo1.forEach((tab1, i) => {
+            tab1.classList.remove("active");
+            tab1.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+          });
+
+          tabsvideo1[index].classList.add("active");
+          tabsvideo1[index].click();
+        }
+
+      document.querySelector(".interior-home .prev-btn-video").addEventListener("click", () => {
+        if (currentIndex1 > 0) {
+          currentIndex1--;
+          updatetabsvideo11(currentIndex1);
+        }
+      });
+
+      document.querySelector(".interior-home .next-btn-video").addEventListener("click", () => {
+        if (currentIndex1 < tabsvideo1.length - 1) {
+          currentIndex1++;
+          updatetabsvideo11(currentIndex1);
+        }
+      });
+
+      updatetabsvideo11(currentIndex1);
+         }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Interior Video Tab",
+  "settings": [
+    {
+          "type": "text",
+          "id": "css_id",
+          "label": "CSS ID",
+        }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Use a unique identifier (e.g., 'tab1', 'summer2025')"
+        },
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+      ]
+    },
+    {
+      "type": "media",
+      "name": "Media Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Enter the Tab ID this media belongs to."
+        },
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video_url", "label": "External Video (YouTube/Vimeo)" },
+            { "value": "video_file", "label": "Hosted Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image",
+          "label": "Image"
+        },
+        {
+          "type": "video_url",
+          "id": "media_video_url",
+          "label": "External Video URL",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "video",
+          "id": "media_video_file",
+          "label": "Hosted Video"
+        },
+        {
+          "type": "text",
+          "id": "media_text",
+          "label": "Image text"
+        },
+        {
+          "type": "text",
+          "id": "media_collection_text",
+          "label": "Collection text"
+        },
+        {
+          "type": "url",
+          "id": "media_collection_url",
+          "label": "Collection url"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Interior Video Tab",
+      "blocks": [
+        {
+          "type": "tab"
+        },
+        {
+          "type": "media"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

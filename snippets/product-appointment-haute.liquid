@@ -1,0 +1,126 @@
+<div class="product-sticky-add-button product-information--inner appoint-box" {{ block.shopify_attributes }}>
+  <style>
+    .product-sticky-add-button.appoint-box {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 25px;
+      width: 100%;
+      padding-left: 20px;
+      padding-right: 10px;
+    }
+    .product-sticky-add-button.appoint-box .single-add-cart-button {
+      position: relative;
+    }
+    .modal--dark .modal-dialog,
+    .modal--dark .modal-header,
+    .modal--dark .modal_header {
+      background: #231f20;   
+      color: #ffffff;        
+    }
+    .modal--dark .modal-dialog {
+      height: 100%;                    
+    }
+    
+    .modal--dark {                     
+                                       
+  background: #231f20;        
+    }
+    .modal--dark .btn-close,
+    .modal--dark .size-close-btn,
+    .modal--dark .side-panel-close,
+    .modal--dark .btn-close .animation-underline,
+    .modal--dark .animation-underline,
+    .modal--dark .arrow-icon svg path {
+      color: #ffffff !important;
+      fill:  #ffffff !important;
+    }
+    .modal--dark .modal-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;          
+}
+
+.modal--dark .modal-body {
+  flex: 1 1 auto;     
+  display: grid;
+  place-items: center;   
+  overflow-y: auto;      
+  padding: 2rem 1.5rem;  
+
+}
+
+  </style>
+
+<button type="button"
+        class="select_variant single-add-cart-button button"
+        data-bs-toggle="modal"
+        data-bs-target="#bookingModal-{{ section.id }}">
+  <span class="single-add-to-cart-button--text">Request an appointment</span>
+</button>
+
+
+<div class="side-panel side--panel modal appointmentModal modal--dark"
+     id="bookingModal-{{ section.id }}"
+     data-bs-backdrop="true" data-bs-keyboard="true" data-bs-scroll="true">
+
+  <div class="modal-dialog">
+    <div class="modal_header">
+      <span class="btn-close" data-bs-dismiss="modal">
+        <span class="animation-underline">Return to product</span>
+        <span class="arrow-icon">{% render 'svg-icons' with 'thb-caret-up' %}</span>
+      </span>
+    </div>
+      <div class="modal-body"
+           data-tf-live="01JST31C8M82HK3QMHB0KTAK7J"
+           data-tf-hidden="product_id={{ product.handle }}"
+           data-tf-theme="theme_K8wxYvC">
+        <p>Loading...</p>
+      </div>
+
+  </div>
+</div>
+
+
+
+  <!-- Wishlist Button -->
+  <button class="st-wishlist-button button"
+    button-wishlist
+    data-product-handle="{{ product.handle }}"
+    data-type="details"
+    data-handle="{{ product.handle }}">
+  </button>
+
+</div>
+
+<!-- Typeform Script -->
+<script src="https://embed.typeform.com/next/embed.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const SCAN_INTERVAL = 2000;               
+
+  if (!window._tfScanStarted) {             
+    window._tfScanStarted = true;
+    setInterval(() => {
+      if (window.tf && typeof window.tf.load === 'function') {
+        window.tf.load();                   
+      }
+    }, SCAN_INTERVAL);
+  }
+
+  const bookingModal = document.getElementById('bookingModal-{{ section.id }}');
+  if (!bookingModal) return;                
+
+  const bookBtn = document.querySelector('.single-add-cart-button');
+
+  bookingModal.addEventListener('shown.bs.modal', () => {
+    if (bookBtn) bookBtn.style.display = 'none';
+    document.body.style.overflow     = '';
+    document.body.style.paddingRight = '';
+  });
+
+  bookingModal.addEventListener('hidden.bs.modal', () => {
+    if (bookBtn) bookBtn.style.display = 'inline-block';
+  });
+});
+</script>
+<!--   -->

@@ -1,0 +1,221 @@
+{% comment %} Main Cart Code Start {% endcomment %}
+<div id="cart__form_items">
+  <ul class="cart__form_items products row">
+    {%- for item in cart.items -%}
+    <li class="columns small-12 medium-6 large-4 main_item" id="CartItem-{{ item.index | plus: 1 }}"> 
+      <div class="cart__image">
+        {% if item.image %}
+          {%- render 'responsive-image', image: item.image, sizes: '500' -%}
+        {% else %}
+        <div class="thb-placeholder">
+          {{ 'product-1' | placeholder_svg_tag }}
+        </div>
+        {% endif %}
+      </div>
+      <div class="cart__titles">
+        <div class="cart__titles_props">
+          <a href="{{ item.url }}" title="{{ item.product.title | escape }}" class="m-none cart-product-link">{{ item.product.title | truncate:30  }}</a>
+          <div class="cart__ctas_prices">
+            <span class="price">
+              {%- if item.original_line_price != item.final_line_price -%}
+                <del><span class="amount">{{ item.original_line_price | money_without_trailing_zeros }}</span></del>
+                <ins><span class="amount">{{ item.final_line_price | money_without_trailing_zeros }}</span></ins>
+              {%- else -%}
+                <ins><span class="amount">{{ item.original_line_price | money_without_trailing_zeros }}</span></ins>
+              {%- endif -%}
+              {%- if item.variant.available and item.unit_price_measurement -%}
+                <small class="unit-price">
+                  {{ item.variant.unit_price | money_without_trailing_zeros }}
+                  <span class="unit-price-separator">/</span>
+                  {%- if item.variant.unit_price_measurement.reference_value != 1 -%}
+                    {{- item.variant.unit_price_measurement.reference_value -}}
+                  {%- endif -%}
+                  {{ item.variant.unit_price_measurement.reference_unit }}
+                </small>
+              {%- endif -%}
+            </span>
+            <div class="loading-overlay">
+              {% render 'svg-icons' with 'thb-loading' %}
+            </div>
+          </div>
+          <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" class="d-none remove-product remove" data-index="{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">Remove</a>
+        </div>
+        <div class="cart__ctas cart__titles_props">
+          <a href="{{ item.url }}" title="{{ item.product.title | escape }}" class="d-none cart-product-link">{{ item.product.title | truncate:30  }}</a>
+          {% unless item.variant.title contains 'Default' %}
+          <div class="product-cart-item-options">
+            {%- for option in item.product.options_with_values -%}
+              {% render 'product-option',
+                option_type: "dropdown",
+                color_picker_size: "large",
+                color_picker_use_variants: false,
+                product: item.product,
+                option: option,
+                forloop: forloop.index0,
+                product_form_id: item.id,
+                item:item
+              %}
+            {% endfor %}
+          </div>
+          {% endunless %}
+          <div class="cart__ctas_links">
+            <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" class="remove remove-product m-none" data-index="{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">Remove</a>
+            <div style="display:none !important" class="cart-item__error form-notification error" id="Line-item-error-{{ item.index | plus: 1 }}" role="alert" hidden>
+              {% render 'svg-icons' with 'thb-error' %}
+              <small class="cart-item__error-text"></small>
+            </div>
+          </div>
+       </div>  
+     </div>
+    </li>
+    {%- endfor -%} 
+    <script>cartData = {{ cart | json }};</script>
+  </ul>
+</div>
+{% comment %} Main Cart Code End {% endcomment %}
+
+{% comment %} Cart Drawer Code Start {% endcomment %}
+<div class="product-cart-item--container" id="cart_drawer_items">
+  <div class="all_products">
+    {%- liquid
+      if free_shipping and settings.free_shipping_minimum != blank
+        render 'free-shipping', free_shipping_minimum: free_shipping_minimum, total: total
+      endif
+    -%}
+    {%- for item in cart.items -%}
+      <div class="product-cart-item main_item" id="CartDrawerItem-{{ item.index | plus: 1 }}">
+        <div class="product-cart-item-image cover_img">
+          {% if item.image %}
+            {%- render 'responsive-image', image: item.image, sizes: '900x0', priority: 'low' -%}
+          {% else %}
+            <div class="thb-placeholder">
+              {{ 'product-1' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+          <div class="loading-overlay">
+            {% render 'svg-icons' with 'thb-loading' %}
+          </div>
+        </div>
+        <div class="product-cart-item-info">
+          <div>
+            <a href="{{ item.url }}" title="{{ item.product.title | escape }}" class="cart-product-link">
+              {{- item.product.title -}}
+            </a>
+            {% if item.selling_plan_allocation %}
+              <div class="properties">
+                <span class="selling-plan">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+              </div>
+            {% endif %}
+            {% unless item.variant.title contains 'Default' %}
+              <div class="product-cart-item-options">
+                {%- for option in item.product.options_with_values -%}
+                  {% render 'product-option',
+                    option_type: 'dropdown',
+                    color_picker_size: 'large',
+                    product: item.product,
+                    option: option,
+                    forloop: forloop.index0,
+                    product_form_id: item.id,
+                    item: item
+                  %}
+                {% endfor %}
+              </div>
+            {% endunless %}
+            {%- for property in item.properties -%}
+              {%- assign property_first_char = property.first | slice: 0 -%}
+              {%- if property.last != blank and property_first_char != '_' -%}
+                <div class="product-cart-item-options">
+                  <span>{{ property.first }}: </span>
+                  {%- if property.last contains '/uploads/' -%}
+                    <a href="{{ property.last }}" class="link" target="_blank">
+                      {{ property.last | split: '/' | last }}
+                    </a>
+                  {%- else -%}
+                    {{ property.last }}
+                  {%- endif -%}
+                  <br>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if item.discounts != blank -%}
+              <ul class="discounts" role="list">
+                {%- for discount in item.discounts -%}
+                  <li class="discounts__discount">
+                    {%- render 'svg-icons' with 'discount' -%}
+                    {{ discount.title }} (-{{ discount.amount | money }})
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            <quantity-selector class="quantity cart-update small-qty" data-id="{{ item.key | escape }}">
+             <button class="minus" type="button" aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title | escape }}">{% render 'svg-icons' with 'minus' %}</button>
+              <input
+              type="number"
+              name="updates[]"
+              id="updates_{{ item.key }}"
+              value="{{ item.quantity }}"
+              min="{{ item.variant.quantity_rule.min }}"
+              {% if item.variant.quantity_rule.max != null %} max="{{ item.variant.quantity_rule.max }}"{% elsif item.variant.inventory_management != null and item.variant.inventory_quantity > 0 %} max="{{ item.variant.inventory_quantity }}" {% endif %}
+              step="{{ item.variant.quantity_rule.increment }}"
+              class="qty" data-index="{{ item.index | plus: 1 }}" aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}">
+             <button class="plus" type="button" aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title | escape }}">{% render 'svg-icons' with 'plus' %}</button>
+            </quantity-selector>
+          </div>
+          <div class="product-cart-item-price">
+            <span class="price">
+              {%- if item.original_line_price != item.final_line_price -%}
+                <del>
+                  <span class="amount">
+                    <div class="pn-total-line-item" data-id="{{ item.key }}">
+                      {{ item.original_line_price | money }}
+                    </div>
+                  </span>
+                </del>
+                <ins><span class="amount">{{ item.final_line_price | money }}</span></ins>
+              {%- else -%}
+                <ins>
+                  <span class="amount">
+                    <div class="pn-total-line-item" data-id="{{ item.key }}">
+                      {{ item.original_line_price | money }}
+                    </div>
+                  </span>
+                </ins>
+              {%- endif -%}
+              {%- if item.variant.available and item.unit_price_measurement -%}
+                <small class="unit-price">
+                  {{ item.variant.unit_price | money }}
+                  <span class="unit-price-separator">/</span>
+                  {%- if item.variant.unit_price_measurement.reference_value != 1 -%}
+                    {{- item.variant.unit_price_measurement.reference_value -}}
+                  {%- endif -%}
+                  {{ item.variant.unit_price_measurement.reference_unit }}
+                </small>
+              {%- endif -%}
+            </span>
+            <div class="bottom_button">
+              <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity=0" class="remove-product remove text-button" data-index="{{ item.index | plus: 1 }}" data-line-item-key="{{ item.key }}">Remove</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+{% comment %} Cart Drawer Code End {% endcomment %}
+
+<table id="cart__totals" class="table mini_cart">
+  <tbody>
+    <tr>
+      <td>Subtotal</td>
+      <td>{{ cart.total_price | money_without_trailing_zeros }}</td>
+    </tr>
+    <tr>
+      <td>Shipping</td>
+      <td>Free</td>
+    </tr> 
+    <tr>
+      <td>Total</td>
+      <td class="total-price" data-checkout-payment-due-target="{{ cart.total_price }}" data-checkout-payment-total-target="{{ cart.total_price | money_without_currency | replace: ',', '' }}">{{ cart.total_price | money_without_trailing_zeros }}</td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,36 @@
+.countdown-banner--timer.countdown-video-tab {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: calc(100% - 65px);
+}
+.countdown-video-tab countdown-timer.countdown-timer {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    gap:10px;
+    padding:0 30px;
+}
+.countdown-video-tab countdown-timer.countdown-timer.align-left{
+    justify-content:flex-start;
+}
+.countdown-video-tab countdown-timer.countdown-timer.align-right{
+    justify-content:flex-end;
+}
+.countdown-timer--column--number {
+    font-size: 2rem;
+}
+.countdown-timer--column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@media (max-width:769px){
+    .countdown-video-tab countdown-timer.countdown-timer{
+        justify-content:center;
+    }
+}

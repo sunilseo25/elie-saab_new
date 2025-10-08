@@ -1,0 +1,2403 @@
+{{ 'about-us-custom.css' | asset_url | stylesheet_tag }}
+{% liquid
+  assign disable_top_spacing = section.settings.disable_top_spacing
+  assign disable_bottom_spacing = section.settings.disable_bottom_spacing
+
+  assign first_tab_blocks = section.blocks | where: 'type', 'video'
+  assign second_tab_blocks = section.blocks | where: 'type', 'video2'
+  assign third_tab_blocks = section.blocks | where: 'type', 'video3'
+
+  assign slider_first = section.blocks | where: 'type', 'slider'
+  assign slider_second = section.blocks | where: 'type', 'slider2'
+  assign slider_third = section.blocks | where: 'type', 'slider3'
+%}
+<style>
+  /* .flickity-prev svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 50%;
+  position: absolute;
+  top: 44.5%;
+  z-index: 1;
+  height: 36px;
+  width: 36px;
+  border: 1px solid #80808045;
+  left: 20px;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 10px #00000026;
+}
+  .flickity-next svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 50%;
+  position: absolute;
+  top: 44.5%;
+  z-index: 1;
+  height: 36px;
+  width: 36px;
+  border: 1px solid #80808045;
+  right: 20px;
+  transform: translateX(50%);
+  box-shadow: 0 2px 10px #00000026;
+} */
+@media(max-width:767px){
+  tab-component .slide-btn.flickity-nav {
+    width: auto;
+    height: auto;
+  }
+  tab-component .slide-btn.flickity-next {
+    right: 30px;
+  }
+  tab-component .slide-btn.flickity-prev {
+    left: 30px;
+  }
+  tab-component .slide-btn span {
+    padding: 5px 10px;
+    font-size: 40px;
+    font-weight: 300;
+    color: #acacac;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  slider-component.custom_slider{
+    margin: 0 -16px !important;
+  }
+  tab-component .nav-link{
+    padding-top:18px;
+    padding-bottom:18px
+  }
+  .template-page-about .featured_tab{
+    margin:10px 0 3rem
+  }
+  .banner_hero {
+    height: 520px !important;
+    padding-bottom: 0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+}  
+</style>
+<div class="section-spacing{% if disable_top_spacing %} section-spacing--disable-top{% endif %}{% if disable_bottom_spacing %} section-spacing--disable-bottom{% endif %}">
+  <div class="row">
+    <div class="small-12 columns">
+      <div class="tab-pane active tab1">
+        <div class="banner_hero cover_img object-top {% if section.settings.mn1 != blank %}m-none{% endif %}" style="--padding-bottom:49%">
+          {% if section.settings.bn1 != blank %}
+            <img
+              src="{{ section.settings.bn1 | img_url:'master' }}"
+              width="{{ section.settings.bn1.width }}"
+              height="{{ section.settings.bn1.height }}"
+            >
+          {%- else %}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder_svg_tag' }}
+          {%- endif %}
+        </div>
+        {% if section.settings.mn1 != blank %}
+          <div class="banner_hero cover_img d-none" style="--padding-bottom:150%">
+            <img
+              src="{{ section.settings.mn1 | img_url:'master' }}"
+              width="{{ section.settings.mn1.width }}"
+              height="{{ section.settings.mn1.height }}"
+            >
+          </div>
+        {%- endif %}
+      </div>
+      {% if false %}
+      <div class="tab-pane tab2">
+        <div class="cover_img object-top {% if section.settings.mn2 != blank %}m-none{% endif %}" style="--padding-bottom:49%">
+          {% if section.settings.bn2 != blank %}
+            <img
+              src="{{ section.settings.bn2 | img_url:'master' }}"
+              width="{{ section.settings.bn2.width }}"
+              height="{{ section.settings.bn2.height }}"
+            >
+          {%- else %}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder_svg_tag' }}
+          {%- endif %}
+        </div>
+        {% if section.settings.mn2 != blank %}
+          <div class="cover_img d-none" style="--padding-bottom:150%">
+            <img
+              src="{{ section.settings.mn2 | img_url:'master' }}"
+              width="{{ section.settings.mn2.width }}"
+              height="{{ section.settings.mn2.height }}"
+            >
+          </div>
+        {%- endif %}
+      </div>
+      {% endif %}
+      <div class="tab-pane tab3">
+        <div class="cover_img object-top  {% if section.settings.mn3 != blank %}m-none{% endif %}" style="--padding-bottom:49%">
+          {% if section.settings.video3 != blank %}
+            {{
+              section.settings.video3
+              | video_tag:
+                image_size: 'master',
+                autoplay: true,
+                controls: false,
+                muted: true,
+                loop: true,
+                playsinline: true
+            }}
+          {% else %}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder_svg_tag' }}
+          {% endif %}
+        </div>
+        {% if section.settings.mn3 != blank %}
+          <div class="cover_img d-none" style="--padding-bottom:150%">
+            <img
+              src="{{ section.settings.mn3 | img_url:'master' }}"
+              width="{{ section.settings.mn3.width }}"
+              height="{{ section.settings.mn3.height }}"
+            >
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="featured_tab">
+        <tab-component class="nav nav-tabs about-tabs">
+          <li class="nav-item carousel">
+            <a class="nav-link active" data-bs-toggle="tab" data-bs-target="tab1" href="javascript:void(0);">
+              {{- section.settings.tab1 -}}
+            </a>
+          </li>
+          {% if false %}
+          <li class="nav-item carousel">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="tab2" href="javascript:void(0);">
+              {{- section.settings.tab2 -}}
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item carousel">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="tab3" href="javascript:void(0);">
+              {{- section.settings.tab3 -}}
+            </a>
+          </li>
+          <div class="slide-btn flickity-nav flickity-prev" tabindex="0">
+            <span>‹</span>
+          </div>
+          <div class="slide-btn flickity-nav flickity-next" tabindex="0">
+            <span>›</span>
+          </div>
+        </tab-component>
+        <div class="underline-progress">
+          <div class="aboutprogress under_progress"></div>
+        </div>
+      </div>
+
+      <div class="tab-pane active tab1" id="tab1">
+        {% if section.settings.heading != blank %}
+          <h2 class="tab-heading h5">
+            <span>{{ section.settings.heading }}</span>
+          </h2>
+        {% endif %}
+        {% if section.settings.content != blank or section.settings.content_image %}
+          <div class="tab_content{% if section.settings.brand %} brand__logo{% endif %}">
+            <div>
+              {% if section.settings.content != blank %}
+                <div class="rte">
+                  <p>{{ section.settings.content }}</p>
+                </div>
+              {% endif %}
+              {% if section.settings.content_image != blank %}
+                <img
+                  src="{{ section.settings.content_image | img_url:'master' }}"
+                  height="{{ section.settings.content_image.height }}"
+                  width="{{ section.settings.content_image.width }}"
+                >
+              {% endif %}
+            </div>
+            {% if section.settings.brand != blank %}
+              <img
+                class="brand_logo"
+                src="{{ section.settings.brand | img_url:'master'}}"
+                height="{{ section.settings.brand.height }}"
+                width="{{ section.settings.brand.width }}"
+              >
+            {% endif %}
+          </div>
+        {% endif %}
+        {% if first_tab_blocks.size > 0 %}
+          {% liquid
+            if first_tab_blocks.size > 4
+              assign slide = 'slider-component'
+            else
+              assign slide = 'div'
+            endif
+          %}
+          <{{ slide }} class="custom_slider carousel products row">
+            {% for block in first_tab_blocks %}
+              <div class="carousel_slide small-6 medium-6 large-3 columns">
+                <div class="product-card-item">
+                  <div class="cover_img" id="block-{{ block.id }}" style="--padding-bottom:155%">
+                    {% if block.settings.video_hosted != blank %}
+                      {{
+                        block.settings.video_hosted
+                        | video_tag:
+                          image_size: 'master',
+                          autoplay: block.settings.video_autoplay,
+                          controls: false,
+                          muted: true,
+                          loop: true,
+                          playsinline: true
+                      }}
+                    {% else %}
+                      <img
+                        src="{{ block.settings.image | img_url: 'master' }}"
+                        width="{{ block.settings.image.width }}"
+                        height="{{ block.settings.image.height }}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                  {% if block.settings.video_hosted != blank and block.settings.video_autoplay == false %}
+                    <button class="play-btn" data-target="#block-{{ block.id }} video">
+                      <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+            {% if first_tab_blocks.size > 4 %}
+              <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                <img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}">
+              </div>
+              <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+              </div>
+            {% endif %}
+          </{{ slide }}>
+        {% endif %}
+
+        {% if slider_first.size > 0 %}
+          {% assign slide_count = 0 %}
+          {% for block in slider_first %}
+            <div class="slider_row">
+              {% if block.settings.heading != blank %}
+                <h3 class="h5 slider-title">{{ block.settings.heading }}</h3>
+              {% endif %}
+              {% liquid
+                if slide_count.size > 4
+                  assign slide = 'slider-component'
+                else
+                  assign slide = 'div'
+                endif
+              %}
+              <{{ slide }} class="custom_slider carousel products row">
+                {% if block.settings.image != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image | img_url: 'master' }}"
+                          width="{{ block.settings.image.width }}"
+                          height="{{ block.settings.image.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text != blank %}
+                        <a
+                          href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image2 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url2 != blank %}{{ block.settings.url2 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image2 | img_url: 'master' }}"
+                          width="{{ block.settings.image2.width }}"
+                          height="{{ block.settings.image2.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text2 != blank %}
+                        <a
+                          href="{% if block.settings.url2 != blank %}{{ block.settings.url2 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text2 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image3 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url3 != blank %}{{ block.settings.url3 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image3 | img_url: 'master' }}"
+                          width="{{ block.settings.image3.width }}"
+                          height="{{ block.settings.image3.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text3 != blank %}
+                        <a
+                          href="{% if block.settings.url3 != blank %}{{ block.settings.url3 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text3 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image4 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url4 != blank %}{{ block.settings.url4 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image4 | img_url: 'master' }}"
+                          width="{{ block.settings.image4.width }}"
+                          height="{{ block.settings.image4.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text4 != blank %}
+                        <a
+                          href="{% if block.settings.url4 != blank %}{{ block.settings.url4 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text4 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image5 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url5 != blank %}{{ block.settings.url5 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image5 | img_url: 'master' }}"
+                          width="{{ block.settings.image5.width }}"
+                          height="{{ block.settings.image5.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text5 != blank %}
+                        <a
+                          href="{% if block.settings.url5 != blank %}{{ block.settings.url5 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text5 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image6 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url6 != blank %}{{ block.settings.url6 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image6 | img_url: 'master' }}"
+                          width="{{ block.settings.image6.width }}"
+                          height="{{ block.settings.image6.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text6 != blank %}
+                        <a
+                          href="{% if block.settings.url6 != blank %}{{ block.settings.url6 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text6 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image7 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url7 != blank %}{{ block.settings.url7 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image7 | img_url: 'master' }}"
+                          width="{{ block.settings.image7.width }}"
+                          height="{{ block.settings.image7.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text7 != blank %}
+                        <a
+                          href="{% if block.settings.url7 != blank %}{{ block.settings.url7 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text7 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image8 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url8 != blank %}{{ block.settings.url8 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image8 | img_url: 'master' }}"
+                          width="{{ block.settings.image8.width }}"
+                          height="{{ block.settings.image8.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text8 != blank %}
+                        <a
+                          href="{% if block.settings.url8 != blank %}{{ block.settings.url8 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text8 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if block.settings.image9 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url9 != blank %}{{ block.settings.url9 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image9 | img_url: 'master' }}"
+                          width="{{ block.settings.image9.width }}"
+                          height="{{ block.settings.image9.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text9 != blank %}
+                        <a
+                          href="{% if block.settings.url9 != blank %}{{ block.settings.url9 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text9 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image10 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url10 != blank %}{{ block.settings.url10 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image10 | img_url: 'master' }}"
+                          width="{{ block.settings.image10.width }}"
+                          height="{{ block.settings.image10.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text10 != blank %}
+                        <a
+                          href="{% if block.settings.url10 != blank %}{{ block.settings.url10 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text10 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if slide_count.size > 4 %}
+                  <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                    <img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}">
+                  </div>
+                  <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                    <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+                  </div>
+                {% endif %}
+              </{{ slide }}>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+                {% comment %}
+      <div class="tab-pane tab2" id="tab2">
+        {% if section.settings.heading2 != blank %}
+          <h2 class="tab-heading h5">
+            <span>{{ section.settings.heading2 }}</span>
+          </h2>
+        {% endif %}
+        {% if section.settings.content2 != blank or section.settings.content_image2 %}
+          <div class="tab_content{% if section.settings.brand2 %} brand__logo{% endif %}">
+            <div>
+              {% if section.settings.content2 != blank %}
+                <div class="rte">
+                  <p>{{ section.settings.content2 }}</p>
+                </div>
+              {% endif %}
+              {% if section.settings.content_image2 != blank %}
+                <img
+                  src="{{ section.settings.content_image2 | img_url:'master'}}"
+                  height="{{ section.settings.content_image2.height }}"
+                  width="{{ section.settings.content_image2.width }}"
+                >
+              {% endif %}
+            </div>
+            {% if section.settings.brand2 != blank %}
+              <img
+                class="brand_logo"
+                src="{{ section.settings.brand2 | img_url:'master'}}"
+                height="{{ section.settings.brand2.height }}"
+                width="{{ section.settings.brand2.width }}"
+              >
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if second_tab_blocks.size > 0 %}
+          {% liquid
+            if second_tab_blocks.size > 4
+              assign slide = 'slider-component'
+            else
+              assign slide = 'div'
+            endif
+          %}
+          <{{ slide }} class="custom_slider carousel products row">
+            {% for block in second_tab_blocks %}
+              <div class="carousel_slide small-6 medium-6 large-3 columns">
+                <div class="product-card-item">
+                  <div class="cover_img" style="--padding-bottom:155%">
+                    {% if block.settings.video_hosted != blank %}
+                      {{
+                        block.settings.video_hosted
+                        | video_tag:
+                          image_size: 'master',
+                          autoplay: block.settings.video_autoplay,
+                          controls: false,
+                          muted: true,
+                          loop: true,
+                          playsinline: true
+                      }}
+                    {% else %}
+                      <img
+                        src="{{ block.settings.image | img_url: 'master' }}"
+                        width="{{ block.settings.image.width }}"
+                        height="{{ block.settings.image.height }}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                  {% if block.settings.video_hosted != blank and block.settings.video_autoplay == false %}
+                    <button class="play-btn" data-target="#block-{{ block.id }} video">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 47 47" height="47" width="47">
+                        <circle fill="rgb(0 0 0 / 50%)" r="23.1186" cy="23.56" cx="23.6342"></circle>
+                        <g clip-path="url(#clip0_185_1710)"><path fill="#fff" d="M18.0537 16.1195V31.0004C18.0537 31.1659 18.0978 31.3284 18.1815 31.4712C18.2652 31.6139 18.3855 31.7318 18.5299 31.8125C18.6744 31.8933 18.8377 31.934 19.0032 31.9306C19.1686 31.9271 19.3302 31.8796 19.4711 31.7929L31.5619 24.3524C31.6973 24.2692 31.8091 24.1527 31.8867 24.0139C31.9643 23.8752 32.005 23.7189 32.005 23.56C32.005 23.401 31.9643 23.2448 31.8867 23.106C31.8091 22.9673 31.6973 22.8508 31.5619 22.7676L19.4711 15.3271C19.3302 15.2404 19.1686 15.1929 19.0032 15.1894C18.8377 15.186 18.6744 15.2267 18.5299 15.3075C18.3855 15.3882 18.2652 15.506 18.1815 15.6488C18.0978 15.7915 18.0537 15.954 18.0537 16.1195Z"></path></g>
+                        <defs>
+                          <clipPath id="clip0_185_1710">
+                            <rect transform="translate(12.4736 12.3994)" fill="white" height="22.3214" width="22.3214"></rect>
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+            {% if second_tab_blocks.size > 4 %}
+              <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 5L9 12L16 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow"></path>
+                </svg>
+              </div>
+              <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="right-arrow"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M8 5L15 12L8 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </div>
+            {% endif %}
+          </{{ slide }}>
+        {% endif %}
+
+        {% if slider_second.size > 0 %}
+          {% assign slide_count = 0 %}
+          {% for block in slider_second %}
+            <div class="slider_row">
+              {% if block.settings.heading != blank %}
+                <h3 class="h5 slider-title">{{ block.settings.heading }}</h3>
+              {% endif %}
+              {% liquid
+                if slide_count.size > 4
+                  assign slide = 'slider-component'
+                else
+                  assign slide = 'div'
+                endif
+              %}
+              <{{ slide }} class="custom_slider carousel products row">
+                {% if block.settings.image != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image | img_url: 'master' }}"
+                          width="{{ block.settings.image.width }}"
+                          height="{{ block.settings.image.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text != blank %}
+                        <a
+                          href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image2 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url2 != blank %}{{ block.settings.url2 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image2 | img_url: 'master' }}"
+                          width="{{ block.settings.image2.width }}"
+                          height="{{ block.settings.image2.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text2 != blank %}
+                        <a
+                          href="{% if block.settings.url2 != blank %}{{ block.settings.url2 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text2 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image3 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url3 != blank %}{{ block.settings.url3 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image3 | img_url: 'master' }}"
+                          width="{{ block.settings.image3.width }}"
+                          height="{{ block.settings.image3.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text3 != blank %}
+                        <a
+                          href="{% if block.settings.url3 != blank %}{{ block.settings.url3 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text3 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image4 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url4 != blank %}{{ block.settings.url4 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image4 | img_url: 'master' }}"
+                          width="{{ block.settings.image4.width }}"
+                          height="{{ block.settings.image4.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text4 != blank %}
+                        <a
+                          href="{% if block.settings.url4 != blank %}{{ block.settings.url4 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text4 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image5 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url5 != blank %}{{ block.settings.url5 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image5 | img_url: 'master' }}"
+                          width="{{ block.settings.image5.width }}"
+                          height="{{ block.settings.image5.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text5 != blank %}
+                        <a
+                          href="{% if block.settings.url5 != blank %}{{ block.settings.url5 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text5 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image6 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url6 != blank %}{{ block.settings.url6 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image6 | img_url: 'master' }}"
+                          width="{{ block.settings.image6.width }}"
+                          height="{{ block.settings.image6.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text6 != blank %}
+                        <a
+                          href="{% if block.settings.url6 != blank %}{{ block.settings.url6 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text6 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image7 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url7 != blank %}{{ block.settings.url7 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image7 | img_url: 'master' }}"
+                          width="{{ block.settings.image7.width }}"
+                          height="{{ block.settings.image7.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text7 != blank %}
+                        <a
+                          href="{% if block.settings.url7 != blank %}{{ block.settings.url7 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text7 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image8 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url8 != blank %}{{ block.settings.url8 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image8 | img_url: 'master' }}"
+                          width="{{ block.settings.image8.width }}"
+                          height="{{ block.settings.image8.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text8 != blank %}
+                        <a
+                          href="{% if block.settings.url8 != blank %}{{ block.settings.url8 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text8 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if block.settings.image9 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url9 != blank %}{{ block.settings.url9 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image9 | img_url: 'master' }}"
+                          width="{{ block.settings.image9.width }}"
+                          height="{{ block.settings.image9.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text9 != blank %}
+                        <a
+                          href="{% if block.settings.url9 != blank %}{{ block.settings.url9 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text9 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image10 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url10 != blank %}{{ block.settings.url10 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image10 | img_url: 'master' }}"
+                          width="{{ block.settings.image10.width }}"
+                          height="{{ block.settings.image10.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text10 != blank %}
+                        <a
+                          href="{% if block.settings.url10 != blank %}{{ block.settings.url10 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text10 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if slide_count.size > 4 %}
+                  <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 5L9 12L16 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow"></path>
+                    </svg>
+                  </div>
+                  <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      class="right-arrow"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M8 5L15 12L8 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </div>
+                {% endif %}
+              </{{ slide }}>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+     {% endcomment %}   
+      <div class="tab-pane tab3" id="tab3">
+        {% if section.settings.heading3 != blank %}
+          <h2 class="tab-heading h5">
+            <span>{{ section.settings.heading3 }}</span>
+          </h2>
+        {% endif %}
+        {% if section.settings.content3 != blank or section.settings.content_image3 %}
+          <div class="tab_content{% if section.settings.brand3 %} brand__logo{% endif %}">
+            <div>
+              {% if section.settings.content3 != blank %}
+                <div class="rte">
+                  <p>{{ section.settings.content3 }}</p>
+                </div>
+              {% endif %}
+              {% if section.settings.content_image3 != blank %}
+                <img
+                  src="{{ section.settings.content_image3 | img_url:'master'}}"
+                  height="{{ section.settings.content_image3.height }}"
+                  width="{{ section.settings.content_image3.width }}"
+                >
+              {% endif %}
+            </div>
+            {% if section.settings.brand3 != blank %}
+              <img
+                class="brand_logo"
+                src="{{ section.settings.brand3 | img_url:'master'}}"
+                height="{{ section.settings.brand3.height }}"
+                width="{{ section.settings.brand3.width }}"
+              >
+            {% endif %}
+          </div>
+        {% endif %}
+        {% if third_tab_blocks.size > 0 %}
+          {% liquid
+            if third_tab_blocks.size > 4
+              assign slide = 'slider-component'
+            else
+              assign slide = 'div'
+            endif
+          %}
+          <{{ slide }} class="custom_slider carousel products row">
+            {% for block in third_tab_blocks %}
+              <div class="carousel_slide small-6 medium-6 large-3 columns">
+                <div class="product-card-item">
+                  <div class="cover_img" style="--padding-bottom:155%">
+                    {% if block.settings.video_hosted != blank %}
+                      {{
+                        block.settings.video_hosted
+                        | video_tag:
+                          image_size: 'master',
+                          autoplay: block.settings.video_autoplay,
+                          controls: false,
+                          muted: true,
+                          loop: true,
+                          playsinline: true
+                      }}
+                    {% else %}
+                      <img
+                        src="{{ block.settings.image | img_url: 'master' }}"
+                        width="{{ block.settings.image.width }}"
+                        height="{{ block.settings.image.height }}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                  {% if block.settings.video_hosted != blank and block.settings.video_autoplay == false %}
+                    <button class="play-btn" data-target="#block-{{ block.id }} video">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 47 47" height="47" width="47">
+                        <circle fill="rgb(0 0 0 / 50%)" r="23.1186" cy="23.56" cx="23.6342"></circle>
+                        <g clip-path="url(#clip0_185_1710)"><path fill="#fff" d="M18.0537 16.1195V31.0004C18.0537 31.1659 18.0978 31.3284 18.1815 31.4712C18.2652 31.6139 18.3855 31.7318 18.5299 31.8125C18.6744 31.8933 18.8377 31.934 19.0032 31.9306C19.1686 31.9271 19.3302 31.8796 19.4711 31.7929L31.5619 24.3524C31.6973 24.2692 31.8091 24.1527 31.8867 24.0139C31.9643 23.8752 32.005 23.7189 32.005 23.56C32.005 23.401 31.9643 23.2448 31.8867 23.106C31.8091 22.9673 31.6973 22.8508 31.5619 22.7676L19.4711 15.3271C19.3302 15.2404 19.1686 15.1929 19.0032 15.1894C18.8377 15.186 18.6744 15.2267 18.5299 15.3075C18.3855 15.3882 18.2652 15.506 18.1815 15.6488C18.0978 15.7915 18.0537 15.954 18.0537 16.1195Z"></path></g>
+                        <defs>
+                          <clipPath id="clip0_185_1710">
+                            <rect transform="translate(12.4736 12.3994)" fill="white" height="22.3214" width="22.3214"></rect>
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+            {% if third_tab_blocks.size > 4 %}
+              <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                <img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}">
+              </div>
+              <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+              </div>
+            {% endif %}
+          </{{ slide }}>
+        {% endif %}
+
+        {% if slider_third.size > 0 %}
+          {% assign slide_count = 0 %}
+          {% for block in slider_third %}
+            <div class="slider_row">
+              {% if block.settings.heading != blank %}
+                <h3 class="h5 slider-title">{{ block.settings.heading }}</h3>
+              {% endif %}
+              {% liquid
+                if slide_count.size > 4
+                  assign slide = 'slider-component'
+                else
+                  assign slide = 'div'
+                endif
+              %}
+              <{{ slide }} class="custom_slider carousel products row">
+                {% if block.settings.image != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image | img_url: 'master' }}"
+                          width="{{ block.settings.image.width }}"
+                          height="{{ block.settings.image.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text != blank %}
+                        <a
+                          href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image2 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url2 != blank %}{{ block.settings.url2 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image2 | img_url: 'master' }}"
+                          width="{{ block.settings.image2.width }}"
+                          height="{{ block.settings.image2.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text2 != blank %}
+                        <a
+                          href="{% if block.settings.url2 != blank %}{{ block.settings.url2 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text2 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image3 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url3 != blank %}{{ block.settings.url3 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image3 | img_url: 'master' }}"
+                          width="{{ block.settings.image3.width }}"
+                          height="{{ block.settings.image3.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text3 != blank %}
+                        <a
+                          href="{% if block.settings.url3 != blank %}{{ block.settings.url3 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text3 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image4 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url4 != blank %}{{ block.settings.url4 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image4 | img_url: 'master' }}"
+                          width="{{ block.settings.image4.width }}"
+                          height="{{ block.settings.image4.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text4 != blank %}
+                        <a
+                          href="{% if block.settings.url4 != blank %}{{ block.settings.url4 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text4 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image5 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url5 != blank %}{{ block.settings.url5 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image5 | img_url: 'master' }}"
+                          width="{{ block.settings.image5.width }}"
+                          height="{{ block.settings.image5.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text5 != blank %}
+                        <a
+                          href="{% if block.settings.url5 != blank %}{{ block.settings.url5 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text5 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image6 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url6 != blank %}{{ block.settings.url6 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image6 | img_url: 'master' }}"
+                          width="{{ block.settings.image6.width }}"
+                          height="{{ block.settings.image6.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text6 != blank %}
+                        <a
+                          href="{% if block.settings.url6 != blank %}{{ block.settings.url6 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text6 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image7 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url7 != blank %}{{ block.settings.url7 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image7 | img_url: 'master' }}"
+                          width="{{ block.settings.image7.width }}"
+                          height="{{ block.settings.image7.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text7 != blank %}
+                        <a
+                          href="{% if block.settings.url7 != blank %}{{ block.settings.url7 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text7 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image8 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url8 != blank %}{{ block.settings.url8 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image8 | img_url: 'master' }}"
+                          width="{{ block.settings.image8.width }}"
+                          height="{{ block.settings.image8.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text8 != blank %}
+                        <a
+                          href="{% if block.settings.url8 != blank %}{{ block.settings.url8 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text8 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if block.settings.image9 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url9 != blank %}{{ block.settings.url9 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image9 | img_url: 'master' }}"
+                          width="{{ block.settings.image9.width }}"
+                          height="{{ block.settings.image9.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text9 != blank %}
+                        <a
+                          href="{% if block.settings.url9 != blank %}{{ block.settings.url9 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text9 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.image10 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url10 != blank %}{{ block.settings.url10 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image10 | img_url: 'master' }}"
+                          width="{{ block.settings.image10.width }}"
+                          height="{{ block.settings.image10.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text10 != blank %}
+                        <a
+                          href="{% if block.settings.url10 != blank %}{{ block.settings.url10 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text10 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if block.settings.image11 != blank %}
+                  {% assign slide_count = slide_count | plus: 1 %}
+                  <div class="carousel_slide small-6 medium-6 {% if block.settings.colum == 'three' %}large-4{% else %}large-3{% endif %} columns">
+                    <div class="product-card-item">
+                      <a
+                        href="{% if block.settings.url11 != blank %}{{ block.settings.url11 }}{% else %}javascript:void(0);{% endif %}"
+                        class="cover_img"
+                        style="--padding-bottom:155%"
+                      >
+                        <img
+                          src="{{ block.settings.image11 | img_url: 'master' }}"
+                          width="{{ block.settings.image11.width }}"
+                          height="{{ block.settings.image11.height }}"
+                          alt=""
+                        >
+                      </a>
+                      {% if block.settings.text11 != blank %}
+                        <a
+                          href="{% if block.settings.url11 != blank %}{{ block.settings.url11 }}{% else %}javascript:void(0);{% endif %}"
+                          class="product_content text-center"
+                        >
+                          <span class="text-button-underline">{{ block.settings.text11 }}</span>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if slide_count.size > 4 %}
+                  <div class="flickity-nav product-next flickity-prev" tabindex="0">
+                    <img width="30" height="30" src="{{ 'arrow-left.svg' | asset_url }}">
+                  </div>
+                  <div class="flickity-nav product-prev flickity-next" tabindex="0">
+                    <img width="30" height="30" src="{{ 'arrow-right.svg' | asset_url }}">
+                  </div>
+                {% endif %}
+              </{{ slide }}>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+   $('.play-btn').on('click', function () {
+      var videoSelector = $(this).data('target');
+      var video = $(videoSelector).get(0);
+      if (video) {
+        video.play();
+        video.setAttribute('controls', true); // Optional: show controls on play
+        $(this).hide(); // Hide the play button
+      }
+    });
+    function setUnderline() {
+      var $activeTab = $(".about-tabs .nav-link.active");
+      var $underline = $(".aboutprogress");
+      if ($activeTab.length > 0) {
+        if (window.innerWidth <= 768) {
+        if($activeTab.html() == 'Legacy') {
+          $underline.css({
+          width: 50,
+          left: $activeTab.offset().left - $(".about-tabs").offset().left,
+        });
+        } else if($activeTab.html() == 'About') {
+          $underline.css({
+          width: 50,
+          left: $activeTab.offset().left - $(".about-tabs").offset().left,
+          });
+        } else {
+          $underline.css({
+          width: 130,
+          left: $activeTab.offset().left - $(".about-tabs").offset().left,
+        });
+      }
+        } else {
+        $underline.css({
+          width: $activeTab.outerWidth(),
+          left: $activeTab.offset().left - $(".about-tabs").offset().left,
+        });
+        }
+    }
+    }
+    setUnderline();
+    $(".about-tabs .nav-link").on("shown.bs.tab", function () {
+      let target = $(this).attr('data-bs-target');
+      $('.tab-pane').removeClass('show active');
+      $('.' + target).addClass('show active');
+
+      setTimeout(function () {
+        $('slider-component').each(function () {
+          let flkty = Flickity.data(this);
+          if (flkty) {
+            flkty.resize(); // Force Flickity to update layout
+          }
+        });
+      }, 100);
+      setUnderline();
+    });
+    $(window).on("resize", function () {
+      setUnderline();
+    });
+  });
+
+
+const hashAlias = { about: 'tab1', eliesaabworld: 'tab3' };
+
+
+$(function () {
+  const friendly = window.location.hash.replace('#', '');
+  const className = hashAlias[friendly];          // "tab1" or "tab3"
+  if (className) {
+    $('.about-tabs .nav-link[data-bs-target="' + className + '"]').tab('show');
+  }
+});
+
+
+$('.about-tabs .nav-link').on('shown.bs.tab', function () {
+  const className = $(this).attr('data-bs-target');      // "tab1"/"tab3"
+  const newHash   = Object.keys(hashAlias)
+                        .find(k => hashAlias[k] === className);
+  if (newHash) history.replaceState(null, null, '#' + newHash);
+});
+</script>
+
+{% schema %}
+{
+  "name": "About Us Section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "First tab content"
+    },
+    {
+      "type": "image_picker",
+      "id": "bn1",
+      "label": "Top banner on desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "mn1",
+      "label": "Top banner on mobile"
+    },
+    {
+      "type": "text",
+      "id": "tab1",
+      "label": "Tab Teading",
+      "default": "About"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Story"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "content",
+      "label": "content",
+      "default": "Born with a passion for design, Elie Saab founded his fashion house in 1982 at just 18 years old. From a small atelier in Beirut to the world’s most prestigious runways, his vision for elegance and craftsmanship has redefined modern luxury. With an innate ability to blend Middle Eastern heritage with European refinement, he has built a global empire celebrated for its timeless sophistication and originality."
+    },
+    {
+      "type": "image_picker",
+      "id": "content_image",
+      "label": "Content image"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand",
+      "label": "Brand logo"
+    },
+    {
+      "type": "header",
+      "content": "Second tab content"
+    },
+    {
+      "type": "image_picker",
+      "id": "bn2",
+      "label": "Top banner on desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "mn2",
+      "label": "Top banner on mobile"
+    },
+    {
+      "type": "text",
+      "id": "tab2",
+      "label": "Tab Teading",
+      "default": "Legacy"
+    },
+    {
+      "type": "text",
+      "id": "heading2",
+      "label": "Heading",
+      "default": "Dear Guest"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "content2",
+      "label": "content",
+      "default": "Born with a passion for design, Elie Saab founded his fashion house in 1982 at just 18 years old. From a small atelier in Beirut to the world’s most prestigious runways, his vision for elegance and craftsmanship has redefined modern luxury. With an innate ability to blend Middle Eastern heritage with European refinement, he has built a global empire celebrated for its timeless sophistication and originality."
+    },
+    {
+      "type": "image_picker",
+      "id": "content_image2",
+      "label": "Content image"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand2",
+      "label": "Brand logo"
+    },
+    {
+      "type": "header",
+      "content": "Third tab content"
+    },
+    {
+      "type": "image_picker",
+      "id": "bn3",
+      "label": "Top banner on desktop"
+    },
+    {
+      "type": "video",
+      "id": "video3",
+      "label": "Top Video on desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "mn3",
+      "label": "Top banner on mobile"
+    },
+    {
+      "type": "text",
+      "id": "tab3",
+      "label": "Tab Teading",
+      "default": "ELIE SAAB World"
+    },
+    {
+      "type": "text",
+      "id": "heading3",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "content3",
+      "label": "content",
+      "default": "Born with a passion for design, Elie Saab founded his fashion house in 1982 at just 18 years old. From a small atelier in Beirut to the world’s most prestigious runways, his vision for elegance and craftsmanship has redefined modern luxury. With an innate ability to blend Middle Eastern heritage with European refinement, he has built a global empire celebrated for its timeless sophistication and originality."
+    },
+    {
+      "type": "image_picker",
+      "id": "content_image3",
+      "label": "Content image"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand3",
+      "label": "Brand logo"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "checkbox",
+      "id": "disable_top_spacing",
+      "default": false,
+      "label": "Remove top spacing"
+    },
+    {
+      "type": "checkbox",
+      "id": "disable_bottom_spacing",
+      "default": false,
+      "label": "Remove bottom spacing"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Tab 1 (Image / Video)",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video_hosted",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "video_autoplay",
+          "default": false,
+          "label": "Autoplay",
+          "info": "Video will be muted"
+        }
+      ]
+    },
+    {
+      "type": "video2",
+      "name": "Tab 2 (Image / Video)",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video_hosted",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "video_autoplay",
+          "default": false,
+          "label": "Autoplay",
+          "info": "Video will be muted"
+        }
+      ]
+    },
+    {
+      "type": "video3",
+      "name": "Tab 3 (Image / Video)",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video_hosted",
+          "label": "Shopify-hosted video"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "video_autoplay",
+          "default": false,
+          "label": "Autoplay",
+          "info": "Video will be muted"
+        }
+      ]
+    },
+    {
+      "type": "slider",
+      "name": "Tab 1 (Slider)",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "header",
+          "content": "Block 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image2",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text2",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url2",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image3",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text3",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url3",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image4",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text4",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url4",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 5"
+        },
+        {
+          "type": "image_picker",
+          "id": "image5",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text5",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url5",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 6"
+        },
+        {
+          "type": "image_picker",
+          "id": "image6",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text6",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url6",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 7"
+        },
+        {
+          "type": "image_picker",
+          "id": "image7",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text7",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url7",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 8"
+        },
+        {
+          "type": "image_picker",
+          "id": "image8",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text8",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url8",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 9"
+        },
+        {
+          "type": "image_picker",
+          "id": "image9",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text9",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url9",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 10"
+        },
+        {
+          "type": "image_picker",
+          "id": "image10",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text10",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url10",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "colum",
+          "label": "Slider Column",
+          "options": [
+            { "label": "Column Three", "value": "three" },
+            { "label": "Column Four", "value": "four" }
+          ],
+          "default":"four"
+        }
+      ]
+    },
+    {
+      "type": "slider2",
+      "name": "Tab 2 (Slider)",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "header",
+          "content": "Block 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image2",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text2",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url2",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image3",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text3",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url3",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image4",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text4",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url4",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 5"
+        },
+        {
+          "type": "image_picker",
+          "id": "image5",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text5",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url5",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 6"
+        },
+        {
+          "type": "image_picker",
+          "id": "image6",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text6",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url6",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 7"
+        },
+        {
+          "type": "image_picker",
+          "id": "image7",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text7",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url7",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 8"
+        },
+        {
+          "type": "image_picker",
+          "id": "image8",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text8",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url8",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 9"
+        },
+        {
+          "type": "image_picker",
+          "id": "image9",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text9",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url9",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 10"
+        },
+        {
+          "type": "image_picker",
+          "id": "image10",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text10",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url10",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "colum",
+          "label": "Slider Column",
+          "options": [
+            { "label": "Column Three", "value": "three" },
+            { "label": "Column Four", "value": "four" }
+          ],
+          "default":"four"
+        }
+      ]
+    },
+    {
+      "type": "slider3",
+      "name": "Tab 3 (Slider)",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "header",
+          "content": "Block 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image2",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text2",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url2",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image3",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text3",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url3",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image4",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text4",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url4",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 5"
+        },
+        {
+          "type": "image_picker",
+          "id": "image5",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text5",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url5",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 6"
+        },
+        {
+          "type": "image_picker",
+          "id": "image6",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text6",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url6",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 7"
+        },
+        {
+          "type": "image_picker",
+          "id": "image7",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text7",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url7",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 8"
+        },
+        {
+          "type": "image_picker",
+          "id": "image8",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text8",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url8",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 9"
+        },
+        {
+          "type": "image_picker",
+          "id": "image9",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text9",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url9",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 10"
+        },
+        {
+          "type": "image_picker",
+          "id": "image10",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text10",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url10",
+          "label": "Link"
+        },
+        {
+          "type": "header",
+          "content": "Block 11"
+        },
+        {
+          "type": "image_picker",
+          "id": "image11",
+          "label": "Image"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text11",
+          "label": "Text"
+        },
+        {
+          "type": "url",
+          "id": "url11",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "colum",
+          "label": "Slider Column",
+          "options": [
+            { "label": "Column Three", "value": "three" },
+            { "label": "Column Four", "value": "four" }
+          ],
+          "default":"four"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Us Section"
+    }
+  ]
+}
+{% endschema %}

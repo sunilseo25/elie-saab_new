@@ -1,0 +1,252 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page-monaco-boutiques",
+      "settings": {}
+    },
+    "slideshow_QrQcFK": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_tUymY3": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/A_ESM_SDM_L1020134.1_2_2048x_7d2c7777-fb9c-4185-8a3d-0cd30bb9018f.webp",
+            "slide_link": "",
+            "video_background": false,
+            "video": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "subheading": "",
+            "heading": "",
+            "heading_size": "h1-xlarge",
+            "content": "",
+            "description_size": "medium",
+            "content_position": "middle-center",
+            "text_alignment": "center",
+            "content_size": "medium",
+            "overlay_color": "#000000",
+            "overlay_opacity": 70,
+            "overlay_gradient": "linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4) 100%)",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_outline": false,
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_outline": false
+          }
+        }
+      },
+      "block_order": [
+        "slide_tUymY3"
+      ],
+      "custom_css": [],
+      "settings": {
+        "desktop_height": "desktop-height-650",
+        "mobile_height": "mobile-height-500",
+        "full_width": false,
+        "autoplay": false,
+        "autoplay_length": 5,
+        "transition": "swipe",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": false,
+        "css_id": ""
+      }
+    },
+    "rich_text_bexP93": {
+      "type": "rich-text",
+      "blocks": {
+        "text_TwCnVR": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Via Pietro Mascagni 2,<br/>20122 Milan Italy<br/></p>",
+            "custom_liquid": "",
+            "size": "text-size-regular"
+          }
+        }
+      },
+      "block_order": [
+        "text_TwCnVR"
+      ],
+      "settings": {
+        "css_id": "borderBottom",
+        "section_width": "grid",
+        "text_width": "medium",
+        "text_position": "center",
+        "text_alignment": "center",
+        "color_bg": "rgba(0,0,0,0)",
+        "color_text": "#000000",
+        "color_links": "#000000",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": true
+      }
+    },
+    "rich_text_JCNBwW": {
+      "type": "rich-text",
+      "blocks": {
+        "text_C4xCwH": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Unveiled during Salone del Mobile 2025, the new ELIE SAAB Maison showroom opens its doors in the heart of Milan’s prestigious Design District. Set within a historic palazzo, the 450sqm space redefines luxury living — where interiors, architecture, lifestyle, and sensory design converge. ⁠ More than a showroom, it is an immersive experience. A curated journey through sculptural elegance, refined materials, and timeless design — all elevated by bespoke scent, sound, and light.</p>",
+            "custom_liquid": "",
+            "size": "text-size-regular"
+          }
+        }
+      },
+      "block_order": [
+        "text_C4xCwH"
+      ],
+      "settings": {
+        "css_id": "",
+        "section_width": "grid",
+        "text_width": "xlarge",
+        "text_position": "center",
+        "text_alignment": "center",
+        "color_bg": "rgba(0,0,0,0)",
+        "color_text": "#000000",
+        "color_links": "#000000",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": true
+      }
+    },
+    "custom_map_with_locations_RgRFiR": {
+      "type": "custom-map-with-locations",
+      "blocks": {
+        "pin_fJWJqx": {
+          "type": "pin",
+          "settings": {
+            "pin_retina": true,
+            "pin_lat": "43.74889",
+            "pin_long": "7.43861",
+            "store_name": "Paris Boutique George V",
+            "pin_title": "Working Hours",
+            "pin_desc": "Monday: 11:00 - 19:00\nTuesday - Saturday: 10:00 -19:00\nSunday: Closed",
+            "service_title": "Services",
+            "service_desc": "Ready-to-Wear\nAccessories \nKids",
+            "contact_title": "Contact",
+            "contact_desc": "31 Avenue George V, 75008 Paris, France",
+            "contact_email": "george5@eliesaab.com",
+            "contact_phoneno": "+33 1 42 56 69 00",
+            "contact_wapp": "+33 6 68 92 23 94",
+            "direction_title": "Get directions",
+            "direction_desc": "For Bridal and Haute Couture, please visit our dedicated Boutique in Paris at 1 Rond-Point des Champs Elysées."
+          }
+        }
+      },
+      "block_order": [
+        "pin_fJWJqx"
+      ],
+      "settings": {
+        "googlemaps_api_key": "AIzaSyDs2mhPEROJsD73nEZA0nzoZIWZSt71OSQ",
+        "desktop_height": "desktop-height-550",
+        "mobile_height": "mobile-height-350",
+        "map_type": "roadmap",
+        "map_style_select": "default",
+        "map_zoom": 17,
+        "color_bg": "#ffffff",
+        "color_text": "#151515",
+        "color_border": "#151515",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": true
+      }
+    },
+    "custom_text_with_slider_Fz9z78": {
+      "type": "custom-text-with-slider",
+      "blocks": {
+        "media_GgQ6yC": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/C_ESM_SDM_L1010810_1512x_dbcb9f6a-116a-4cd7-b3d0-ff1dd8d0ae46.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_hreH9k": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/F_ESM_SDM_L1011153_1512x_7293496e-9932-4f77-878c-c1bf231a245b.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_W49HPH": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/L1010836_1512x_12e15295-9b33-4d7a-8dc9-aba9d02c64bf.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_EPdmix": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/L1010901_1512x_2cfa723a-81dd-46a5-8e02-16bd24a01fc7.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_tnY6VE": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/L1011096_1512x_61fac2a3-2934-4797-952a-58ec379af4ba.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_fdWEWt": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/E_ESM_SDM_L1010833_1512x_ec9ba0d2-8971-4f67-b5d6-5f8f83dc9ba4.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "media_GgQ6yC",
+        "media_hreH9k",
+        "media_W49HPH",
+        "media_EPdmix",
+        "media_tnY6VE",
+        "media_fdWEWt"
+      ],
+      "settings": {
+        "title": "",
+        "description": "",
+        "css_id": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "slideshow_QrQcFK",
+    "rich_text_bexP93",
+    "rich_text_JCNBwW",
+    "custom_map_with_locations_RgRFiR",
+    "custom_text_with_slider_Fz9z78"
+  ]
+}

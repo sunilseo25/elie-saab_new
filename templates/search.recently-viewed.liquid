@@ -1,0 +1,12 @@
+{% layout none %}
+{%- if search.performed -%}
+  <div class="products collection row small-up-1 medium-up-4 no-padding">
+    {%- for item in search.results -%}
+      {%- if item.object_type == 'product' -%}
+        <div class="column small-6 carousel__slide">
+          {% render 'product-card', product_card_product: item %}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}

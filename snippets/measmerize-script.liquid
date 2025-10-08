@@ -1,0 +1,16 @@
+{% liquid
+  assign product_code = product.metafields.descriptors.style_code
+  assign country_code = localization.country.iso_code
+%}
+
+{% if product_code != blank %}
+  <script
+    id="measmerize-script"
+    src="https://client.measmerize.com/script.js"
+    data-brand-code="ffa3147a-8fb3-4cf3-8c52-23e0dc8aab8d"
+    data-product-code="{{ product_code }}"
+    data-lang-code="en"
+    data-country-code="{{ country_code }}"
+    defer
+  ></script>
+{% endif %}

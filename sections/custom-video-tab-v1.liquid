@@ -1,0 +1,1422 @@
+{% if section.settings.enable_countdown %}
+  {{ 'custom-video-tab.css' | asset_url | stylesheet_tag }}
+  {% liquid
+    assign timer_year = section.settings.timer_year
+	assign timer_month = section.settings.timer_month
+	assign timer_day = section.settings.timer_day
+	assign timer_hour = section.settings.timer_hour
+	assign timer_minute = section.settings.timer_minute
+  assign countdown_color = section.settings.countdown_color
+  assign timer_align = section.settings.timer_align
+
+	assign timezone = 1 | date: '%z'
+
+	capture date
+		echo timer_day | append: '-' | append: timer_month | append: '-' | append: timer_year
+	endcapture
+
+	capture time
+		echo timer_hour | append: ':' | append: timer_minute
+	endcapture
+  %}
+{% endif %}
+
+<div class="video-main-multi-tab-section {{ section.settings.tab_class }} {% if section.settings.hide_on_mobile %}hide-on-mobile{% else %}hide-on-desktop{% endif %}" id="custom-tab-{{ section.id }}">
+  <div class="row">
+    <div class="small-12 columns {% if section.settings.enable_countdown %} relative{% endif %}">
+      {% for block in section.blocks %}
+      <div class="video-tab-content{% if block.settings.default_active or forloop.first %} active{% endif %}" data-tab-id="tab-{{ forloop.index0 }}">
+        <div class="video-tab-slide">
+          {% if block.settings.media_type == 'image' %}
+            <a href="{{  block.settings.media_collection_url }}" class="overlay_content_link" id="overlay_content_{{ forloop.index0 }}">
+              <img id="tab-{{ forloop.index0 }}" src="{{ block.settings.media_image | img_url: 'master' }}" width="100%" height="520px" class="image-wrapper single-video-tab" alt="Slide Image">
+            </a>
+            <script>
+              window.videoBlocks = window.videoBlocks || {};
+              window.videoBlocks["tab-{{ forloop.index0 }}"] = [
+                {% if block.settings.media_image != blank %}"{{ block.settings.media_image | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image2 != blank %}"{{ block.settings.media_image2 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image3 != blank %}"{{ block.settings.media_image3 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image4 != blank %}"{{ block.settings.media_image4 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image5 != blank %}"{{ block.settings.media_image5 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image6 != blank %}"{{ block.settings.media_image6 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image7 != blank %}"{{ block.settings.media_image7 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image8 != blank %}"{{ block.settings.media_image8 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image9 != blank %}"{{ block.settings.media_image9 | img_url: 'master' }}",{% endif %}
+                {% if block.settings.media_image10 != blank %}"{{ block.settings.media_image10 | img_url: 'master' }}",{% endif %}
+              ];
+            </script>
+          {% elsif block.settings.media_type == 'video_url' %}
+            {%- assign url = block.settings.media_video_url | strip -%}
+            <div class="video-wrapper">
+              <video id="tab-{{ forloop.index0 }}" src="{{ url }}"  class="single-video-tab lazyvideo" muted playsinline preload="none" style="width:100%;height:520px;object-fit:cover" controlslist="nodownload noremoteplayback" crossorigin="anonymous" poster="{{ section.settings.default_media_image | image_url }}" ></video>
+              {% if url contains 'youtu.be' or url contains 'youtube.com' %}
+                {%- assign id = url | replace: 'https://youtu.be/', '' | replace: 'https://www.youtube.com/watch?v=', '' | split: '&' | first -%}
+                <iframe src="https://www.youtube.com/embed/{{ id }}?autoplay=1&loop=1&mute=1&playlist={{ id }}&controls=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen class="single-video-tab" ></iframe>
+              {% elsif url contains 'vimeo.com' %}
+                {%- assign id = url | split: '/' | last -%}
+                <iframe src="https://player.vimeo.com/video/{{ id }}?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%;height:520px" class="single-video-tab" ></iframe>
+              {% endif %}
+              {% if block.settings.media_collection_url != blank %}
+              <a href="{{ block.settings.media_collection_url }}" class="overlay-content overlay_content_link" id="overlay_content_{{ forloop.index0 }}"></a>
+              {% endif %}
+            </div>
+            <script>
+              window.videoBlocks = window.videoBlocks || {};
+              window.videoBlocks["tab-{{ forloop.index0 }}"] = [
+                {% if block.settings.media_video_url != blank %}"{{ block.settings.media_video_url }}",{% endif %}
+                {% if block.settings.media_video_url2 != blank %}"{{ block.settings.media_video_url2 }}",{% endif %}
+                {% if block.settings.media_video_url3 != blank %}"{{ block.settings.media_video_url3 }}",{% endif %}
+                {% if block.settings.media_video_url4 != blank %}"{{ block.settings.media_video_url4 }}",{% endif %}
+                {% if block.settings.media_video_url5 != blank %}"{{ block.settings.media_video_url5 }}",{% endif %}
+                {% if block.settings.media_video_url6 != blank %}"{{ block.settings.media_video_url6 }}",{% endif %}
+                {% if block.settings.media_video_url7 != blank %}"{{ block.settings.media_video_url7 }}",{% endif %}
+                {% if block.settings.media_video_url8 != blank %}"{{ block.settings.media_video_url8 }}",{% endif %}
+                {% if block.settings.media_video_url9 != blank %}"{{ block.settings.media_video_url9 }}",{% endif %}
+                {% if block.settings.media_video_url10 != blank %}"{{ block.settings.media_video_url10 }}",{% endif %}
+              ];
+          </script>
+          {% else %}
+            <div class="video-wrapper">
+              {%- assign tab_id_attribute = 'tab-' | append:forloop.index0 -%}
+              {{ block.settings.media_video_file | video_tag: autoplay: true, loop: false, controls: false, muted: true, image_size: sizes, class: 'single-video-tab', id: tab_id_attribute, attributes: "playsinline controlslist='nodownload noremoteplayback' " }}
+              {% if  block.settings.media_collection_url != blank %}
+                <a href="{{ block.settings.media_collection_url }}" class="overlay-content overlay_content_link" id="overlay_content_{{ forloop.index0 }}"></a>
+              {% endif %}
+              <script>
+                window.videoBlocks = window.videoBlocks || {};
+                window.videoBlocks["tab-{{ block.settings.tab_id }}"] = [
+                  {% if block.settings.media_video_file != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file2 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file3 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file4 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file5 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file6 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file7 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file8 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file9 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                  {% if block.settings.media_video_file10 != blank %}"{{ block.settings.media_video_file.sources[1].url }}",{% endif %}
+                ];
+              </script>
+            </div>
+          {% endif %}
+          <div class="text-abs-section">
+            <div class="image-text" id="image_text_{{ forloop.index0 }}">{{ block.settings.media_text }}</div>
+            {% if block.settings.media_collection_text != blank %}
+            <a href="{{ block.settings.media_collection_url }}" class="image_collection_link" id="collection_url_{{ forloop.index0 }}">
+              <div class="image-collection-text" id="image_collection_text_{{ forloop.index0 }}">{{ block.settings.media_collection_text }}</div>
+            </a>
+            {% endif %}
+            <script>
+              window.videoBlocks = window.videoBlocks || {};
+              window.videoBlocks["overlay_content_{{ forloop.index0 }}"] = [ {% if block.settings.media_collection_url != blank %}"{{ block.settings.media_collection_url }}",{% endif %} {% if block.settings.media_collection_url2 != blank %}"{{ block.settings.media_collection_url2 }}",{% endif %} {% if block.settings.media_collection_url3 != blank %}"{{ block.settings.media_collection_url3 }}",{% endif %} {% if block.settings.media_collection_url4 != blank %}"{{ block.settings.media_collection_url4 }}",{% endif %} {% if block.settings.media_collection_url5 != blank %}"{{ block.settings.media_collection_url5 }}",{% endif %} {% if block.settings.media_collection_url6 != blank %}"{{ block.settings.media_collection_url6 }}",{% endif %} {% if block.settings.media_collection_url7 != blank %}"{{ block.settings.media_collection_url7 }}",{% endif %} {% if block.settings.media_collection_url8 != blank %}"{{ block.settings.media_collection_url8 }}",{% endif %} {% if block.settings.media_collection_url9 != blank %}"{{ block.settings.media_collection_url9 }}",{% endif %} {% if block.settings.media_collection_url10 != blank %}"{{ block.settings.media_collection_url10 }}",{% endif %} ];
+              window.videoBlocks["collection_url_{{ forloop.index0 }}"] = [ {% if block.settings.media_collection_url != blank %}"{{ block.settings.media_collection_url }}",{% endif %} {% if block.settings.media_collection_url2 != blank %}"{{ block.settings.media_collection_url2 }}",{% endif %} {% if block.settings.media_collection_url3 != blank %}"{{ block.settings.media_collection_url3 }}",{% endif %} {% if block.settings.media_collection_url4 != blank %}"{{ block.settings.media_collection_url4 }}",{% endif %} {% if block.settings.media_collection_url5 != blank %}"{{ block.settings.media_collection_url5 }}",{% endif %} {% if block.settings.media_collection_url6 != blank %}"{{ block.settings.media_collection_url6 }}",{% endif %} {% if block.settings.media_collection_url7 != blank %}"{{ block.settings.media_collection_url7 }}",{% endif %} {% if block.settings.media_collection_url8 != blank %}"{{ block.settings.media_collection_url8 }}",{% endif %} {% if block.settings.media_collection_url9 != blank %}"{{ block.settings.media_collection_url9 }}",{% endif %} {% if block.settings.media_collection_url10 != blank %}"{{ block.settings.media_collection_url10 }}",{% endif %} ];
+              window.videoBlocks["image_text_{{ forloop.index0 }}"] = [ {% if block.settings.media_text != blank %}"{{ block.settings.media_text }}",{% endif %} {% if block.settings.media_text2 != blank %}"{{ block.settings.media_text2 }}",{% endif %} {% if block.settings.media_text3 != blank %}"{{ block.settings.media_text3 }}",{% endif %} {% if block.settings.media_text4 != blank %}"{{ block.settings.media_text4 }}",{% endif %} {% if block.settings.media_text5 != blank %}"{{ block.settings.media_text5 }}",{% endif %} {% if block.settings.media_text6 != blank %}"{{ block.settings.media_text6 }}",{% endif %} {% if block.settings.media_text7 != blank %}"{{ block.settings.media_text7 }}",{% endif %} {% if block.settings.media_text8 != blank %}"{{ block.settings.media_text8 }}",{% endif %} {% if block.settings.media_text9 != blank %}"{{ block.settings.media_text9 }}",{% endif %} {% if block.settings.media_text10 != blank %}"{{ block.settings.media_text10 }}",{% endif %} ];
+              window.videoBlocks["image_collection_text_{{ forloop.index0 }}"] = [{% if block.settings.media_collection_text != blank %}"{{ block.settings.media_collection_text }}",{% endif %}{% if block.settings.media_collection_text2 != blank %}"{{ block.settings.media_collection_text2 }}",{% endif %}{% if block.settings.media_collection_text3 != blank %}"{{ block.settings.media_collection_text3 }}",{% endif %}{% if block.settings.media_collection_text4 != blank %}"{{ block.settings.media_collection_text4 }}",{% endif %}{% if block.settings.media_collection_text5 != blank %}"{{ block.settings.media_collection_text5 }}",{% endif %}{% if block.settings.media_collection_text6 != blank %}"{{ block.settings.media_collection_text6 }}",{% endif %}{% if block.settings.media_collection_text7 != blank %}"{{ block.settings.media_collection_text7 }}",{% endif %}{% if block.settings.media_collection_text8 != blank %}"{{ block.settings.media_collection_text8 }}",{% endif %}{% if block.settings.media_collection_text9 != blank %}"{{ block.settings.media_collection_text9 }}",{% endif %}{% if block.settings.media_collection_text10 != blank %}"{{ block.settings.media_collection_text10 }}",{% endif %}];
+            </script>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="video__tabs">
+        <div class="video-tabs video-collection-tabs__list">
+          <button class="arrow-btn prev-btn-video">‹</button>
+          {% for block in section.blocks %}
+          <button class="video-tab video-collection-tabs__list-link {% if block.settings.default_active or forloop.first %} active{% endif %}" data-tab-id="tab-{{ forloop.index0 }}" id="tab-heading{{ forloop.index0 }}">
+            <span> {{ block.settings.tab_title }} </span>
+          </button>
+          <script>
+            window.videoBlocks = window.videoBlocks || {};
+            window.videoBlocks["tab-heading{{ forloop.index0 }}"] = [ {% if block.settings.tab_title != blank %}"{{ block.settings.tab_title }}",{% endif %} {% if block.settings.tab_title2 != blank %}"{{ block.settings.tab_title2 }}",{% endif %} {% if block.settings.tab_title3 != blank %}"{{ block.settings.tab_title3 }}",{% endif %} {% if block.settings.tab_title4 != blank %}"{{ block.settings.tab_title4 }}",{% endif %} {% if block.settings.tab_title5 != blank %}"{{ block.settings.tab_title5 }}",{% endif %} {% if block.settings.tab_title6 != blank %}"{{ block.settings.tab_title6 }}",{% endif %} {% if block.settings.tab_title7 != blank %}"{{ block.settings.tab_title7 }}",{% endif %} {% if block.settings.tab_title8 != blank %}"{{ block.settings.tab_title8 }}",{% endif %} {% if block.settings.tab_title9 != blank %}"{{ block.settings.tab_title9 }}",{% endif %} {% if block.settings.tab_title10 != blank %}"{{ block.settings.tab_title10 }}",{% endif %} ];
+          </script>
+          {% endfor %}
+          <button class="arrow-btn next-btn-video">›</button>
+        </div>
+        <div class="tab-indicator"></div>
+      </div>
+      {% if section.settings.enable_countdown %}
+        <div class="countdown-banner--timer countdown-video-tab" style="color:{{ countdown_color }}">
+        <countdown-timer class="countdown-timer align-{{ timer_align }}" data-date="{{ date }}" data-time="{{ time }}" data-timezone="{{ timezone }}">
+          <div class="countdown-timer--column days">
+            <span class="countdown-timer--column--number">0</span>
+            <span class="countdown-timer--column--text">{{ 'sections.countdown_banner.days' | t }}</span>
+          </div>
+          <div class="countdown-timer--column hours">
+            <span class="countdown-timer--column--number">0</span>
+            <span class="countdown-timer--column--text">{{ 'sections.countdown_banner.hours' | t }}</span>
+          </div>
+          <div class="countdown-timer--column minutes">
+            <span class="countdown-timer--column--number">0</span>
+            <span class="countdown-timer--column--text">{{ 'sections.countdown_banner.minutes' | t }}</span>
+          </div>
+          <div class="countdown-timer--column seconds">
+            <span class="countdown-timer--column--number">0</span>
+            <span class="countdown-timer--column--text">{{ 'sections.countdown_banner.seconds' | t }}</span>
+          </div>
+        </countdown-timer>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script type="load">
+jQuery(document).ready(function($) {
+  const $videoTabs = $('#custom-tab-{{ section.id }} .video-tab');
+  const $videoContents = $('#custom-tab-{{ section.id }} .video-tab-content');
+  const tabs = document.querySelectorAll("#custom-tab-{{ section.id }} .video-tab");
+  const videos = document.querySelectorAll("#custom-tab-{{ section.id }} .single-video-tab");
+  const prevBtn = document.querySelector("#custom-tab-{{ section.id }} .prev-btn-video");
+  const nextBtn = document.querySelector("#custom-tab-{{ section.id }} .next-btn-video");
+
+  let currentIndex = 0;
+  let isPlaying = false;
+
+  // -------------------
+  // Update Tab Indicator
+  // -------------------
+  function updateTabIndicator() {
+    const activeTab = document.querySelector('#custom-tab-{{ section.id }} .video-tab.active');
+    const indicator = document.querySelector('#custom-tab-{{ section.id }} .tab-indicator');
+
+    if (activeTab && indicator) {
+      const tabRect = activeTab.getBoundingClientRect();
+      const containerRect = activeTab.parentElement.getBoundingClientRect();
+      const left = tabRect.left - containerRect.left;
+      const width = tabRect.width;
+      indicator.style.left = `${left}px`;
+      indicator.style.width = `${width}px`;
+    }
+  }
+
+  // -------------------
+  // Activate Tab
+  // -------------------
+  function activateTab(index) {
+    if (isPlaying) return;
+    isPlaying = true;
+
+    const $tab = $videoTabs.eq(index);
+    const tabId = $tab.data('tab-id');
+
+    // Update UI
+    $videoTabs.removeClass('active');
+    $videoContents.removeClass('active');
+    $tab.addClass('active');
+    $(`#custom-tab-{{ section.id }} .video-tab-content[data-tab-id="${tabId}"]`).addClass('active');
+
+    // Pause all videos
+    videos.forEach(video => { if (video.tagName === "VIDEO") video.pause(); });
+
+    // Play new video
+    const video = document.getElementById(tabId);
+    if (video && video.tagName === "VIDEO") {
+      video.muted = true;
+      video.play()
+        .catch(e => console.error("Playback failed:", e))
+        .finally(() => { updateTabIndicator(); isPlaying = false; });
+    } else {
+      updateTabIndicator();
+      isPlaying = false;
+    }
+
+    currentIndex = index;
+  }
+
+  // -------------------
+  // Play Next Video
+  // -------------------
+  function playNextVideo(index) {
+    let nextIndex = index + 1;
+    if (nextIndex >= videos.length) {
+      nextIndex = 0; // loop back
+    }
+    activateTab(nextIndex);
+  }
+
+  // -------------------
+  // Event Listeners
+  // -------------------
+  $videoTabs.on('click', function() {
+    const index = $videoTabs.index(this);
+    activateTab(index);
+  });
+
+  // Auto switch on video end
+  videos.forEach((video, index) => {
+    if (video.tagName === "VIDEO") {
+      video.addEventListener("ended", () => playNextVideo(index));
+      video.addEventListener("play", () => warmNext(index));
+    }
+  });
+
+  // Preload next video
+  function warmNext(index) {
+    if (!videos.length) return;
+    const next = (index + 1) % videos.length;
+    const vid = videos[next];
+    if (vid.tagName === 'VIDEO' && vid.preload !== 'auto') {
+      vid.preload = 'auto';
+    }
+  }
+
+  // -------------------
+  // Mobile Navigation
+  // -------------------
+  if (window.innerWidth <= 768 && prevBtn && nextBtn) {
+    function updateMobileTab(index) {
+      if (index >= 0 && index < tabs.length) {
+        activateTab(index);
+      }
+    }
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) updateMobileTab(currentIndex - 1);
+    });
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex < tabs.length - 1) updateMobileTab(currentIndex + 1);
+    });
+  }
+
+  // -------------------
+  // Init First Tab
+  // -------------------
+  function initFirstTab() {
+    if ($videoTabs.length) {
+      activateTab(0);
+    }
+  }
+
+  initFirstTab();
+  $('.template-index .customHide').hide();
+});
+
+// Preload video wrappers
+document.querySelectorAll('.video-wrapper.preload video').forEach((vid) => {
+  const show = () => vid.classList.add('is-ready');
+  vid.addEventListener('loadeddata', show, { once: true });
+});
+
+  const videoBlocksArray = Array.from(document.querySelectorAll("#custom-tab-{{ section.id }} .single-video-tab")).map((video, i) => {
+    return {
+      videoEl: video,
+      headingEl: document.querySelectorAll("#custom-tab-{{ section.id }} .video-tab")[i],
+      imageTextEl: document.querySelectorAll("#custom-tab-{{ section.id }} .image-text")[i],
+      collectionTextEl: document.querySelectorAll("#custom-tab-{{ section.id }} .image-collection-text")[i],
+      collectionLinkEl: document.querySelectorAll("#custom-tab-{{ section.id }} .image_collection_link")[i],
+      overLinkEl: document.querySelectorAll("#custom-tab-{{ section.id }} .overlay_content_link")[i],      
+      videoSources: (window.videoBlocks?.[video.id] || []).filter(src => src && src.trim() !== ""),
+      headingSources: (window.videoBlocks?.[document.querySelectorAll("#custom-tab-{{ section.id }} .video-tab")[i]?.id] || []).filter(src => src && src.trim() !== ""),
+      imageTextSources: (window.videoBlocks?.[document.querySelectorAll("#custom-tab-{{ section.id }} .image-text")[i]?.id] || []).filter(src => src && src.trim() !== ""),
+      collectionTextSources: (window.videoBlocks?.[document.querySelectorAll("#custom-tab-{{ section.id }} .image-collection-text")[i]?.id] || []).filter(src => src && src.trim() !== ""),
+      collectionLinkUrls: (window.videoBlocks?.[document.querySelectorAll("#custom-tab-{{ section.id }} .image_collection_link")[i]?.id] || []).filter(src => src && src.trim() !== ""),
+      overLinkUrls: (window.videoBlocks?.[document.querySelectorAll("#custom-tab-{{ section.id }} .overlay_content_link")[i]?.id] || []).filter(src => src && src.trim() !== "")
+    };
+  });
+
+  videoBlocksArray.forEach(block => {
+    const {
+      videoEl,
+      headingEl,
+      imageTextEl,
+      collectionTextEl,
+      collectionLinkEl,
+      overLinkEl,
+      videoSources,
+      headingSources,
+      imageTextSources,
+      collectionTextSources,
+      collectionLinkUrls,
+      overLinkUrls
+    } = block;
+    const lengths = [
+      videoSources.length,
+      headingSources.length,
+      imageTextSources.length,
+      collectionTextSources.length,
+      collectionLinkUrls.length
+    ];
+    const maxLength = Math.max(...lengths);
+    if (maxLength === 0) return;
+    const randomIndex = Math.floor(Math.random() * maxLength);
+    if (videoSources[randomIndex] && videoEl) {
+      const cacheBuster = "?t=" + new Date().getTime();
+      videoEl.src = videoSources[randomIndex] + (videoSources[randomIndex].includes('?') ? '&' : '?') + cacheBuster;
+      videoEl.load();
+      videoEl.play().catch(() => console.log("Autoplay blocked for video:", videoEl.id));
+    }
+    if (headingSources[randomIndex] && headingEl) {
+      const span = headingEl.querySelector("span");
+      if (span) span.textContent = headingSources[randomIndex];
+    }
+    if (imageTextSources[randomIndex] && imageTextEl) {
+      imageTextEl.textContent = imageTextSources[randomIndex];
+    }
+    if (collectionTextSources[randomIndex] && collectionTextEl) {
+      collectionTextEl.textContent = collectionTextSources[randomIndex];
+    }
+    if (collectionLinkUrls[randomIndex] && collectionLinkEl) {
+      collectionLinkEl.href = collectionLinkUrls[randomIndex];
+    }
+    if (overLinkUrls[randomIndex] && overLinkEl) {
+      overLinkEl.href = overLinkUrls[randomIndex];
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name":"Video Tab v1",
+    "settings": [
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide Section On Mobile"
+    },
+    {
+      "type": "text",
+      "id": "tab_class",
+      "label": "CSS Class"
+    },
+    {
+      "type": "image_picker",
+      "id": "default_media_image",
+      "label": "Image"
+    },
+    {
+			"type": "header",
+			"content": "Timer"
+		},
+    {
+      "type":"checkbox",
+      "id":"enable_countdown",
+      "label": "Enable countdown",
+      "default":false
+    },
+    {
+      "type":"color",
+      "id":"countdown_color",
+      "label": "Color",
+      "default":"#000"
+    },
+    {
+			"type": "select",
+			"id": "timer_align",
+			"label": "Position",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				},
+      ],
+      "default":"center"
+    },
+		{
+		  "type": "number",
+		  "id": "timer_year",
+		  "label": "Year",
+		  "default": 2025
+		},
+		{
+			"type": "select",
+			"id": "timer_month",
+			"label": "Month",
+			"options": [
+				{
+					"value": "01",
+					"label": "January"
+				},
+				{
+					"value": "02",
+					"label": "February"
+				},
+				{
+					"value": "03",
+					"label": "March"
+				},
+				{
+					"value": "04",
+					"label": "April"
+				},
+				{
+					"value": "05",
+					"label": "May"
+				},
+				{
+					"value": "06",
+					"label": "June"
+				},
+				{
+					"value": "07",
+					"label": "July"
+				},
+				{
+					"value": "08",
+					"label": "August"
+				},
+				{
+					"value": "09",
+					"label": "September"
+				},
+				{
+					"value": "10",
+					"label": "October"
+				},
+				{
+					"value": "11",
+					"label": "November"
+				},
+				{
+					"value": "12",
+					"label": "December"
+				}
+			],
+			"default": "01"
+		},
+		{
+			"type": "select",
+			"id": "timer_day",
+			"label": "Day",
+			"options": [
+				{
+					"value": "01",
+					"label": "01"
+				},
+				{
+					"value": "02",
+					"label": "02"
+				},
+				{
+					"value": "03",
+					"label": "03"
+				},
+				{
+					"value": "04",
+					"label": "04"
+				},
+				{
+					"value": "05",
+					"label": "05"
+				},
+				{
+					"value": "06",
+					"label": "06"
+				},
+				{
+					"value": "07",
+					"label": "07"
+				},
+				{
+					"value": "08",
+					"label": "08"
+				},
+				{
+					"value": "09",
+					"label": "09"
+				},
+				{
+					"value": "10",
+					"label": "10"
+				},
+				{
+					"value": "11",
+					"label": "11"
+				},
+				{
+					"value": "12",
+					"label": "12"
+				},
+				{
+					"value": "13",
+					"label": "13"
+				},
+				{
+					"value": "14",
+					"label": "14"
+				},
+				{
+					"value": "15",
+					"label": "15"
+				},
+				{
+					"value": "16",
+					"label": "16"
+				},
+				{
+					"value": "17",
+					"label": "17"
+				},
+				{
+					"value": "18",
+					"label": "18"
+				},
+				{
+					"value": "19",
+					"label": "19"
+				},
+				{
+					"value": "20",
+					"label": "20"
+				},
+				{
+					"value": "21",
+					"label": "21"
+				},
+				{
+					"value": "22",
+					"label": "22"
+				},
+				{
+					"value": "23",
+					"label": "23"
+				},
+				{
+					"value": "24",
+					"label": "24"
+				},
+				{
+					"value": "25",
+					"label": "25"
+				},
+				{
+					"value": "26",
+					"label": "26"
+				},
+				{
+					"value": "27",
+					"label": "27"
+				},
+				{
+					"value": "28",
+					"label": "28"
+				},
+				{
+					"value": "29",
+					"label": "29"
+				},
+				{
+					"value": "30",
+					"label": "30"
+				},
+				{
+					"value": "31",
+					"label": "31"
+				}
+			],
+			"default": "01"
+		},
+		{
+			"type": "select",
+			"id": "timer_hour",
+			"label": "Hour",
+			"options": [
+				{
+					"value": "00",
+					"label": "12 AM (Midnight)"
+				},
+				{
+					"value": "01",
+					"label": "01 AM"
+				},
+				{
+					"value": "02",
+					"label": "02 AM"
+				},
+				{
+					"value": "03",
+					"label": "03 AM"
+				},
+				{
+					"value": "04",
+					"label": "04 AM"
+				},
+				{
+					"value": "05",
+					"label": "05 AM"
+				},
+				{
+					"value": "06",
+					"label": "06 AM"
+				},
+				{
+					"value": "07",
+					"label": "07 AM"
+				},
+				{
+					"value": "08",
+					"label": "08 AM"
+				},
+				{
+					"value": "09",
+					"label": "09 AM"
+				},
+				{
+					"value": "10",
+					"label": "10 AM"
+				},
+				{
+					"value": "11",
+					"label": "11 AM"
+				},
+				{
+					"value": "12",
+					"label": "12 PM (Noon)"
+				},
+				{
+					"value": "13",
+					"label": "01 PM"
+				},
+				{
+					"value": "14",
+					"label": "02 PM"
+				},
+				{
+					"value": "15",
+					"label": "03 PM"
+				},
+				{
+					"value": "16",
+					"label": "04 PM"
+				},
+				{
+					"value": "17",
+					"label": "05 PM"
+				},
+				{
+					"value": "18",
+					"label": "06 PM"
+				},
+				{
+					"value": "19",
+					"label": "07 PM"
+				},
+				{
+					"value": "20",
+					"label": "08 PM"
+				},
+				{
+					"value": "21",
+					"label": "09 PM"
+				},
+				{
+					"value": "22",
+					"label": "10 PM"
+				},
+				{
+					"value": "23",
+					"label": "11 PM"
+				}
+			],
+			"default": "00"
+		},
+		{
+			"type": "select",
+			"id": "timer_minute",
+			"label": "Minute",
+			"options": [
+				{
+					"value": "00",
+					"label": "00"
+				},
+				{
+					"value": "01",
+					"label": "01"
+				},
+				{
+					"value": "02",
+					"label": "02"
+				},
+				{
+					"value": "03",
+					"label": "03"
+				},
+				{
+					"value": "04"
+				},
+				{
+					"value": "05",
+					"label": "05"
+				},
+				{
+					"value": "06",
+					"label": "06"
+				},
+				{
+					"value": "07",
+					"label": "07"
+				},
+				{
+					"value": "08",
+					"label": "08"
+				},
+				{
+					"value": "09",
+					"label": "09"
+				},
+				{
+					"value": "10",
+					"label": "10"
+				},
+				{
+					"value": "11",
+					"label": "11"
+				},
+				{
+					"value": "12",
+					"label": "12"
+				},
+				{
+					"value": "13",
+					"label": "13"
+				},
+				{
+					"value": "14",
+					"label": "14"
+				},
+				{
+					"value": "15",
+					"label": "15"
+				},
+				{
+					"value": "16",
+					"label": "16"
+				},
+				{
+					"value": "17",
+					"label": "17"
+				},
+				{
+					"value": "18",
+					"label": "18"
+				},
+				{
+					"value": "19",
+					"label": "19"
+				},
+				{
+					"value": "20",
+					"label": "20"
+				},
+				{
+					"value": "21",
+					"label": "21"
+				},
+				{
+					"value": "22",
+					"label": "23"
+				},
+				{
+					"value": "24",
+					"label": "24"
+				},
+				{
+					"value": "25",
+					"label": "25"
+				},
+				{
+					"value": "26",
+					"label": "26"
+				},
+				{
+					"value": "27",
+					"label": "27"
+				},
+				{
+					"value": "28",
+					"label": "28"
+				},
+				{
+					"value": "29",
+					"label": "29"
+				},
+				{
+					"value": "30",
+					"label": "30"
+				},
+				{
+					"value": "31",
+					"label": "31"
+				},
+				{
+					"value": "32",
+					"label": "32"
+				},
+				{
+					"value": "33",
+					"label": "33"
+				},
+				{
+					"value": "34",
+					"label": "34"
+				},
+				{
+					"value": "35",
+					"label": "35"
+				},
+				{
+					"value": "36",
+					"label": "36"
+				},
+				{
+					"value": "37",
+					"label": "37"
+				},
+				{
+					"value": "38",
+					"label": "38"
+				},
+				{
+					"value": "39",
+					"label": "39"
+				},
+				{
+					"value": "40",
+					"label": "40"
+				},
+				{
+					"value": "41",
+					"label": "41"
+				},
+				{
+					"value": "42",
+					"label": "42"
+				},
+				{
+					"value": "43",
+					"label": "43"
+				},
+				{
+					"value": "44",
+					"label": "44"
+				},
+				{
+					"value": "45",
+					"label": "45"
+				},
+				{
+					"value": "46",
+					"label": "46"
+				},
+				{
+					"value": "47",
+					"label": "47"
+				},
+				{
+					"value": "48",
+					"label": "48"
+				},
+				{
+					"value": "49",
+					"label": "49"
+				},
+				{
+					"value": "50",
+					"label": "50"
+				},
+				{
+					"value": "51",
+					"label": "51"
+				},
+				{
+					"value": "52",
+					"label": "52"
+				},
+				{
+					"value": "53",
+					"label": "53"
+				},
+				{
+					"value": "54",
+					"label": "54"
+				},
+				{
+					"value": "55",
+					"label": "55"
+				},
+				{
+					"value": "56",
+					"label": "56"
+				},
+				{
+					"value": "57",
+					"label": "57"
+				},
+				{
+					"value": "58",
+					"label": "58"
+				},
+				{
+					"value": "59",
+					"label": "59"
+				}
+			],
+			"default": "00"
+		}
+  ],
+  "blocks":[
+    {
+      "type":"media",
+      "name":"Media Item",
+      "settings":[
+        {
+          "type":"select",
+          "id":"media_type",
+          "label":"Media Type",
+          "options":[
+            {
+              "value":"image",
+              "label":"Image"
+            },
+            {
+              "value":"video_url",
+              "label":"External Video"
+            },
+            {
+              "value":"video_file",
+              "label":"Hosted Video"
+            }
+          ],
+          "default":"image"
+        },
+        {
+          "type": "header",
+          "content": "Section 1"
+        },
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 2"
+        },
+        {
+          "type": "text",
+          "id": "tab_title2",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image2",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url2",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file2",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text2",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text2",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url2",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 3"
+        },
+        {
+          "type": "text",
+          "id": "tab_title3",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image3",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url3",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file3",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text3",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text3",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url3",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 4"
+        },
+        {
+          "type": "text",
+          "id": "tab_title4",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image4",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url4",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file4",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text4",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text4",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url4",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 5"
+        },
+        {
+          "type": "text",
+          "id": "tab_title5",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image5",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url5",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file5",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text5",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text5",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url5",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 6"
+        },
+        {
+          "type": "text",
+          "id": "tab_title6",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image6",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url6",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file6",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text6",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text6",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url6",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 7"
+        },
+        {
+          "type": "text",
+          "id": "tab_title7",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image7",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url7",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file7",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text7",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text7",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url7",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 8"
+        },
+        {
+          "type": "text",
+          "id": "tab_title8",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image8",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url8",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file8",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text8",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text8",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url8",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 9"
+        },
+        {
+          "type": "text",
+          "id": "tab_title9",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image9",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url9",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file9",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text9",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text9",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url9",
+          "label":"Collection url"
+        },
+        {
+          "type": "header",
+          "content": "Section 10"
+        },
+        {
+          "type": "text",
+          "id": "tab_title10",
+          "label": "Tab Title"
+        },
+        {
+          "type":"image_picker",
+          "id":"media_image10",
+          "label":"Image",
+          "visible_if": "{{ block.settings.media_type == 'image' }}"
+        },
+        {
+          "type":"url",
+          "id":"media_video_url10",
+          "label":"Video URL (YouTube · Vimeo · MP4 · Cloudinary)",
+          "visible_if": "{{ block.settings.media_type == 'video_url' }}"
+        },
+        {
+          "type":"video",
+          "id":"media_video_file10",
+          "label":"Hosted Video",
+          "visible_if": "{{ block.settings.media_type == 'video_file' }}"
+        },
+        {
+          "type":"text",
+          "id":"media_text10",
+          "label":"Image text"
+        },
+        {
+          "type":"text",
+          "id":"media_collection_text10",
+          "label":"Collection text"
+        },
+        {
+          "type":"url",
+          "id":"media_collection_url10",
+          "label":"Collection url"
+        }
+      ]
+    }
+  ],
+  "presets":[
+    {
+      "name":"Video Tab v1",
+      "blocks":[
+        {
+          "type":"media"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

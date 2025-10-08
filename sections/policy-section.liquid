@@ -1,0 +1,156 @@
+<style>
+  @media(min-width:767px){
+    .underline-progress{
+      height:1.5px;
+    }
+    tab-component .nav-link {
+      padding: 15px 20px;
+    }
+  }
+  tab-component .nav-link.active {
+    font-weight: 600;
+  }
+  .main-multi-tab-section{
+    margin-top: 0;
+    padding: 50px 0 0;
+    display:block
+  }
+  .policy-pages .content::-webkit-scrollbar{
+    width: 10px;
+  }
+  .policy-pages .content::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background-color: #777777;
+    border: 3px solid #fff;
+  }
+</style>
+
+<div class="policy_header">
+  <h1 id="policy_header_title">{{ section.blocks.first.settings.tab_title }}</h1>
+</div>
+
+<div class="main-multi-tab-section policy-pages">
+  <div class="row">
+    <div class="columns setPadding">
+      <tab-component class="nav nav-tabs cart_progress_bar">
+        {% for block in section.blocks %}
+        <li class="nav-item carousel">
+          <a class="nav-link {% if forloop.first%}active{% endif %}" data-bs-toggle="tab" data-title="{{ block.settings.tab_title }}" data-bs-target="#{{ block.settings.tab_id }}" href="javascript:void(0);">
+            {{ block.settings.tab_title }}
+          </a>
+        </li>
+        {% endfor %}
+        <div class="slide-btn flickity-nav flickity-prev" tabindex="0">
+          {%- render 'svg-icons' with 'arrow-left' -%}
+        </div>
+        <div class="slide-btn flickity-nav flickity-next" tabindex="0">
+          {%- render 'svg-icons' with 'arrow-right' -%}
+        </div>
+      </tab-component>
+      <div class="underline-progress">
+        <div class="cartprogress under_progress"></div>
+      </div>  
+      
+      {% for block in section.blocks %}
+        <div class="content tab-pane {% if forloop.first%}active{% endif %}" id="{{ block.settings.tab_id | default: block.id }}">
+          {{ shop[block.settings.tab_id] }}
+        </div>
+      {% endfor %}
+      <div class="policy_page_footer">
+        <a href="/">
+          <div class="image-collection-text">Return to main</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function () {
+  function activateTab(hash, doScroll) {
+    if (!hash) return;
+    var $trigger = $('[data-bs-toggle="tab"][data-bs-target="' + hash + '"]');
+    if ($trigger.length) {
+      var tab = new bootstrap.Tab($trigger[0]);
+      tab.show();  
+      var title = $trigger.data('title'); // <- FIXED HERE
+      $('#policy_header_title').text(title);
+      if (doScroll) {
+        $('html, body').animate({ scrollTop: 0 }, 500);
+      }
+    }
+  }
+  activateTab(window.location.hash, false);
+  $(window).on('hashchange', function() {
+    activateTab(window.location.hash, true);
+  });
+  
+  function setUnderline() {
+    var $activeTab = $(".cart_progress_bar .nav-link.active");
+    var $underline = $(".cartprogress");
+    if ($activeTab.length > 0) {
+      var offset = $activeTab.offset().left - $(".cart_progress_bar").offset().left;
+      $underline.css({
+        width: $activeTab.outerWidth(),
+        transform: 'translateX(' + offset + 'px)',
+      });
+    }
+  } 
+  document.querySelectorAll(".cart_progress_bar .nav-link").forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", function () {
+      setUnderline();
+      var title = $(this).data('title'); // 'this' refers to the clicked tab now
+      $('#policy_header_title').text(title);
+    });
+  });
+  setUnderline();
+  $(window).on("resize", function () {
+    setUnderline();
+  });
+});
+
+</script>
+
+{% schema %}
+{
+  "name": "Policy section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Use a unique identifier (e.g., 'tab1', 'summer2025')"
+        },
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Tab content from page"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Policy section",
+      "blocks": [
+        {
+          "type": "tab"
+        },
+        {
+          "type": "tab"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

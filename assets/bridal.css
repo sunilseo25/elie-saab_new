@@ -1,0 +1,216 @@
+.hide-on-desktop {
+  display: none;
+}
+.custom-sticky-style {
+  position: sticky;
+  top: var(--header-height);
+  background: #fbfbfb;
+  z-index: 2;
+}
+.template-page-bridal-home .rich-text {
+  border: 1px solid #e5e5e5;
+  padding: 50px 0;
+}
+.template-page-bridal-home .rich-text__inner h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.template-page-bridal-home .rich-text .rte {
+  margin-bottom: 1.25rem;
+}
+#film {
+  margin-bottom: 6rem;
+  margin-top: 2rem;
+}
+.view-btn {
+  margin-top: 2rem;
+  border: none;
+  font-weight: 600;
+  font-size: 17px;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+  position: relative;
+  line-height: 1.5;
+}
+.view-btn:after {
+  background-color: #000;
+  border-radius: 4px;
+  content: " ";
+  display: block;
+  margin: 3px auto 0;
+  position: absolute;
+  right: 0;
+  bottom: 0px;
+  width: 100%;
+  height: 2px;
+  transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+}
+.view-btn:hover:after {
+  width: 0;
+  right: 0;
+}
+.slider-text a {
+  display: flex;
+  justify-content: center;
+}
+.template-page-bridal-home .custom-slider-section {
+  margin-top: 6rem;
+}
+#press-release .welcome-guest-heading {
+  margin-top: 3rem;
+}
+#looks .collection-text {
+  position: absolute;
+  bottom: 0%;
+  left: 15%;
+  transform: translate(-60%, -40%);
+  color: #000;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px 3px;
+}
+#looks .collection-text:after {
+  content: "";
+  display: none;
+}
+#shows {
+  margin-top: 5rem;
+}
+.main-collection-section {
+  position: relative;
+}
+.main-collection-section .price {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  color: #000;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px 3px;
+}
+/* Price */
+/* #looks .collection-price {
+  position: absolute;
+  bottom: 0%;
+  right: 15%;
+  transform: translate(60%, -40%);
+  color: #000;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px 3px;
+} */
+@media (min-width:770px){
+
+  .sign-desc{
+
+    padding:0 25px;
+
+  }
+
+}
+@media screen and (max-width: 768px) {
+  .template-page-bridal-home .rich-text {
+    border: unset;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    background: #fff;
+  }
+  #film {
+    margin-bottom: 3rem;
+  }
+  .template-page-bridal-home .custom-slider-section {
+    margin-top: 3rem;
+    padding: unset;
+  }
+  .template-page-bridal-home .custom-slider-section .row {
+    padding: unset;
+  }
+  .template-page-bridal-home .custom-slider-section .row .columns {
+    padding: unset;
+  }
+  .template-page-bridal-home .rich-text .rte p {
+    font-size: 14px;
+    letter-spacing: 0.7px;
+  }
+  .template-page-bridal-home .rich-text .rte {
+    text-align: center;
+  }
+  .view-btn {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+  }
+  .custom-sticky-style {
+    position: relative !important;
+    top: unset !important;
+    z-index: 1 !important;
+  }
+  .sign-desc {
+    text-align: center;
+    margin: 2em !important;
+  }
+  #main-image img,
+  .slider img {
+    height: 650px !important;
+  }
+  .template-page-bridal-home #main-image img,
+  .template-page-bridal-home .slider img {
+    height: 520px !important;
+  }
+  #season-content-wrapper {
+    margin-top: 4rem;
+  }
+  #diamond-dust {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+  }
+  .welcome-guest {
+    gap: 30px;
+  }
+  .welcome-guest .letter-btn {
+    margin-top: unset;
+    font-size: 16px;
+  }
+  .videoBorder .columns {
+    border-top: 1px solid #e9e9e9;
+  }
+  .videoBorder .columns .section {
+    margin-top: 4rem;
+  }
+  #appointments {
+    margin-top: 4rem;
+  }
+  #view-collection {
+    margin-top: 40px;
+  }
+  .view-btn:after {
+    bottom: -3px !important;
+    height: 1px !important;
+  }
+  .season-title {
+    font-weight: 500 !important;
+  }
+  .template-page-bridal-home .rich-text__inner h3 {
+    font-weight: 500;
+  }
+  .season-line {
+    margin: unset !important;
+  }
+  .season-line span {
+    height: 1.7px !important;
+    bottom: -13px !important;
+  }
+  .hide-on-mobile {
+    display: none;
+  }
+  .hide-on-desktop {
+    display: block;
+  }
+  /* .video-collection-tabs__list-link {
+    display: block;
+  } */
+}

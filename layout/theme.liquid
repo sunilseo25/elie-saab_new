@@ -1,0 +1,1327 @@
+<!doctype html>
+{%- capture dir -%}
+{%- case request.locale.iso_code -%}
+  {%- when 'ae' or 'ar' or 'arc' or 'bcc' or 'bqi' or 'ckb' or 'dv' or 'fa' or 'glk' or 'ha' or 'he' or 'kwh' or 'ks' or 'ku' or 'mzn' or 'nqo' or 'pnb' or 'ps' or 'sd' or 'ug' or 'ur' or 'yi' -%}
+    rtl
+  {%- else -%} 
+    ltr
+{%- endcase -%}
+{%- endcapture -%}
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ dir }}">
+  <head>
+    {% render 'head-content' %}
+
+    <!-- Google Tag Manager -->
+    <script  type="load">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PGXZ72PB');</script>
+    <!-- End Google Tag Manager -->
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="{{ settings.color_body_bg }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    {% render 'head-preload' %}
+
+    {% if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif %}
+
+    <title>
+      {{ page_title }}
+      {% if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+      {%- endif %}
+      {% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}
+      {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {%- unless settings.heading_font.system? and settings.body_font.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+
+    {% render 'social-meta-tags' %}
+     <link href="{{ "app.css" | asset_url }}" rel="stylesheet" type="text/css" media="all" />
+      {% if template contains 'index' %}
+         <link class="lazycss" data-href="{{ "custom.css" | asset_url }}" rel="stylesheet" type="text/css" media="all" /> 
+      {% else %}
+        <link  href="{{ "custom.css" | asset_url }}" rel="stylesheet" type="text/css" media="all" /> 
+      {% endif %}  
+    {% render 'head-variables' %}
+    
+
+   <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const cartContainer = document.querySelector(".main-header-tab");
+        const cartline = document.querySelector(".underline__offset");
+
+        function updatecartline() {
+          if (!cartContainer || !cartline) return;
+          const activeTab = document.querySelector(".main-header-tab .nav-link.active");
+          if (!activeTab) return;
+          const tabRect = activeTab.getBoundingClientRect();
+          const containerRect = cartContainer.getBoundingClientRect();
+          cartline.style.width = `${tabRect.width}px`;
+          cartline.style.transform = `translateX(${tabRect.left - containerRect.left}px)`;
+        }
+
+        function activateTab(tabId) {
+          const targetTab = document.querySelector(`.main-header-tab .nav-link[data-bs-target="${tabId}"]`);
+          if (targetTab) {
+            const bsTab = bootstrap.Tab.getOrCreateInstance(targetTab);
+            bsTab.show();
+            setTimeout(updatecartline, 50);
+          }
+        }
+
+        document.querySelectorAll(".main-header-tab .nav-link").forEach((tab) => {
+          tab.addEventListener("shown.bs.tab", updatecartline);
+        });
+
+        setTimeout(updatecartline, 50);
+        window.addEventListener("load", updatecartline);
+        window.addEventListener("resize", updatecartline);
+      });
+    </script>
+
+
+  <!-- OSANO for ELIE SAAB -->
+     <script  type="load" d-src="https://cmp.osano.com/169kYhTLToBKb28oY/0a834570-b9ea-4be2-bc5a-e4906c1d10ac/osano.js"></script>
+    <!-- Hotjar Tracking Code for ELIE SAAB -->
+<script type="load">
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:5153228,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+
+    <script>
+		window.theme = window.theme || {};
+		theme = {
+        settings: {
+          money_with_currency_format: {{- shop.money_format | json -}},
+          cart_drawer: {{- settings.cart_drawer -}},
+          product_id: {% if product %}{{ product.id }}{% else %}false{% endif %},
+        },
+        routes: {
+          root_url: '{{ routes.root_url }}',
+          cart_url: '{{ routes.cart_url }}',
+          cart_add_url: '{{ routes.cart_add_url }}',
+          search_url: '{{ routes.search_url }}',
+          cart_change_url: '{{ routes.cart_change_url }}',
+          cart_update_url: '{{ routes.cart_update_url }}',
+          cart_clear_url: '{{ routes.cart_clear_url }}',
+          predictive_search_url: '{{ routes.predictive_search_url }}',
+        },
+        variantStrings: {
+          addToCart: `{{ 'products.product.add_to_cart' | t }}`,
+          soldOut: `{{ 'products.product.sold_out' | t }}`,
+          unavailable: `{{ 'products.product.unavailable' | t }}`,
+          preOrder: `{{ 'products.product.pre_order' | t }}`,
+        },
+        strings: {
+          requiresTerms: `{{ 'sections.cart.terms_confirm' | t }}`,
+          shippingEstimatorNoResults: `{{ 'sections.cart.shipping_estimator.no_results' | t }}`,
+          shippingEstimatorOneResult: `{{ 'sections.cart.shipping_estimator.one_result' | t }}`,
+          shippingEstimatorMultipleResults: `{{ 'sections.cart.shipping_estimator.multiple_results' | t }}`,
+          shippingEstimatorError: `{{ 'sections.cart.shipping_estimator.error' | t }}`
+        }
+      };
+    </script>
+      {%- if request.design_mode or template contains 'cart' or template contains 'checkout' -%}
+        {{ content_for_header }}
+      {%- else -%}
+        {% capture content_for_header2 %}{{ content_for_header }}{% endcapture %}
+        {{ content_for_header2 | replace: ' async="async" ', ' type="load" ' | replace: ' defer="defer" ', ' type="load" ' | replace: " src=", " d-src=" | replace: "DOMContentLoaded", "xDOMContentLoaded" | replace: "window.addEventListener('load', asyncLoad, false);", "window.addEventListener('xDOMContentLoaded', asyncLoad, false);" | replace: "addEventListener('load', prefetchAssets);", "addEventListener('xDOMContentLoaded', prefetchAssets);" | replace: "type='text/javascript' async=''", "type='load' " | replace: 'type="module" d-', 'dxt="module" type="load" d-' | replace: 'async dxt="module" type="load"', 'dxt="module"' | replace: '<script type="module">', '<script dxt="module" type="load">' | replace: "type='text/javascript' defer='defer' d-src", "type='load' d-src" | replace: '<script>', '<script type="load">' | replace: 'type="load" d-src="https://shop.app/checkouts/internal/preloads.js', 'type="lload" d-src="https://shop.app/checkouts/internal/preloads.js' }}
+        <script>
+          var trekkie=[];trekkie.integrations=!0;window.BOOMR={},window.BOOMR.version=true;
+        </script>
+      {%- endif -%}
+    <!-- Header hook for plugins -->
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+
+    
+    {{ settings.custom_html_head }}
+    {% if template contains 'index' or page.handle == 'policies' %}
+    <link rel="stylesheet" type="text/css" media="all" href="{{ 'homepage.css' | asset_url }}">
+    {% endif %}
+    {% if template contains 'index' %}
+        <link class="lazycss" data-href="{{ 'custom-kp.css' | asset_url }}" rel="stylesheet" type="text/css" media="all" />
+    {% else %}
+        <link  href="{{ 'custom-kp.css' | asset_url }}" rel="stylesheet" type="text/css" media="all" />
+    {% endif %}  
+    {% render 'custom-css' %}
+    <style> 
+      .product-information .look-slider,.product-information .product-desc {width:100%;}
+      {% if template == 'collection.custom-haute-couture-template' %}
+        #product-grid .product-card button.st-wishlist-button svg.st-wishlist-icon {
+          --color-footer-text: #fff;
+        }
+      {% endif %}
+      .osano-cm-widget {
+        display: none;
+      }
+      #my_custom_svg {
+        position: fixed;
+        bottom: 0px;
+        right: 18px;
+        z-index: 9;
+      }   
+      .intercom-1lxx3nn {
+        padding-bottom: 10px !important;
+      }      
+      #my_custom_svg img {
+        transition: transform 0.3s ease-in-out;
+      }      
+      #my_custom_svg img:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+      }      
+      #my_custom_svg img.no-hover:hover {
+        transform: none;
+      }      
+      @media (min-width: 768px) {
+        #my_custom_svg {
+          right: 20px;
+        }      
+        i.intercom-t1a1yt.e17z5v9w0 svg {
+          color: white !important;
+        }      
+        .intercom-namespace .intercom-with-namespace-k8341w {
+          bottom: 60px !important;
+          height: min(704px, 100% - 102px) !important;
+        }
+      }
+      {% if page.handle == 'thankyou' %}
+      .footer {
+        border-top: 0 !important;
+        padding-top: 0 !important;
+      }        
+      .thb-header-mobile-left,
+      .thb-header-right {
+        opacity: 0 !important;
+      }        
+      .footer-top,
+      .middle-footer {
+        display: none !important;
+      }
+      {% endif %}
+    </style>
+    <script>
+      document.cookie = "country={{ localization.country.iso_code }};Path=/;";
+      document.cookie = "country_name={{ localization.country.name }};Path=/;";
+      if(localStorage.getItem('selectedCountry23') == null)
+       localStorage.setItem('selectedCountry23', '{{ localization.country.iso_code }}');
+      if(localStorage.getItem('selectedCountry') == null)
+       localStorage.setItem("selectedCountry", "US");
+    </script>  
+    <link rel="preconnect" href="https://player.vimeo.com">
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    {%- if section.blocks.size > 0
+         and section.blocks.first.settings.media_type == 'video_url' -%}
+      <link rel="preload"
+            as="video"
+            fetchpriority="high"
+            href="{{ section.blocks.first.settings.media_video_url | escape }}" />
+    {%- endif -%}
+           {% if template contains 'index' %}
+         <style>
+           @media (min-width:769px){
+         .custom-slick-slider .flickity-viewport,
+         .custom-slider .flickity-viewport{
+            border-radius: 3px;
+          }
+      .custom-slick-slider .flickity-viewport .slide-item,
+         .custom-slider .flickity-viewport  .slide-item{
+            
+         }
+            .custom-slick-slider .flickity-viewport > div,
+         .custom-slider .flickity-viewport > div{
+            margin-left: -2.5px;
+             margin-right: -2.5px; 
+         }
+             }
+           </style>
+      {% endif %}
+    {% render 'app-block' %}
+    {% render 'custom-css1' %}
+  </head>
+  <body
+    class="no-js-body {% if template contains 'use-es-mbp-' %}template-page-monaco-boutique{% endif %} {% if template contains 'use-es-bouh-' %}template-page-boutiques-home{% endif %} {% if template contains 'use-es-rtwsh-' %}template-page-rtw-shows-page{% endif %} {% if template contains 'use-es-hch-' %}template-page-haute-couture-home{% endif %} {% if template contains 'bridal-spring-summer-' %}template-page-bridal-home{% endif %} {% if template contains 'bridal-spring-' %}template-page-bridal-home{% endif %} {% if template contains 'bridal-fall-' %}template-page-bridal-home{% endif %} {% if template contains 'es-bh' %}template-page-bridal-home{% endif %} {% if template contains 'use-es-bh-' %}template-page-bridal-home{% endif %}  animations-{{ settings.animations }} button-uppercase-{{ settings.button_uppercase }} navigation-uppercase-{{ settings.navigation_uppercase }} product-card-spacing-{{ settings.product_card_spacing }} product-title-uppercase-{{ settings.product_title_uppercase }}{% if customer %} customer-logged-in{% endif %} template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }} template-{{ template | replace: '.', '-' | handle }}"
+    id="{% if template == 'page.haute-couture' %}csthaut{% endif %} "
+  >
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PGXZ72PB"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <style>
+      /* .no-js-body #main-content > div + div,
+       .no-js-body .shopify-section-group-footer-group{
+        opacity:0;
+      } */
+      .intercom-lightweight-app {
+  display: none !important;
+}
+    </style>
+     <select name="currency-selector" style="display:none;" id="currency--selector">
+  <option value="">Select a country and currency</option>
+  <option value="AF|AFN|؋">🇦🇫 Afghanistan - AFN (؋)</option>
+  <option value="AL|ALL|L">🇦🇱 Albania - ALL (L)</option>
+  <option value="DZ|DZD|د.ج">🇩🇿 Algeria - DZD (د.ج)</option>
+  <option value="AD|EUR|€">🇦🇩 Andorra - EUR (€)</option>
+  <option value="AO|AOA|Kz">🇦🇴 Angola - AOA (Kz)</option>
+  <option value="AG|XCD|$">🇦🇬 Antigua and Barbuda - XCD ($)</option>
+  <option value="AR|ARS|$">🇦🇷 Argentina - ARS ($)</option>
+  <option value="AM|AMD|֏">🇦🇲 Armenia - AMD (֏)</option>
+  <option value="AU|AUD|$">🇦🇺 Australia - AUD ($)</option>
+  <option value="AT|EUR|€">🇦🇹 Austria - EUR (€)</option>
+  <option value="AZ|AZN|₼">🇦🇿 Azerbaijan - AZN (₼)</option>
+  <option value="BS|BSD|$">🇧🇸 Bahamas - BSD ($)</option>
+  <option value="BH|BHD|.د.ب">🇧🇭 Bahrain - BHD (.د.ب)</option>
+  <option value="BD|BDT|৳">🇧🇩 Bangladesh - BDT (৳)</option>
+  <option value="BB|BBD|$">🇧🇧 Barbados - BBD ($)</option>
+  <option value="BY|BYN|Br">🇧🇾 Belarus - BYN (Br)</option>
+  <option value="BE|EUR|€">🇧🇪 Belgium - EUR (€)</option>
+  <option value="BZ|BZD|$">🇧🀀𐀀𐀀𐀀𐀀򏰠𠡥𫁩𮡥𘀭 BZD ($)</option>
+  <option value="BJ|XOF|Fr">🇧🇯 Benin - XOF (Fr)</option>
+  <option value="BT|INR|₹">🇧🇹 Bhutan - INR (₹)</option>
+  <option value="BO|BOB|Bs.">🇧🇴 Bolivia - BOB (Bs.)</option>
+  <option value="BA|BAM|KM">🇧🇦 Bosnia and Herzegovina - BAM (KM)</option>
+  <option value="BW|BWP|P">🇧🇼 Botswana - BWP (P)</option>
+  <option value="BR|BRL|R$">🇧🇷 Brazil - BRL (R$)</option>
+  <option value="BN|BND|$">🇧🇳 Brunei - BND ($)</option>
+  <option value="BG|BGN|лв">🇧🇬 Bulgaria - BGN (лв)</option>
+  <option value="BF|XOF|Fr">🇧🇫 Burkina Faso - XOF (Fr)</option>
+  <option value="BI|BIF|Fr">🇧🇮 Burundi - BIF (Fr)</option>
+  <option value="CV|CVE|Esc">🇨🇻 Cabo Verde - CVE (Esc)</option>
+  <option value="KH|KHR|៛">🇰🇭 Cambodia - KHR (៛)</option>
+  <option value="CM|XAF|Fr">🇨🇲 Cameroon - XAF (Fr)</option>
+  <option value="CA|CAD|$">🇨🇦 Canada - CAD ($)</option>
+  <option value="CF|XAF|Fr">🇨🇫 Central African Republic - XAF (Fr)</option>
+  <option value="TD|XAF|Fr">🇹🇩 Chad - XAF (Fr)</option>
+  <option value="CL|CLP|$">🇨🇱 Chile - CLP ($)</option>
+  <option value="CN|CNY|¥">🇨🇳 China - CNY (¥)</option>
+  <option value="CO|COP|$">🇨🇴 Colombia - COP ($)</option>
+  <option value="KM|KMF|Fr">🇰🇲 Comoros - KMF (Fr)</option>
+  <option value="CG|XAF|Fr">🇨🇬 Congo - XAF (Fr)</option>
+  <option value="CR|CRC|₡">🇨🇷 Costa Rica - CRC (₡)</option>
+  <option value="HR|HRK|kn">🇭🇷 Croatia - HRK (kn)</option>
+  <option value="CU|CUP|$">🇨🇺 Cuba - CUP ($)</option>
+  <option value="CY|EUR|€">🇨🇾 Cyprus - EUR (€)</option>
+  <option value="CZ|CZK|Kč">🇨🇿 Czechia - CZK (Kč)</option>
+  <option value="DK|DKK|kr">🇩🇰 Denmark - DKK (kr)</option>
+  <option value="DJ|DJF|Fr">🇩🇯 Djibouti - DJF (Fr)</option>
+  <option value="DM|XCD|$">🇩🇲 Dominica - XCD ($)</option>
+  <option value="DO|DOP|$">🇩🇴 Dominican Republic - DOP ($)</option>
+  <option value="EC|USD|$">🇪🇨 Ecuador - USD ($)</option>
+  <option value="EG|EGP|£">🇪🇬 Egypt - EGP (£)</option>
+  <option value="SV|USD|$">🇸🇻 El Salvador - USD ($)</option>
+  <option value="GQ|XAF|Fr">🇬🇶 Equatorial Guinea - XAF (Fr)</option>
+  <option value="ER|ERN|Nfk">🇪🇷 Eritrea - ERN (Nfk)</option>
+  <option value="EE|EUR|€">🇪🇪 Estonia - EUR (€)</option>
+  <option value="SZ|SZL|L">🇸🇿 Eswatini - SZL (L)</option>
+  <option value="ET|ETB|Br">🇪🇹 Ethiopia - ETB (Br)</option>
+  <option value="FJ|FJD|$">🇫🇯 Fiji - FJD ($)</option>
+  <option value="FI|EUR|€">🇫🇮 Finland - EUR (€)</option>
+  <option value="FR|EUR|€">🇫🇷 France - EUR (€)</option>
+  <option value="GA|XAF|Fr">🇬🇦 Gabon - XAF (Fr)</option>
+  <option value="GM|GMD|D">🇬🇲 Gambia - GMD (D)</option>
+  <option value="GE|GEL|₾">🇬🇪 Georgia - GEL (₾)</option>
+  <option value="DE|EUR|€">🇩🇪 Germany - EUR (€)</option>
+  <option value="GH|GHS|₵">🇬🇭 Ghana - GHS (₵)</option>
+  <option value="GR|EUR|€">🇬🇷 Greece - EUR (€)</option>
+  <option value="GD|XCD|$">🇬🇩 Grenada - XCD ($)</option>
+  <option value="GT|GTQ|Q">🇬🇹 Guatemala - GTQ (Q)</option>
+  <option value="GN|GNF|Fr">🇬🇳 Guinea - GNF (Fr)</option>
+  <option value="GW|XOF|Fr">🇬🇼 Guinea-Bissau - XOF (Fr)</option>
+  <option value="GY|GYD|$">🇬🇾 Guyana - GYD ($)</option>
+  <option value="HT|HTG|G">🇭🇹 Haiti - HTG (G)</option>
+  <option value="HN|HNL|L">🇭🇳 Honduras - HNL (L)</option>
+  <option value="HU|HUF|Ft">🇭🇺 Hungary - HUF (Ft)</option>
+  <option value="IS|ISK|kr">🇮🇸 Iceland - ISK (kr)</option>
+  <option value="IN|INR|₹">🇮🇳 India - INR (₹)</option>
+  <option value="ID|IDR|Rp">🇮🇩 Indonesia - IDR (Rp)</option>
+  <option value="IR|IRR|﷼">🇮🇷 Iran - IRR (﷼)</option>
+  <option value="IQ|IQD|ع.د">🇮🇶 Iraq - IQD (ع.د)</option>
+  <option value="IE|EUR|€">🇮🇪 Ireland - EUR (€)</option>
+  <option value="IL|ILS|₪">🇮🇱 Israel - ILS (₪)</option>
+  <option value="IT|EUR|€">🇮🇹 Italy - EUR (€)</option>
+  <option value="JM|JMD|$">🇯🇲 Jamaica - JMD ($)</option>
+  <option value="JP|JPY|¥">🇯🇵 Japan - JPY (¥)</option>
+  <option value="JO|JOD|د.ا">🇯🇴 Jordan - JOD (د.ا)</option>
+  <option value="KZ|KZT|₸">🇰🇿 Kazakhstan - KZT (₸)</option>
+  <option value="KE|KES|Sh">🇰🇪 Kenya - KES (Sh)</option>
+  <option value="KI|AUD|$">🇰🇮 Kiribati - AUD ($)</option>
+  <option value="KW|KWD|د.ك">🇰🇼 Kuwait - KWD (د.ك)</option>
+  <option value="KG|KGS|с">🇰🇬 Kyrgyzstan - KGS (с)</option>
+  <option value="LA|LAK|₭">🇱🇦 Laos - LAK (₭)</option>
+  <option value="LV|EUR|€">🇱🇻 Latvia - EUR (€)</option>
+  <option value="LB|LBP|ل.ل">🇱🇧 Lebanon - LBP (ل.ل)</option>
+  <option value="LS|LSL|L">🇱🇸 Lesotho - LSL (L)</option>
+  <option value="LR|LRD|$">🇱🇷 Liberia - LRD ($)</option>
+  <option value="LY|LYD|ل.د">🇱🇾 Libya - LYD (ل.د)</option>
+  <option value="LI|CHF|Fr">🇱🇮 Liechtenstein - CHF (Fr)</option>
+  <option value="LT|EUR|€">🀀򌐼򎐠Lithuania - EUR (€)</option>
+  <option value="LU|EUR|€">🇱🇺 Luxembourg - EUR (€)</option>
+  <option value="MG|MGA|Ar">🇲🇬 Madagascar - MGA (Ar)</option>
+  <option value="MW|MWK|MK">🇲🇼 Malawi - MWK (MK)</option>
+  <option value="MY|MYR|RM">🇲🇾 Malaysia - MYR (RM)</option>
+  <option value="MV|MVR|ރ">🇲🇻 Maldives - MVR (ރ)</option>
+  <option value="ML|XOF|Fr">🇲🇱 Mali - XOF (Fr)</option>
+  <option value="MT|EUR|€">🇲🇹 Malta - EUR (€)</option>
+  <option value="MH|USD|$">🇲🀀򋐠Marshall Islands - USD ($)</option>
+  <option value="MR|MRU|UM">🇲🇷 Mauritania - MRU (UM)</option>
+  <option value="MU|MUR|₨">🇲🇺 Mauritius - MUR (₨)</option>
+  <option value="MX|MXN|$">🇲🇽 Mexico - MXN ($)</option>
+  <option value="MD|MDL|L">🇲🇩 Moldova - MDL (L)</option>
+  <option value="MC|EUR|€">🇲🇨 Monaco - EUR (€)</option>
+  <option value="MN|MNT|₮">🇲🇳 Mongolia - MNT (₮)</option>
+  <option value="ME|EUR|€">🇲🇪 Montenegro - EUR (€)</option>
+  <option value="MA|MAD|د.م.">🇲🇦 Morocco - MAD (د.م.)</option>
+  <option value="MZ|MZN|MT">🇲🇿 Mozambique - MZN (MT)</option>
+  <option value="NA|NAD|$">🇳🇦 Namibia - NAD ($)</option>
+  <option value="NP|NPR|₨">🇳🇵 Nepal - NPR (₨)</option>
+  <option value="NL|EUR|€">🇳🇱 Netherlands - EUR (€)</option>
+  <option value="NZ|NZD|$">🇳🇿 New Zealand - NZD ($)</option>
+  <option value="NI|NIO|C$">🇳🇮 Nicaragua - NIO (C$)</option>
+  <option value="NE|XOF|Fr">🇳🇪 Niger - XOF (Fr)</option>
+  <option value="NG|NGN|₦">🇳🇬 Nigeria - NGN (₦)</option>
+  <option value="NO|NOK|kr">🇳🇴 Norway - NOK (kr)</option>
+  <option value="OM|OMR|ر.ع.">🇴🇲 Oman - OMR (ر.ع.)</option>
+  <option value="PK|PKR|₨">🇵🇰 Pakistan - PKR (₨)</option>
+  <option value="PA|PAB|B/.">🇵🇦 Panama - PAB (B/.)</option>
+  <option value="PG|PGK|K">🇵🇬 Papua New Guinea - PGK (K)</option>
+  <option value="PY|PYG|₲">🇵🇾 Paraguay - PYG (₲)</option>
+  <option value="PE|PEN|S/">🀀򍐼򊠀𐀠𤁥ru - PEN (S/)</option>
+  <option value="PH|PHP|₱">🇵🇭 Philippines - PHP (₱)</option>
+  <option value="PL|PLN|zł">🇵🇱 Poland - PLN (zł)</option>
+  <option value="PT|EUR|€">🇵🇹 Portugal - EUR (€)</option>
+  <option value="QA|QAR|ر.ق">🇶🇦 Qatar - QAR (ر.ق)</option>
+  <option value="RO|RON|lei">🇷🇴 Romania - RON (lei)</option>
+  <option value="RU|RUB|₽">🇷🇺 Russia - RUB (₽)</option>
+  <option value="RW|RWF|Fr">🇷🇼 Rwanda - RWF (Fr)</option>
+  <option value="WS|WST|T">🀀򏀼𐀀𐇸𘁓𨑭oa - WST (T)</option>
+  <option value="SA|SAR|ر.س">🇸🇦 Saudi Arabia - SAR (ر.س)</option>
+  <option value="SN|XOF|Fr">🇸🇳 Senegal - XOF (Fr)</option>
+  <option value="RS|RSD|дин">🇷🇸 Serbia - RSD (дин)</option>
+  <option value="SC|SCR|₨">🇸🇨 Seychelles - SCR (₨)</option>
+  <option value="SL|SLL|Le">🇸🇱 Sierra Leone - SLL (Le)</option>
+  <option value="SG|SGD|$">🇸🇬 Singapore - SGD ($)</option>
+  <option value="SK|EUR|€">🇸🇰 Slovakia - EUR (€)</option>
+  <option value="SI|EUR|€">🇸🇮 Slovenia - EUR (€)</option>
+  <option value="SB|SBD|$">🇸🇧 Solomon Islands - SBD ($)</option>
+  <option value="SO|SOS|Sh">🇸🇴 Somalia - SOS (Sh)</option>
+  <option value="ZA|ZAR|R">🇿🇦 South Africa - ZAR (R)</option>
+  <option value="KR|KRW|₩">🇰🇷 South Korea - KRW (₩)</option>
+  <option value="SS|SSP|£">🇸🇸 South Sudan - SSP (£)</option>
+  <option value="ES|EUR|€">🇪🇸 Spain - EUR (€)</option>
+  <option value="LK|LKR|₨">🇱🇰 Sri Lanka - LKR (₨)</option>
+  <option value="SD|SDG|ج.س.">🇸🇩 Sudan - SDG (ج.س.)</option>
+  <option value="SR|SRD|$">🇸🇷 Suriname - SRD ($)</option>
+  <option value="SE|SEK|kr">🇸🇪 Sweden - SEK (kr)</option>
+  <option value="CH|CHF|Fr">🇨🇭 Switzerland - CHF (Fr)</option>
+  <option value="SY|SYP|£">🇸🇾 Syria - SYP (£)</option>
+  <option value="TW|TWD|$">🇹🇼 Taiwan - TWD ($)</option>
+  <option value="TJ|TJS|ЅМ">🇹🇯 Tajikistan - TJS (ЅМ)</option>
+  <option value="TZ|TZS|Sh">🇹🇿 Tanzania - TZS (Sh)</option>
+  <option value="TH|THB|฿">🇹🇭 Thailand - THB (฿)</option>
+  <option value="TL|USD|$">🇹🇱 Timor-Leste - USD ($)</option>
+  <option value="TG|XOF|Fr">🇹🇬 Togo - XOF (Fr)</option>
+  <option value="TO|TOP|T$">🇹🇴 Tonga - TOP (T$)</option>
+  <option value="TT|TTD|$">🇹🇹 Trinidad and Tobago - TTD ($)</option>
+  <option value="TN|TND|د.ت">🇹🇳 Tunisia - TND (د.ت)</option>
+  <option value="TR|TRY|₺">🇹🇷 Turkey - TRY (₺)</option>
+  <option value="TM|TMT|m">🇹🇲 Turkmenistan - TMT (m)</option>
+  <option value="UG|UGX|Sh">🇺🇬 Uganda - UGX (Sh)</option>
+  <option value="UA|UAH|₴">🇺🇦 Ukraine - UAH (₴)</option>
+  <option value="AE|AED|د.إ">🇦🇪 United Arab Emirates - AED (د.إ)</option>
+  <option value="GB|GBP|£">🇬🇧 United Kingdom - GBP (£)</option>
+  <option value="US|USD|$">🇺🀀𐀀𐀀𐇸𘁕𫡩𭁥d States - USD ($)</option>
+  <option value="UY|UYU|$U">🇺🇾 Uruguay - UYU ($U)</option>
+  <option value="UZ|UZS|сўм">🇺🇿 Uzbekistan - UZS (сўм)</option>
+  <option value="VU|VUV|Vt">🇻🇺 Vanuatu - VUV (Vt)</option>
+  <option value="VE|VES|Bs.">🇻🇪 Venezuela - VES (Bs.)</option>
+  <option value="VN|VND|₫">🇻🇳 Vietnam - VND (₫)</option>
+  <option value="YE|YER|﷼">🇾🇪 Yemen - YER (﷼)</option>
+  <option value="ZM|ZMW|ZK">🇿🇲 Zambia - ZMW (ZK)</option>
+  <option value="ZW|ZWL|Z$">🇿🇼 Zimbabwe - ZWL (Z$)</option>
+</select>
+<script>
+  const baseCurrency = 'USD';
+
+  let rates = {};
+
+  async function fetchRates() {
+    const res = await fetch('https://open.er-api.com/v6/latest/'+baseCurrency);
+    const data = await res.json();
+    rates = data.rates;
+   
+  }
+
+ 
+// Format the price above to USD using the locale, style, and currency.
+let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});
+  
+  function convertPrices() {
+      let savedCountry = localStorage.getItem('selectedCountry')??"US";  
+      let currencyCode_ = $("#currency--selector option[value^='"+savedCountry+"|']").val();
+     let [countryCode, currencyCode, symbol] = currencyCode_.split('|'); 
+     if (currencyCode == "LBP"){
+       currencyCode = "USD";
+       symbol = "$"; 
+     }
+    let currency = currencyCode;
+    
+    if (!rates[currency]) {
+      console.error(`No exchange rate for ${currency}`);
+      return;
+    }
+
+    const rate = rates[currency];
+    document.querySelectorAll('.money[data-base-price]').forEach(el => {
+      const base = parseFloat(el.getAttribute('data-base-price').replace(/[^0-9.]/g, ''));
+      if (!isNaN(base)) {
+        const converted = (base * rate).toFixed(0);
+         el.textContent = `${symbol}${USDollar.format(converted).replace("$","").split(".")[0]}`;
+         el.dataset.price = converted;
+      }
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', async () => {
+ //  await fetchRates();
+    if(localStorage.getItem('selectedCountry') != "US"){
+      setInterval(function(){
+      // convertPrices();
+      },200);  
+    }
+  })
+  
+ function switchCurrency(val,code){
+    event.preventDefault(); 
+     localStorage.setItem('selectedCountry', val);
+  // convertPrices();
+  switchCurrencyAuto();
+   $(".doubly-nice-select ul li[data-value='"+code+"']").click();
+  }
+
+</script>
+    <a class="screen-reader-shortcut" href="#main-content">{{ 'accessibility.skip_to_text' | t }}</a>
+      {% if template == 'tracktor' %}
+   {{ 'tracktor.css' | asset_url | stylesheet_tag }}
+      {% endif %}
+    <div id="wrapper">
+      <script type="load" d-src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js?v=165519143715454352281756116300"></script>
+      {%- sections 'header-group' -%}
+      
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css?v=165519143715454352281756116300">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css?v=165519143715454352281756116300">
+    <link rel="stylesheet" class="lazycss" data-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css?v=165519143715454352281756116300">
+    
+    
+    <script type="load" d-src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js?v=165519143715454352281756116300"></script>
+    <script type="load" d-src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js?v=165519143715454352281756116300"></script>
+    <script type="load" d-src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js?v=165519143715454352281756116300"></script>
+
+      {%- sections 'overlay-group' -%}
+      <div role="main" id="main-content">
+        {{ content_for_layout }}
+      </div>
+      {% sections 'footer-group' %}
+      {% render 'cart-drawer' %}
+      {% render 'product-drawer' %}
+      {% render 'search-drawer' %}
+      <div class="click-capture"></div>
+    </div>
+	{{ 'vendor.min.js' | asset_url | script_tag | replace: ' src' , ' d-src' | replace: ' type="text/javascript"' , ' type="load"'}}
+    {% if settings.animations %}
+ <script type="load" d-src="//elie-saab-switzerland.myshopify.com/cdn/shop/t/156/assets/animations.min.js?v=125778792411641688251747899799" type="text/javascript"></script>
+      <script type="load">
+        gsap.defaults({
+        	ease: Power4.easeOut
+        });
+        gsap.config({
+           nullTargetWarn: false
+         });
+        gsap.registerPlugin(ScrollTrigger);
+      </script>
+    {% endif %}
+    {{ 'app.js' | asset_url | script_tag | replace: ' src' , ' d-src' | replace: ' type="text/javascript"' , ' type="load"'}}
+     <script type="load" d-src="{{ 'slideshow.js' | asset_url }}" ></script>   
+
+     <script type="load" d-src="{{ 'wishlist.js' | asset_url }}" ></script>
+    {{ 'custom.js'| asset_url | script_tag | replace: ' src' , ' d-src' | replace: ' type="text/javascript"' , ' type="load"' }}
+    {%- liquid
+      assign add_product_js = false
+      if settings.enable_quick_view or settings.enable_quick_add
+        assign add_product_js = true
+      endif
+
+      if cart != empty and settings.cart_recommendations
+        assign add_product_js = true
+      endif
+    -%}
+    {% if add_product_js %}
+      <script src="{{ 'product.js' | asset_url }}" defer="defer"></script>
+    {% endif %}
+    <script dxt="module" type="load" d-src="{{ 'scroll-shadow.js' | asset_url }}"></script>
+    <script type="load" d-src="{{ 'predictive-search.js' | asset_url }}"></script>
+    {%- if request.design_mode -%}
+      {{ 'theme-editor.js' | asset_url | script_tag }}
+      {% render 'customer-data' %}
+    {%- endif -%}
+    {%- if settings.free_shipping -%}
+      {{ 'free-shipping.js' | asset_url | script_tag }}
+      {{ 'free-shipping.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+    {%- if settings.cart_recommendations -%}
+      <script type="load" d-src="{{ 'product-recommendations.js' | asset_url }}"></script>
+    {%- endif -%}
+    {%- if settings.cart_terms_conditions_enable -%}
+      <script type="load" d-src="{{ 'terms-checkbox.js' | asset_url }}"></script>
+    {%- endif -%}
+    {% render 'back-to-top' %}
+
+    {%- if settings.preload_links -%}
+      {%- unless request.design_mode -%}
+        <script dxt="module" type="load" d-src="{{ 'instant-page.js' | asset_url }}"></script>
+      {%- endunless -%}
+    {%- endif -%}
+ 
+    <script type="load">     
+      if (window.innerWidth < 749) {
+       $(".filter_btn,span.facets-toggle").on("click", function() {
+        $("facetfiltersformmobile").toggleClass("active");
+         $("body").toggleClass("filter-active open-cc");
+         $(".collection-meta-size").removeClass("show");
+         $(".subcollection_dropdown,.dropdown-collection").removeClass("active");
+       }); 
+      }
+      $("body").on("click", ".dropdown-collection", function() {
+        $(".collection-meta-size").removeClass("show");
+        $(".subcollection_dropdown").removeClass("active");
+      })
+      $("body").on("click", ".dropdown_button", function() {
+        $("#dropdownCard").toggleClass("active");
+        $(this).toggleClass('active')
+      });
+      $(document).on("click", ".drop_child .link", function () {
+        const data_title = $(this).data("title");
+        $("#updated_text").text(data_title);
+        $('.dropdown_button').removeClass('active');
+        $('#dropdownCard').removeClass('active');
+      });
+      document.addEventListener("DOMContentLoaded", function () {
+        // Cart count number function
+        // function updateCartCount() {
+        //   fetch('/cart.js')
+        //   .then(response => response.json())
+        //   .then(cart => {
+        //     const cartCountElement = document.querySelector("#cartcount");
+        //     if (cartCountElement) {
+        //       if (cart.item_count > 0) {
+        //         cartCountElement.classList.add("active");
+        //       } else {
+        //         cartCountElement.classList.remove("active");
+        //       }
+        //     }
+        //   })
+        //   .catch(error => console.error("Error fetching cart:", error))
+        //   .finally(() => {
+        //     setTimeout(updateCartCount, 500);
+        //   });
+        // }
+        // updateCartCount();
+
+        // Country size
+        document.addEventListener("click", function (event) {
+          const dropdownToggle = event.target.closest(".dropdown-toggle");
+          const dropdownMenu = event.target.closest(".dropdown-menu");
+          const dropdown = event.target.closest(".dropdown");
+          if (!dropdown) {
+            document.querySelectorAll(".dropdown-menu").forEach(menu => menu.classList.remove("show"));
+            document.querySelectorAll(".dropdown-toggle").forEach(toggle => toggle.classList.remove("active"));
+          }
+          // Handle dropdown toggle
+          if (dropdownToggle) {
+            const parentDropdown = dropdownToggle.closest(".dropdown");
+            const menu = parentDropdown.querySelector(".dropdown-menu");
+            dropdownToggle.classList.toggle("active");
+            menu.classList.toggle("show");
+          }        
+          // Handle menu item selection
+          if (dropdownMenu) {
+            const button = event.target.closest(".country-btn");
+            if (button) {
+              dropdownMenu.querySelectorAll(".country-btn").forEach(btn => btn.classList.remove("active"));
+              button.classList.add("active");        
+              const dropdown = button.closest(".dropdown");
+              const dropdownText = dropdown.querySelector(".dropdown-toggle span");
+              dropdownText.textContent = button.dataset.country;
+              // setTimeout(() => {
+              //   dropdown.querySelector(".dropdown-menu").classList.remove("show");
+              //   dropdown.querySelector(".dropdown-toggle").classList.remove("active");
+              // }, 2000);
+            }
+          }
+        });          
+        // modal popup js
+        {% if template.name == "product" %}
+        // const sizebutton = document.querySelector(".sizeModal");
+        //       const variantSize = document.querySelector(".product-form__input.size_fieldset");
+        //   const modelsizebody = document.querySelector("#sizeModal .modal-size-body")
+        // sizebutton.addEventListener("shown.bs.modal",function(e){
+   
+        //   variantSize.classList.add("size-guide-active")
+        //   let boundingEle = modelsizebody.getBoundingClientRect();
+        //   const postitionFromTop = boundingEle.top + boundingEle.height
+        // variantSize.style.setProperty("--position-height",`${postitionFromTop}px`)
+          
+        // })
+        //    sizebutton.addEventListener("hidden.bs.modal",function(e){
+ 
+        //   variantSize.classList.remove("size-guide-active")
+        //          variantSize.style.removeProperty("--position-height")
+        // })
+
+        const sizebutton = document.querySelector(".sizeModal");
+        const variantSize = document.querySelector(".product-form__input.size_fieldset");
+        const modelsizebody = document.querySelector("#sizeModal .modal-size-body");
+        const modalBody = document.querySelector("#sizeModal .modal-dialog");
+        
+        sizebutton.addEventListener("shown.bs.modal", function (e) {
+          variantSize.classList.add("size-guide-active");
+              if (window.innerWidth >= 1100) { // Bootstrap 'lg' breakpoint
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+          }
+          updatePosition(); // Initial position
+        });
+        
+        sizebutton.addEventListener("hidden.bs.modal", function (e) {
+          variantSize.classList.remove("size-guide-active");
+          variantSize.style.removeProperty("--position-height");
+        });
+        
+        modalBody.addEventListener("scroll", updatePosition);
+        
+        function updatePosition() {
+          let boundingEle = modelsizebody.getBoundingClientRect();
+          const postitionFromTop = boundingEle.top + boundingEle.height+30;
+          variantSize.style.setProperty("--position-height", `${postitionFromTop}px`);
+        }         
+        document.querySelectorAll('.exampleModal').forEach(function (modal) {
+          modal.addEventListener('shown.bs.modal', function (e) {
+      
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+          });
+        });
+        document.addEventListener('hidden.bs.modal', function (event) {
+          let scrollY = window.scrollY;
+          window.scrollTo(0, scrollY);
+        });
+      {% endif %}
+        const tabsContainer = document.querySelector(".collaps_tab");
+        const underline = document.querySelector(".tab-underline");
+        function updateUnderline(activeTab) {
+          if (!underline || !activeTab) return;
+          const tabRect = activeTab.getBoundingClientRect();
+          const containerRect = tabsContainer.getBoundingClientRect();
+          underline.style.width = `${tabRect.width}px`;
+          underline.style.transform = `translateX(${tabRect.left - containerRect.left}px)`;
+        }
+        function activateTab(targetTab) {
+          const tabToActivate = document.querySelector(`[data-bs-target="${targetTab}"]`);
+          if (tabToActivate) {
+            new bootstrap.Tab(tabToActivate).show();
+            updateUnderline(tabToActivate);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }
+        const activeTab = document.querySelector(".collaps_tab .active");
+        if (activeTab) updateUnderline(activeTab);
+        document.querySelectorAll(".collaps_tab .nav-link").forEach((tab) => {
+          tab.addEventListener("shown.bs.tab", function () {
+            updateUnderline(this);
+          });
+        });
+        document.querySelectorAll(".max-height-toggle").forEach((button) => {
+          button.addEventListener("click", function () {
+            const targetTab = this.getAttribute("data-target-tab");
+            setTimeout(() => activateTab(targetTab), 100);
+          });
+        });
+        
+        // Wihslist
+        function checkWishlistStatus() {
+          const detailsButton = document.querySelector(".st-wishlist-details-button");
+          const numberSpan = detailsButton?.querySelector(".st-js-number");
+          const wishlistIcon = document.querySelector(".st-wishlist-details-button svg use");
+          if (!detailsButton || !numberSpan) return;      
+          let currentCount = parseInt(numberSpan.getAttribute("data-count")) || 0;
+      
+          if (currentCount > 0) {
+            detailsButton.classList.add("active");
+            wishlistIcon.setAttribute("xlink:href", "#st_added_icon");
+          }
+          const observer = new MutationObserver(() => {
+            let newCount = parseInt(numberSpan.getAttribute("data-count")) || 0;
+            if (newCount > 0) {
+              detailsButton.classList.add("active");
+              wishlistIcon.setAttribute("xlink:href", "#st_added_icon");
+            } else {
+              detailsButton.classList.remove("active");
+              wishlistIcon.setAttribute("xlink:href", "#st_details_icon");
+            }
+          });
+          observer.observe(numberSpan, { attributes: true, attributeFilter: ["data-count"] });
+        }
+        setTimeout(checkWishlistStatus, 2000);
+      });
+    
+      document.addEventListener("click", function (event) {
+        const wishlistButton = event.target.closest(".st-wishlist-button");
+        if (wishlistButton) {
+          const detailsButton = document.querySelector(".st-wishlist-details-button");
+          const custom_list = document.querySelector("[data-tb='#wishlist']")
+          const numberSpan = detailsButton.querySelector(".st-js-number");          
+          if (!numberSpan) return;
+          let previousCount = parseInt(numberSpan.getAttribute("data-count")) || 0;
+          const observer = new MutationObserver(() => {
+            let newCount = parseInt(numberSpan.getAttribute("data-count")) || 0;
+            if (newCount > previousCount) {
+              //detailsButton.classList.add('active');
+              let messageSpan = detailsButton.querySelector(".wishlist-message");
+              if (!messageSpan && window.innerWidth > 768) {
+                messageSpan = document.createElement("span");
+                messageSpan.classList.add("wishlist-message");
+                messageSpan.textContent = "Item added to wishlist";
+                custom_list.appendChild(messageSpan);
+                setTimeout(() => {
+                  messageSpan.remove();
+                }, 5000);
+              }
+            }
+            observer.disconnect();
+          });
+          observer.observe(numberSpan, { attributes: true, attributeFilter: ["data-count"] });
+        }
+      });
+      document.addEventListener("DOMContentLoaded", function () { 
+        // Notify Functionality Start    
+        document.addEventListener("click", function (event) {
+          if (event.target.classList.contains("select_variant")) {
+            const sizeVariants = document.querySelectorAll(".size_variant");
+            const selectButtons = document.querySelectorAll(".select_variant");
+            const index = [...selectButtons].indexOf(event.target);
+            if (index !== -1) {
+              const sizeVariant = sizeVariants[index];
+              const selectedSize = sizeVariant?.querySelector("input[type='radio']:checked");
+              if (!selectedSize) {
+                sizeVariant?.classList.add("active");
+              }
+            }
+          }
+          if (event.target.classList.contains("notify_btn")) {
+            const notifyButtons = document.querySelectorAll(".notify_btn");
+            const customNotifies = document.querySelectorAll(".custom_notify");
+            const index = [...notifyButtons].indexOf(event.target);
+            if (index !== -1) {
+              const customNotify = customNotifies[index];
+              if (customNotify) {
+                event.target.style.display = "none";
+                customNotify.style.display = "block";
+              }
+            }
+          }
+          if (event.target.id === "spb__bis-modal-btn") {
+            const formInput = document.getElementById("spb__bis-email-input");
+            if (!formInput) return;
+            const successMessages = document.querySelectorAll(".success_message");
+            const externalEmails = document.querySelectorAll(".external-email");
+            const externalButtons = document.querySelectorAll(".external-button-box")
+            const index = [...externalEmails].findIndex(input => input.value.trim() === formInput.value.trim());
+            if (index !== -1 && successMessages[index]) {
+              console.log("Button Clicked with valid email:", formInput.value);
+              successMessages[index].classList.add("active");
+              externalEmails[index].style.display = "none";
+               externalButtons[index].style.display = "none";
+            }
+          }
+        });
+        document.addEventListener("change", function (event) {
+          if (event.target.matches(".size_fieldset input[type='radio']")) {
+            document.querySelectorAll(".size_variant").forEach(variant => variant.classList.remove("active"));
+            event.target.closest(".size_variant")?.classList.remove("active");
+            document.querySelectorAll(".select_variant").forEach(btn => btn.classList.add("hide"));
+            document.querySelectorAll(".notify_btn").forEach(btn => btn.removeAttribute("style"));
+            document.querySelectorAll(".custom_notify").forEach(custom => custom.removeAttribute("style"));
+            document.querySelectorAll(".success_message").forEach(message => message.classList.remove("active"));
+            document.querySelectorAll(".external-email").forEach(emailInput => emailInput.value = "");
+          }
+        });
+        document.addEventListener("input", function (event) {
+          if (event.target.classList.contains("external-email")) {
+            const formInput = document.getElementById("spb__bis-email-input");
+            const button = document.getElementById("spb__bis-modal-btn");
+            if (!formInput || !button) return;
+            const emailValue = event.target.value.trim();
+            formInput.value = emailValue;
+            formInput.disabled = !emailValue;
+            button.disabled = !isValidEmail(emailValue);
+          }
+        });
+        function handleEmailSubmission() {
+          const formInput = document.getElementById("spb__bis-email-input") || document.getElementById("external-email");
+          const button = document.getElementById("spb__bis-modal-btn") || document.querySelector(".external-button-box");
+          if (!formInput || !button) return;
+          if (isValidEmail(formInput.value.trim())) {
+            button.click(); // Trigger the modal button click
+          } else {
+            console.log("Please enter a valid email address!");
+            formInput.classList.add("error");
+          }
+        }
+        document.addEventListener("keydown", function (event) {
+          if (event.target.classList.contains("external-email") && event.key === "Enter") {
+            event.preventDefault();
+            handleEmailSubmission();
+          }
+        });
+        document.querySelector(".external-button-box")?.addEventListener("click", function (event) {
+          event.preventDefault();
+          const emailInput = document.querySelector(".external-email");
+          if (!emailInput.value.trim()) {
+            emailInput.classList.add("error"); // Add error class
+            emailInput.setAttribute("placeholder", "Please enter your email"); // Correctly set the placeholder
+          } else {
+            emailInput.classList.remove("error"); // Remove error class if valid
+            emailInput.setAttribute("placeholder", "Enter your email to be notified"); // Correctly set the placeholder
+            handleEmailSubmission();
+          }
+        });
+        function isValidEmail(email) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        // Notify Functionality End
+        // Country Size Chart
+        const sizeMapping = {
+          FR: [34, 36, 38, 40, 42, 44, 46, 48, 50, 52],
+          US: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+          IT: [38, 40, 42, 44, 46, 48, 50, 52, 54, 56],
+          JP: [5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
+          UK: [6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
+          AU: [6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+        };
+        document.addEventListener("click", function (event) {
+          const button = event.target.closest(".country-btn");
+          if (button) {
+            const selectedCountry = button.getAttribute("data-country");
+            const variantContainer = button.closest(".variant-section");            
+            if (variantContainer) {
+              const radioInputs = variantContainer.querySelectorAll(".country_size input[type='radio']");              
+              radioInputs.forEach((input, index) => {
+                let newSize = sizeMapping[selectedCountry]?.[index] || "";
+                const label = input.nextElementSibling;
+                if (label) {
+                  const span = label.querySelector("span");
+                  if (span) {
+                    span.textContent = newSize;
+                  }
+                }
+              });
+            }
+          }
+        });
+        // Underline scrolling function
+        function updateUnderline(container, underline, activeElement, reduceWidth = false) {
+          if (!underline || !activeElement) return;
+          const rect = activeElement.getBoundingClientRect();
+          const parentRect = container.getBoundingClientRect();
+          const width = reduceWidth ? Math.max(rect.width - 6, 0) : rect.width;
+          const offsetX = rect.left - parentRect.left + (rect.width / 2) - (width / 2);
+          underline.style.width = `${width}px`;
+          underline.style.transform = `translateX(${offsetX}px)`;
+        }
+        function updateVariantUnderline(variantContainer) {
+          const variantUnderline = variantContainer.querySelector(".underline");
+          if (!variantUnderline) return;
+          const checkedInput = variantContainer.querySelector("input:checked");
+          const checkedLabel = checkedInput ? checkedInput.nextElementSibling : null;
+          updateUnderline(variantContainer, variantUnderline, checkedLabel, true);
+        }
+        function updateTabUnderline() {
+          const tabContainer = document.querySelector(".nav-tabs");
+          if (!tabContainer) return;
+          const activeTab = tabContainer.querySelector(".nav-link.active");
+          updateUnderline(tabContainer, activeTab, false);
+        }
+        document.addEventListener("click", function (event) {
+          const label = event.target.closest(".variant_option label");
+          if (label) {
+            const variantContainer = label.closest(".variant_option");
+            if (variantContainer) {
+              setTimeout(() => updateVariantUnderline(variantContainer), 50);
+            }
+          }
+        });
+        const observer = new MutationObserver(() => {
+          document.querySelectorAll(".variant_option").forEach(updateVariantUnderline);
+          updateTabUnderline();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        setTimeout(() => {
+          document.querySelectorAll(".variant_option").forEach(updateVariantUnderline);
+          updateTabUnderline();
+        }, 100);
+        
+        // wishlist added function
+        const wishlistButtons = document.querySelectorAll(".st-wishlist-button");
+        wishlistButtons.forEach(button => {
+          button.addEventListener("click", function () {
+            const handle = this.getAttribute("data-handle");
+            const allMatchingButtons = document.querySelectorAll(`[data-handle="${handle}"]`);
+            allMatchingButtons.forEach(btn => {
+              btn.classList.toggle("added");
+              const label = btn.querySelector(".st-label");
+              const icon = btn.querySelector(".st-wishlist-icon use");
+              if (btn.classList.contains("added")) {
+                label.textContent = "Added to Wishlist";
+                icon.setAttribute("xlink:href", "#st_added_icon"); 
+              } else {
+                label.textContent = "Add to Wishlist";
+                icon.setAttribute("xlink:href", "#st_details_icon");
+              }
+            });
+          });
+        });
+      });
+      // header icons
+      document.addEventListener("DOMContentLoaded", function () {
+        const cartContainer = document.querySelector(".cart_drawer_tab");
+        const cartline = document.querySelector(".cart__underline");
+        const cartDrawer = document.querySelector("#Cart-Drawer");
+      
+        function updatecartline() {
+          if (!cartline) return;
+          const activeTab = document.querySelector(".cart_drawer_tab .nav-link.active");
+          if (!activeTab) return;
+          const tabRect = activeTab.getBoundingClientRect();
+          const containerRect = cartContainer.getBoundingClientRect();
+          cartline.style.width = `${tabRect.width}px`;
+          cartline.style.transform = `translateX(${tabRect.left - containerRect.left}px)`;
+        }
+      
+        function activateTab(tabId) {
+          const targetTab = document.querySelector(`.cart_drawer_tab .nav-link[data-bs-target="${tabId}"]`);
+          if (targetTab) {
+            const bsTab = bootstrap.Tab.getOrCreateInstance(targetTab);
+            bsTab.show();
+            setTimeout(updatecartline, 50);
+          }
+        }
+      
+        // Bind tab shown event
+        document.querySelectorAll(".cart_drawer_tab .nav-link").forEach((tab) => {
+          tab.addEventListener("shown.bs.tab", updatecartline);
+        });
+      
+        // Trigger tab from external .cart_popup icons
+        document.querySelectorAll(".cart_popup").forEach((btn) => {
+          btn.addEventListener("click", function(e) {
+            document.querySelectorAll(".cart_popup.show-cart").forEach((el) => {
+              if (el !== e.currentTarget) el.classList.remove("show-cart");
+            });
+            if (e.currentTarget.classList.contains("show-cart") && window.innerWidth <= 767) {
+              cartDrawer.classList.remove("active");
+              document.body.classList.remove("open-cc","open-cart");
+              e.currentTarget.classList.remove("show-cart");
+              return;
+            }
+            e.currentTarget.classList.add('show-cart')
+            const tabId = this.getAttribute("data-tb");
+            if (cartDrawer) {
+              setTimeout(() => {
+                cartDrawer.classList.add("active");
+                document.body.classList.add("open-cc","open-cart");
+              }, 100);
+            }
+            
+            setTimeout(() => activateTab(tabId), 200);
+          });
+        });
+        
+        $(document).ready(function() {
+          function bindClickEvent() {
+            $('.cart_drawer_tab .nav-link').on('click', function(event) {
+              var targetTab = $(this).data('bs-target');
+              $('.cart_popup').removeClass('show-cart');
+              $('.nav-link').removeClass('show-cart'); 
+              $('.cart_popup[data-tb="' + targetTab + '"]').addClass('show-cart');
+              event.preventDefault();
+            });
+          }
+          if ($(window).width() <= 767) {
+            bindClickEvent();
+          }
+        });
+        // Initialize underline position
+        updatecartline();
+      });
+      document.querySelectorAll('[data-bs-toggle="pill"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', () => {
+          document.querySelectorAll('slider-component').forEach(component => {
+            if (component.dataset.initiated === 'true') {
+              const flkty = Flickity.data(component);
+              if (flkty) {
+                flkty.resize();
+              }
+            }
+          });
+          var $activeTab = $(".wishlist-tabs .nav-link.active");
+          var $underline = $(".wishlistprogress");
+          if ($activeTab.length > 0) {
+            var offset = $activeTab.offset().left - $(".wishlist-tabs").offset().left;
+            $underline.css({
+              width: $activeTab.outerWidth(),
+              transform: 'translateX(' + offset + 'px)',
+            });
+          }
+        });
+      });
+      $(document).ready(function () {
+        $('[data-tb="#search"]').click(function () {
+          $('#search').addClass('active show');
+          // Activate tab via Bootstrap method
+          const tabTrigger = document.querySelector('[data-bs-target="#search"]');
+          if (tabTrigger) {
+            bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+          }
+      
+          // Optional: Wait a moment before triggering Flickity resize
+          setTimeout(function () {
+            document.querySelectorAll('slider-component').forEach(component => {
+              if (component.dataset.initiated === 'true') {
+                const flkty = Flickity.data(component);
+                if (flkty) {
+                  flkty.resize();
+                }
+              }
+            });
+          }, 100); // Slight delay allows tab transition to finish
+        });
+      });
+    </script>
+
+    <script type="load">
+        document.addEventListener("DOMContentLoaded", function() {
+         document.querySelectorAll(".dropdown_item").forEach((dropdown) => {
+          const dropdownToggle = dropdown.querySelector(".subcollection_dropdown");
+          const dropdownMenu = dropdown.querySelector(".collection-meta-size");
+          const dropdownText = dropdownToggle.querySelector("span");
+           if (dropdownToggle && dropdownMenu && dropdownText) {
+           //  dropdownToggle.addEventListener("click", () => {
+            //   dropdownMenu.classList.toggle("show");
+           //    dropdownToggle.classList.toggle("active");
+           //  });
+             dropdownMenu.addEventListener("click", function(event) {
+               const button = event.target.closest(".country-btn");
+               if (button) {
+                 dropdownMenu.querySelectorAll(".country-btn").forEach(btn => btn.classList.remove("active"));
+                 button.classList.add("active");
+                 dropdownText.textContent = button.dataset.country;
+                 setTimeout(() => {
+                   dropdownMenu.classList.remove("show");
+                   dropdownToggle.classList.remove("active");
+                 }, 2000);
+               }
+             });
+           }
+         });
+
+         $("body").on("click",".dropdown_item", function(){
+            const dropdownToggle = $(this).find(".subcollection_dropdown");
+            const dropdownText = dropdownToggle.find("span");
+            const dropdownMenu = $(this).find(".collection-meta-size");
+            dropdownMenu.toggleClass("show");
+            dropdownToggle.toggleClass("active");
+           $(".dropdown-collection").removeClass("active");
+         });
+       });
+
+      const sizeMapping = {
+        FR: [34, 36, 38, 40, 42, 44, 46, 48, 50, 52],
+        US: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+        IT: [38, 40, 42, 44, 46, 48, 50, 52, 54, 56],
+        JP: [7, 9, 11, 13, 15, 17, 19, 21, 23, 25],
+        UK: [6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
+        AU: [6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+      };
+       document.addEventListener("click", function(event) {
+         const button = event.target.closest(".country-btn");
+         if (button) {
+           const selectedCountry = button.getAttribute("data-country");
+           const variantContainer = button.closest(".thb-filter");
+           if (variantContainer) {
+             const radioInputs = variantContainer.querySelectorAll(".list-size li input[type='checkbox']");
+             radioInputs.forEach((input, index) => {
+               let newSize = sizeMapping[selectedCountry]?.[index] || "";
+               const label = input.nextElementSibling;
+               if (label) {
+                 const span = label.querySelector("span");
+                 if (span) {
+                   span.textContent = newSize;
+                 }
+               }
+             });
+           }
+         }
+       });
+    </script>
+
+ 
+
+        <script type="load">
+document.addEventListener('click', function(event) {
+ if (!event.isTrusted) return;
+  const openMenus = document.querySelectorAll('details.coutnryselector[open]');
+  if (!openMenus.length) return;
+
+  const clickedInsideMenu = event.target.closest('details.coutnryselector[open]');
+  if (!clickedInsideMenu) {
+    openMenus.forEach(menu => menu.removeAttribute('open'));
+  }
+});
+    </script>
+ 
+    <script type="lload">
+            $(document).ready(function() {
+        // Attach click event to anchor tags inside .collapsible__content .accordion__content
+        $('.template-page-faq .collapsible__content.accordion__content p a').click(function() {
+          if ($(this).text().trim() === 'My Account') {
+            // Remove the href="#" action from the current anchor tag
+            $(this).attr('href', 'javascript:void(0)'); // Replaces '#' with 'javascript:void(0)'
+
+
+            const loginTrigger = document.querySelector('[data-tb="#login_account"]');
+        if (loginTrigger) {
+          loginTrigger.click();
+        }
+          }
+        });
+      });
+    </script>
+
+    {% comment %} <script>
+var windowWidth,lazyLink,lazyImages,lazyBackground,lazyIframe,lazyVideo,lazyScripts,navigator_platform,lazyLoadedJS,src,style,datasrc,urls,analytics,s,x,i,j,flag;function init(){flag&&(flag=0,lazyLoadImg(),lazyLoadBackground(),lazyLoadIframe(),load_all_js())}function isElementInViewport(t){var a=t.getBoundingClientRect();return a.top>=0&&a.left>=0&&a.bottom<=(window.innerHeight||document.documentElement.clientHeight)&&a.right<=(window.innerWidth||document.documentElement.clientWidth)}function lazyLoadLink(){lazyLink.forEach(function(t){t.href=null==t.dataset.href?t.href:t.dataset.href})}function lazyLoadImg(){lazyImages.forEach(function(t){null!=(src=windowWidth<600?null==t.dataset.mobsrc?t.dataset.src:t.dataset.mobsrc:t.dataset.src)&&(t.src=src),t.classList.remove("lazy2")})}function lazyLoadImg2(){lazyImages.forEach(function(t){isElementInViewport(t)&&(null!=(src=windowWidth<600?null==t.dataset.mobsrc?t.dataset.src:t.dataset.mobsrc:t.dataset.src)&&(t.src=src),t.classList.remove("lazy"))})}function lazyLoadBackground(){lazyBackground.forEach(function(t){lazybg=windowWidth<600?null==t.dataset.mobstyle?t.dataset.style:t.dataset.mobstyle:t.dataset.style,null!=lazybg&&(t.style=lazybg),t.classList.remove("lazybg")})}function lazyLoadIframe(){lazyIframe.forEach(function(t){t.src=null==t.dataset.src?t.src:t.dataset.src});lazyVideo.forEach(function(t){t.src=null==t.dataset.src?t.src:t.dataset.src})}function lazyLoadScripts(){j!=lazyScripts.length&&("lazyload2"==lazyScripts[j].getAttribute("type")?(lazyScripts[j].setAttribute("type","lazyloaded"),void 0!==lazyScripts[j].dataset.src?((s=document.createElement("script")).src=lazyScripts[j].dataset.src,document.body.appendChild(s),s.onload=function(){j++,lazyLoadScripts()}):((s=document.createElement("script")).innerHTML=lazyScripts[j].innerHTML,document.body.appendChild(s),j++,lazyLoadScripts())):(j++,lazyLoadScripts()))}function lazyLoadCss(t){(s=document.createElement("link")).rel="stylesheet",s.href=t,document.getElementsByTagName("head")[0].appendChild(s)}function lazyLoadJS(t){if(lazyLoadedJS)return setTimeout(function(){lazyLoadJS(t)},200),!1;lazyLoadedJS=1,(s=document.createElement("script")).src=t,s.onload=function(){lazyLoadedJS=0},document.body.appendChild(s)}document.addEventListener("DOMContentLoaded",function(){windowWidth=screen.width,lazyLink=document.querySelectorAll("link"),lazyImages=document.querySelectorAll("img.lazy2"),nolazyImages=document.querySelectorAll("img.lazy"),lazyBackground=document.querySelectorAll(".lazybg"),lazyIframe=document.querySelectorAll("iframe"),lazyVideo=document.querySelectorAll("source"),lazyScripts=document.getElementsByTagName("script"),navigator_platform=navigator.platform,i=0,j=0,flag=1,window.addEventListener("scroll",function(){init()}),window.addEventListener("mousemove",function(){init()}),window.addEventListener("touchstart",function(){init()}),"Linux x86_64"!=navigator_platform&&init(),setTimeout(function(){init()},60000)});
+
+function load_all_js() {
+	//lazyLoadCss();
+if(document.querySelectorAll('.lazycss') != null){
+		document.querySelectorAll('.lazycss').forEach(function(elem) {
+		  elem.href = elem.getAttribute('data-href');   
+		});
+	}
+	
+		console.log("Yes-optimization");
+		setTimeout(function() {
+			const wnw_load = new Event('wnw_load');
+			window.dispatchEvent(wnw_load);
+		}, 100);
+setTimeout(function() { 
+             document.body.classList.remove("no-js-body");
+          //   document.querySelector(".skip-to-content-link-2").remove();
+	    }, 300);
+		 
+    //document.querySelector("[hide-on-load]").remove()
+	j=0;
+	lazyScripts = document.getElementsByTagName("script");
+	lazyLoadScripts();
+
+	setInterval(function() {
+		lazyImages = document.querySelectorAll('img.lazy2');
+		lazyBackground = document.querySelectorAll('.lazybg');
+		lazyLoadImg();
+		lazyLoadBackground();
+	}, 2000);
+}
+</script> {% endcomment %}
+  {% comment %} {% endcomment %}
+    {% render 'osano-shopify' %}
+
+    <!-- INTERCOM  -->
+
+    <script type="load">
+      window.intercomSettings = {
+        api_base: "https://api-iam.eu.intercom.io",
+        app_id: "ljliy5ex",
+        custom_launcher_selector:'#my_custom_svg',
+      };
+    </script>
+        <script type="load">
+      // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/ljliy5ex'
+      (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/ljliy5ex';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+      Intercom('boot',{hide_default_launcher:true});
+    </script>
+
+    {% if settings.intercom_on %}
+      <div id="my_custom_svg">
+        <img width="170px" height="auto" src="{{ 'messenger-launcher.svg' | asset_url }}" alt="Intercom Launcher">
+      </div>
+      <script>
+        const img = document.querySelector('#my_custom_svg img');
+        img.addEventListener('click', () => {
+          const isScaled = getComputedStyle(img).transform.includes('matrix');
+          if (isScaled) {
+            img.style.transform = 'scale(1)';
+          }
+          setTimeout(() => {
+            img.style.transform = '';
+          }, 300);
+        });
+      </script>
+    {% elsif settings.intercom_off %}
+      <div id="my_custom_svg">
+        <img width="170px" height="auto" src="{{ 'off-messenger-launch.svg' | asset_url }}" alt="Intercom Offline Launcher">
+      </div>
+      <script>
+        const img = document.querySelector('#my_custom_svg img');
+        img.addEventListener('click', () => {
+          const isScaled = getComputedStyle(img).transform.includes('matrix');
+          if (isScaled) {
+            img.style.transform = 'scale(1)';
+          }
+          setTimeout(() => {
+            img.style.transform = '';
+          }, 300);
+        });
+      </script>
+    {% endif %}
+    {% render 'footer-app-block' %}
+    {% render 'foot-content' %}
+
+  </body>
+</html>

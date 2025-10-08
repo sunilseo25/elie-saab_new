@@ -1,0 +1,175 @@
+<table class="size-guide-box">
+  <thead>
+    <tr data-product="{{ product.vendor }}">
+      {% if product.vendor == 'Kids' %}
+        <th>Height</th>
+        <th>Bust</th>
+        <th>Waist</th>
+        <th>Hips</th>
+
+      {% else %}
+        <th>Chest</th>
+        <th>Waist</th>
+        <th>Hip</th>
+        <th>Neck to shoulder</th>
+        <th>Sleeve Length</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="col-size-row" id="sizeguideElem" data-measure="CM">
+      {% if product.vendor == 'Kids' %}
+        <td>104</td>
+        <td>60</td>
+        <td>54</td>
+        <td>66</td>
+
+      {% else %}
+        <td>80</td>
+        <td>62</td>
+        <td>90</td>
+        <td>11.75</td>
+        <td>62</td>
+      {% endif %}
+    </tr>
+  </tbody>
+</table>
+<script>
+    {% if product.vendor == "Kids" %}
+
+      const sizeCM = {
+  4:[104,60,54,66],
+   6:[116,64,57,70],
+     8:[128,68,62,76],
+        10:[140,73,66,82],
+
+    12:[152,78,68,86],
+    14:[162,82,70,90],
+    16:[165,86,72,94]
+      }
+
+    const sizeIN = {
+    4: [40.9, 23.6, 21.3, 26],
+    6: [45.7, 25.2, 22.4, 27.6],
+    8: [50.4, 26.8, 24.4, 29.9],
+    10: [55.1, 28.7, 26, 32.3],
+    12: [59.8, 30.7, 26.8, 33.9],
+    14: [63.8, 32.3, 27.6, 35.4],
+    16: [65, 33.9, 28.3, 37]
+  };
+
+    {% else %}
+    const sizeCM = {
+      34:[80,62,90,11.75,62],
+      36:[84,66,94,12,62],
+      38:[88,70,98,12.25,62],
+      40:[92,74,102,12.5,62.5],
+      42:[96,78,106,12.75,62.5],
+      44:[100,82,110,13,63],
+      46:[106,88,116,13.25,63],
+      48:[110,92,120,13.5,63.5],
+      50:[114,96,124,13.75,63.5],
+      52:[120,102,130,14,64]
+    }
+    const sizeIN = {
+    34:[31.5,24.4,35.4,4.63,24.4],
+    36:[33.1,26.0,37.0,4.72,24.4],
+    38:[34.6,27.6,38.6,4.82,24.4],
+    40:[36.2,29.1,40.2,4.92,24.6],
+    42:[37.8,30.7,41.7,5.02,24.6],
+    44:[39.4,32.3,43.3,5.12,24.8],
+    46:[41.7,34.6,45.7,5.22,24.8],
+    48:[43.3,36.2,47.2,5.31,25.0],
+    50:[44.9,37.8,48.8,5.41,25.0],
+    52:[47.2,40.2,51.2,5.51,25.2]
+  };
+    {% endif %}
+
+    const alphaMap = {
+    XS: 34,
+    S:  36,
+    M:  38,
+    L:  40,
+    XL: 42,
+    XXL:44,
+    XXXL:46
+  };
+const alphaMapCM = {
+  XS: ["80", "62", "90", "11.75", "62"],
+  S:  ["84-88", "66-70", "94-98", "12-12.25", "62"],
+  M:  ["92-96", "74-78", "102-106", "12.5-12.75", "62.5"],
+  L:  ["100-106", "82-88", "110-116", "13-13.25", "63"],
+  XL: ["110-114", "92-96", "120-124", "13.5-13.75", "63.5"]
+};
+const alphaMapInch = {
+  XS: ["31.5", "24.4", "35.4", "4.6", "24.4"],
+  S:  ["33.1-34.6", "26-27.6", "37-38.6", "4.7-4.8", "24.4"],
+  M:  ["36.2-37.8", "29.1-30.7", "40.2-41.7", "4.9-5", "24.6"],
+  L:  ["39.4-41.7", "32.3-34.6", "43.3-45.7", "5.1-5.2", "24.8"],
+  XL: ["43.3-44.9", "36.2-37.8", "47.2-48.8", "5.3-5.4", "25"]
+};
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .querySelectorAll('.product-form__input--Size .country_size input')
+      .forEach(inp => {
+        const mapped = alphaMap[inp.value.trim().toUpperCase()];
+        if (mapped) {
+           console.log("mapped",inp.value,mapped)
+          inp.dataset.alpha = inp.value;   // keeps the text if you ever need it
+          inp.dataset.value = mapped;              // existing code now sees 34, 36…
+        }
+      });
+    updateSizeGuide()
+  }); 
+  document.querySelectorAll("#sizeModal .switch-button .link").forEach((button) => {
+      button.addEventListener("click", function () {
+          // Remove 'active' class from all buttons
+          document.querySelectorAll(".switch-button .link").forEach((btn) => btn.classList.remove("active"));
+
+          // Add 'active' class to the clicked button
+          this.classList.add("active");
+
+          // Update size guide immediately on unit change
+          updateSizeGuide();
+      });
+  });
+
+  // Handle size selection change
+  const sizeVariant = document.querySelector(".product-form__input--Size .country_size");
+  sizeVariant.addEventListener("change",updateSizeGuide);
+
+  function updateSizeGuide() {
+      const sizeElem = document.querySelector("#sizeguideElem");
+       let selectedSize = sizeVariant.querySelector("input:checked")?.value || sizeVariant.querySelector("input")?.value
+   
+       console.log("selected size////////////",selectedSize)
+    
+      const activeUnit = document.querySelector("#sizeModal .switch-button button.active")?.dataset.value;
+
+      if (!sizeElem || !selectedSize || !activeUnit) return;
+ let sizeArray,sizeGuide;
+      // Determine the correct size guide object
+      if(['XS','S','M','L','XL','XXL','XXXL'].includes(selectedSize)){
+        sizeGuide = activeUnit === "CM" ? alphaMapCM : alphaMapInch;
+           sizeArray=sizeGuide[selectedSize]
+           sizeElem.classList.add("alphasize")
+         }
+    else{
+     sizeGuide = activeUnit === "CM" ? sizeCM : sizeIN;
+        sizeArray = sizeGuide[parseInt(selectedSize)];
+    }
+  
+
+      // Update table content
+      const cells = sizeElem.querySelectorAll("td");
+      sizeArray?.forEach((val, index) => {
+          if (cells[index]) {
+              cells[index].textContent = val;
+          }
+      });
+
+      // Update data attribute
+      sizeElem.dataset.measure = activeUnit;
+  }
+</script>

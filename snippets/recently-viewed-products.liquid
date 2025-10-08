@@ -1,0 +1,11 @@
+<style>
+  .cart_drawer_arrow .flickity-nav{
+    display:none !important
+  }
+</style>
+{%- liquid  assign section_heading = 'Recently viewed' -%}
+<recently-viewed-products class="product-recommendations cart-recently recently-viewed-products" data-product-handle="{{ product.handle }}">
+  {% render 'section-header', section_heading: section_heading, section_description: section_description, section_heading_left: section_heading_left %}
+  <ul class="recently-slider products carousel row no-padding"></ul>
+</recently-viewed-products>
+<script type="load" d-src="{{ 'recently-viewed-products.js' | asset_url }}"></script>

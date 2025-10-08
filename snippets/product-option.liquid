@@ -1,0 +1,227 @@
+{%- liquid
+  if sticky
+    assign appended = '--sticky'
+  endif
+
+  assign handle = option.name | replace: ' ', '-' | downcase | escape
+-%}
+{%- case option_type -%}
+  {%- when 'dropdown' -%}
+  <fieldset class="product-form__input product-form__input--dropdown" data-index="option{{ forloop.index }}" data-handle="{{ handle }}">
+      {% comment %}
+      <div class="select">
+        <select
+          id="Option-{{ section.id }}-{{ forloop.index0 }}{{ appended }}"
+          name="options[{{ option.name | escape | append: appended }}]"
+          form="{{ product_form_id }}"
+        >
+          {%- for value in option.values -%}
+            <option
+              value="{{ value | escape }}"
+              {% if option.selected_value == value %}
+                selected="selected"
+              {% endif %}
+            >
+              {{ value }}
+            </option>
+          {%- endfor -%}
+        </select>
+        <div class="select-arrow">{%- render 'svg-icons' with 'thb-select' -%}</div>
+      </div>
+      {% endcomment %}
+      {% assign active_variant = item.variant | default:item.selected_or_first_available_variant %}
+      <div class="size-custom-dropdown">
+        <div class="size-dropdown-btn" onclick="toggleDropdown(this)">
+          <div class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}{{ appended }}"> {{ option.name -}} {{- sizing_link }} </div>
+          {% assign size_index = 0 %}
+          {% for option in product.options_with_values %}
+            {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}
+              {% assign size_index = forloop.index0 %}
+            {% endif %}
+          {% endfor %}
+          <span id="selected-option-{{ section.id }}-{{ item.id }}">
+            {% assign select_variant = item.variant.options[size_index] | default: option.selected_value %}
+            {% assign select_variant = select_variant | default: 'Select Option' %}
+            {{ select_variant }}
+
+            {% comment %}
+              {{ option.selected_value | default: "Select Option" }}
+            {% endcomment %}
+          </span>
+          <div class="select-arrow">{%- render 'svg-icons' with 'thb-select' -%}</div>
+        </div>
+        <select class="hidden-variant-select" data-link-target="{{ item.id }}" style="display:none">
+          {% for variant in product.variants %}
+            <option value="{{ variant.id }}" data-title="{{ variant.title }}" {% if variant.id == active_variant.id %}selected{% endif %}>{{ variant.title }}</option>
+          {% endfor %}
+        </select>
+        <ul class="size-dropdown-list">
+          {%- for value in option.values -%}
+            {%- assign variant_index = forloop.index0 -%}
+            {%- assign current_variant = product.variants[variant_index] -%}
+            {%- assign is_available = current_variant.available -%}
+            <li data-info="{{ current_variant.id }} == {{ active_variant.id }}" data-link="{{ item.id }}" data-current-variant="{{ active_variant.id }}" data-value="{{ value | escape }}" data-variant-title="{{ current_variant.title }}" data-variant-id="{{ current_variant.id }}" data-vaiant-id="{{ current_variant.id }}" data-variant-name="{{ active_variant.title }}" onclick="{% if is_available %}selectOption(this, '{{ value | escape }}', '{{ section.id }}-{{ forloop.index0 }}'){% else %}return false;{% endif %}" class="{% if current_variant.id == active_variant.id %}selected{% endif %}{% unless is_available %} is-disabled{% endunless %}" {% unless is_available %}aria-disabled="true"{% endunless %}>
+              {{ value }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </fieldset>
+  {%- when 'button' -%}
+        {% assign has_size = false %}
+
+{% for option in product.options_with_values %}
+  {% comment %}Check only size-like option names (optional) {% endcomment %}
+ {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}
+    {% for val in option.values %}
+      {% assign v = val | strip | downcase %}
+      {% if v == 's' or v == 'm' or v == 'l' %}
+        {% assign has_size = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if has_size %}{% break %}{% endif %}
+{% endfor %}
+    <fieldset
+      class="variant-section product-form__input product-form__input--block {%  if has_size %}has-lettersize {% endif %} product-form__input--{{ option.name }} {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}size_fieldset{% endif %}"
+      data-index="option{{ forloop.index }}"
+      data-handle="{{ handle }}"
+    >
+      <div class="form__label {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}size_variant{% endif %}">
+      
+           <span class="option-name">
+        {{ option.name }}
+       </span>
+        <span class="form__label__value">{{ option.selected_value }}</span>
+        <span class="label__value_soldout">Select a {{ option.name | downcase }} to add to bag</span>
+        {{ country_size }}
+      </div>
+      <div class="variant_option {% if option.name == 'size' or option.name == 'SIZE' or option.name == 'Size' %}country_size{% endif %}">
+        {%- for value in option.values -%}
+          {%- assign is_sold_out = true -%}
+          {%- for variant in product.variants -%}
+            {%- if variant.options contains value -%}
+              {%- if variant.available -%}
+                {%- assign is_sold_out = false -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <input
+            type="radio"
+            id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{{ appended }}"
+            name="{{ option.name | append: appended }}"
+            value="{{ value | escape }}"
+            form="{{ product_form_id }}"
+          >
+          <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{{ appended }}">
+            <div class="toottip-size">Only a few remain </div>
+            <span>{{ value }}</span>
+          </label>
+        {%- endfor -%}
+      </div>
+      <div class="size-flex">
+        <span class="first-inline"> 
+          <div id="measmerize-button" class="size-button product-popup-modal__button animation-underline"></div>
+          {% render "measmerize-script", product:product %}
+        </span>
+        {% assign size_guide_option = product.metafields.custom.hide_size_guide_option.value %}
+        {% if size_guide_option == blank  or size_guide_option == false  %}
+        <span class="second-inline">
+          <button type="button" class="size-button product-popup-modal__button animation-underline" id="sizeBtn" data-bs-toggle="modal" data-bs-target="#sizeModal"><span>Size Guide</span></button>
+        </span>
+        {% endif %}
+      </div>
+    </fieldset>
+  {%- when 'color' -%}
+    {%- liquid
+      assign custom_colors = settings.color_swatches | newline_to_br | split: '<br />'
+      assign key_array = ''
+      assign val_array = ''
+
+      for color in custom_colors
+        assign key = color | split: ':' | first | rstrip
+        assign value = color | split: ':' | last | lstrip
+        assign key_array = key_array | append: ',' | append: key
+        assign val_array = val_array | append: ',' | append: value
+      endfor
+
+      assign key_array = key_array | remove_first: ',' | strip_newlines | downcase | split: ','
+      assign val_array = val_array | remove_first: ',' | split: ','
+
+      assign variant_image_size = '40'
+      case color_picker_size
+        when 'large'
+          assign variant_image_size = '72'
+        when 'xlarge'
+          assign variant_image_size = '104'
+      endcase
+    -%}
+    <fieldset
+      class="variant-section product-form__input product-form__input--color product-form__input--color--{{ color_picker_size }}"
+      data-use-images="{{ color_picker_use_variants }}"
+      data-index="option{{ forloop.index }}"
+      data-handle="{{ handle }}"
+    >
+      <div class="form__label">
+        {{ option.name }}
+        <span class="form__label__value">{{ option.selected_value }}</span>
+        <span class="label__value_soldout">Select a {{ option.name | downcase }} to add to bag</span>
+      </div>
+      <div class="variant_option">
+        {%- for value in option.values -%}
+          <input
+            type="radio"
+            id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{{ appended }}"
+            name="{{ option.name | append: appended }}"
+            value="{{ value | escape }}"
+            form="{{ product_form_id }}"
+            {% if option.selected_value == value %}
+              checked
+            {% endif %}
+          >
+          {%- liquid
+            assign color_value = value | downcase | escape
+
+            for custom_color in key_array
+              if custom_color == color_value
+                assign color_value = val_array[forloop.index0]
+              endif
+            endfor
+
+            assign bg_value = empty
+            if color_value contains '.'
+              assign bg_value = color_value | file_url
+              assign color_value = 'var(--bg-body)'
+            endif
+
+            if color_picker_use_variants
+              assign variant_image = blank
+
+              for variant in product.variants
+                if variant.title contains value
+                  if variant.image
+                    assign bg_value = variant.image | image_url: width: variant_image_size
+                    break
+                  endif
+                endif
+              endfor
+            endif
+            if value.swatch.image
+              assign bg_value = value.swatch.image | image_url: width: variant_image_size
+              assign swatch_focal_point = value.swatch.image.presentation.focal_point
+            elsif value.swatch.color
+              assign color_value = 'rgb(' | append: value.swatch.color.rgb | append: ')'
+            endif
+          -%}
+          <label
+            for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}{{ appended }}"
+            style="--option-color: {{ color_value | downcase | escape }}; {%- if bg_value -%}--option-color-image: url('{{ bg_value | escape }}');{%- endif -%}"
+            class="animation-underline"
+          >
+            <span class="color_variant ">{{ value }}</span>
+          </label>
+        {%- endfor -%}
+      </div>
+    </fieldset>
+{%- endcase -%}

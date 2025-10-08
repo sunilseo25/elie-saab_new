@@ -1,0 +1,132 @@
+<style>
+  .button-frag {
+    margin-top: 40px;
+    display: inline-flex;
+  }
+</style>
+
+<section class="text-slideshow" id="{{ section.settings.css_id }}">
+  <div class="row">
+    <div class="small12 columns">
+      <h2 class="text-with-line">{{ section.settings.title }}</h2>
+      <p class="text-slideshow-description">{{ section.settings.description }}</p>
+      <div class="text-slideshow-content custom-slideshow1">
+        {% for block in section.blocks %}
+          {%- case block.type -%}
+            {%- when 'media' -%}
+            <div>
+              {% if block.settings.media_type == 'image' %}
+                <img src="{{ block.settings.media_image | img_url: 'master' }}" height="auto" width="auto" alt="">
+              {% elsif block.settings.media_type == 'video_url' %}
+                <iframe src="{{ block.settings.media_video_url }}" frameborder="0" allowfullscreen></iframe>
+              {% elsif block.settings.media_type == 'video_file' %}
+                {% assign media_video_file = block.settings.media_video_file %}
+                {%- liquid
+                  assign sizes = '1340x'
+                  if full_width
+                    assign sizes = '1600x'
+                  endif
+                -%}
+                {{ media_video_file | video_tag: autoplay: true, loop: true, controls: false, muted: true, image_size: sizes }}
+              {% endif %}
+            </div>
+            {%- when 'button' -%}
+            {%- if block.settings.link_label != blank -%}
+              <a class="button-frag{% if block.settings.button_outline %} rdmore{% else %} button{% endif %}" href="{% if block.settings.link != blank %}{{ block.settings.link }}{% else %}javascript:void(0){% endif %}" {{ block.shopify_attributes }}>
+                <span>{{ block.settings.link_label }}</span>
+              </a>
+            {%- endif -%}
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Text with image frag",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "css_id",
+      "label": "CSS ID"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media",
+      "name": "Media Item",
+       "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video_url", "label": "External Video (YouTube/Vimeo)" },
+            { "value": "video_file", "label": "Hosted Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image",
+          "label": "Image"
+        },
+        {
+          "type": "video_url",
+          "id": "media_video_url",
+          "label": "External Video URL",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "video",
+          "id": "media_video_file",
+          "label": "Hosted Video"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "id": "link_label",
+          "type": "text",
+          "label": "Label",
+          "default": "Learn More",
+          "info": "Leave the label blank to hide the button."
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_outline",
+          "label": "Use link text style",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text with image frag",
+      "category": "Custom Sections"
+    }
+  ]
+}
+{% endschema %}

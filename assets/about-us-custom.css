@@ -1,0 +1,113 @@
+.text-button-underline {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px 0;
+}
+.object-top img {
+  object-position: top;
+}
+.text-button-underline strong {
+  position: relative;
+  font-weight: 600;
+}
+.text-button-underline strong:after {
+  background-color: #fff;
+  border-radius: 4px;
+  content: " ";
+  display: block;
+  margin: 3px auto 0;
+  position: absolute;
+  right: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 2px;
+  transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+}
+.text-button-underline strong:hover:after {
+  width: 0;
+  right: 0;
+}
+/* .flickity-nav.product-next.flickity-prev {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 16px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  height: 50px;
+  width: 50px;
+  border: 1px solid #80808045;
+  left: -22px !important;
+  transform: translate(-50%);
+}
+.flickity-nav.product-prev.flickity-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 16px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  height: 50px;
+  width: 50px;
+  border: 1px solid #80808045;
+  right: -22px !important;
+  transform: translate(50%);
+} */
+.template-page-about .slider-title {
+  margin-bottom: 10px;
+  padding: 0 3px;
+}
+.underline-progress .aboutprogress {
+  transition: left 0.8s ease, width 0.8s ease;
+}
+.featured_tab .underline-progress {
+  height: 2px;
+}
+@media (min-width: 768px) {
+  .about-tabs .flickity-slider {
+    width: 100%;
+  }
+  .about-tabs .flickity-slider .nav-item {
+    width: 50%;
+    display: block;
+    max-width: unset;
+  }
+}
+@media (max-width: 767px) {
+  .featured_tab .flickity-prev svg,
+  .featured_tab .flickity-next svg {
+    top: 35%;
+    border: unset;
+    box-shadow: unset;
+    height: 15px;
+    width: 15px;
+
+    position: absolute;
+  }
+  .featured_tab .flickity-prev svg {
+    transform: rotate(90deg);
+  }
+  .featured_tab .flickity-next svg {
+    transform: rotate(-90deg);
+  }
+  .slider-title {
+    max-width: 78%;
+    margin-bottom: 10px;
+  }
+  .text-button-underline strong {
+    font-weight: 500;
+  }
+}
+@media (max-width: 431px) {
+  .slider-title {
+    max-width: 77%;
+  }
+}

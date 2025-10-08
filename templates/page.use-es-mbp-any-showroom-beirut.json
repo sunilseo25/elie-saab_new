@@ -1,0 +1,288 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page-monaco-boutiques",
+      "settings": {}
+    },
+    "slideshow_QrQcFK": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_tUymY3": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/topBannerBEIRUT_1512x_7b944b91-7bcd-452b-af4e-675259ce905c.webp",
+            "slide_link": "",
+            "video_background": false,
+            "video": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "subheading": "",
+            "heading": "",
+            "heading_size": "h1-xlarge",
+            "content": "",
+            "description_size": "medium",
+            "content_position": "middle-center",
+            "text_alignment": "center",
+            "content_size": "medium",
+            "overlay_color": "#000000",
+            "overlay_opacity": 70,
+            "overlay_gradient": "linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4) 100%)",
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_outline": false,
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_outline": false
+          }
+        }
+      },
+      "block_order": [
+        "slide_tUymY3"
+      ],
+      "custom_css": [],
+      "settings": {
+        "desktop_height": "desktop-height-650",
+        "mobile_height": "mobile-height-500",
+        "full_width": false,
+        "autoplay": false,
+        "autoplay_length": 5,
+        "transition": "swipe",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": false,
+        "css_id": ""
+      }
+    },
+    "rich_text_bexP93": {
+      "type": "rich-text",
+      "blocks": {
+        "text_TwCnVR": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Mina El Hosn<br/>Property 928, Ground Floor<br/>Omar Daouk Street<br/>Beirut I Lebanon</p>",
+            "custom_liquid": "",
+            "size": "text-size-regular"
+          }
+        }
+      },
+      "block_order": [
+        "text_TwCnVR"
+      ],
+      "settings": {
+        "css_id": "borderBottom",
+        "section_width": "grid",
+        "text_width": "medium",
+        "text_position": "center",
+        "text_alignment": "center",
+        "color_bg": "rgba(0,0,0,0)",
+        "color_text": "#000000",
+        "color_links": "#000000",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": true
+      }
+    },
+    "rich_text_JCNBwW": {
+      "type": "rich-text",
+      "blocks": {
+        "text_C4xCwH": {
+          "type": "text",
+          "settings": {
+            "text": "<p>The ELIE SAAB Maison showroom in Beirut, opened its doors in 2021.The showroom is located on Omar Daouk Street, in the heart of the Lebanese capital, Beirut Central District, next to the ELIE SAAB Brand Headquarters. A location with a remarkable exposure, on the ground floor of a building with historical and architectural identity.</p>",
+            "custom_liquid": "",
+            "size": "text-size-regular"
+          }
+        }
+      },
+      "block_order": [
+        "text_C4xCwH"
+      ],
+      "settings": {
+        "css_id": "",
+        "section_width": "grid",
+        "text_width": "xlarge",
+        "text_position": "center",
+        "text_alignment": "center",
+        "color_bg": "rgba(0,0,0,0)",
+        "color_text": "#000000",
+        "color_links": "#000000",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": true
+      }
+    },
+    "custom_map_with_locations_RgRFiR": {
+      "type": "custom-map-with-locations",
+      "blocks": {
+        "pin_fJWJqx": {
+          "type": "pin",
+          "settings": {
+            "pin_retina": true,
+            "pin_lat": "43.74889",
+            "pin_long": "7.43861",
+            "store_name": "Paris Boutique George V",
+            "pin_title": "Working Hours",
+            "pin_desc": "Monday: 11:00 - 19:00\nTuesday - Saturday: 10:00 -19:00\nSunday: Closed",
+            "service_title": "Services",
+            "service_desc": "Ready-to-Wear\nAccessories \nKids",
+            "contact_title": "Contact",
+            "contact_desc": "31 Avenue George V, 75008 Paris, France",
+            "contact_email": "george5@eliesaab.com",
+            "contact_phoneno": "+33 1 42 56 69 00",
+            "contact_wapp": "+33 6 68 92 23 94",
+            "direction_title": "Get directions",
+            "direction_desc": "For Bridal and Haute Couture, please visit our dedicated Boutique in Paris at 1 Rond-Point des Champs Elysées."
+          }
+        }
+      },
+      "block_order": [
+        "pin_fJWJqx"
+      ],
+      "settings": {
+        "googlemaps_api_key": "AIzaSyDs2mhPEROJsD73nEZA0nzoZIWZSt71OSQ",
+        "desktop_height": "desktop-height-550",
+        "mobile_height": "mobile-height-350",
+        "map_type": "roadmap",
+        "map_style_select": "default",
+        "map_zoom": 17,
+        "color_bg": "#ffffff",
+        "color_text": "#151515",
+        "color_border": "#151515",
+        "disable_top_spacing": true,
+        "disable_bottom_spacing": true
+      }
+    },
+    "custom_text_with_slider_Fz9z78": {
+      "type": "custom-text-with-slider",
+      "blocks": {
+        "media_GgQ6yC": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-1_1728x_5016169f-af20-49dc-a1cb-ac5108edeeb5.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_hreH9k": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-1_1728x_cb917cca-ae45-4e03-98e8-10790410ada8.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_W49HPH": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-5_1512x_20cd6932-9abe-4e2d-adab-1bf1fa610a80.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_EPdmix": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-11_copy_2048x_5b1fee15-84a5-44ff-9807-5291984eace0.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_tnY6VE": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-8_1_1728x_7004afaa-1534-4c35-9201-0d885fa7520b.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_PXWpnm": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-4_1728x_506ad96e-8b47-479c-aed2-ba01fd54f17c.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_fdWEWt": {
+          "type": "media",
+          "settings": {
+            "media_type": "image",
+            "media_image": "shopify://shop_images/Untitled-7_1728x_076b0040-a36a-4cb3-b24f-55c060e35c07.webp",
+            "media_video_url": "",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_BzWFj3": {
+          "type": "media",
+          "settings": {
+            "media_type": "video_file",
+            "media_video_url": "",
+            "media_video_file": "shopify://files/videos/cbbd815d138440929e2ffdd4e44d670c.mp4",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        },
+        "media_HcgkrR": {
+          "type": "media",
+          "settings": {
+            "media_type": "video_file",
+            "media_video_url": "",
+            "media_video_file": "shopify://files/videos/c13fe88bb2f74464a5d6dee96ff1f98e.mp4",
+            "subheading": "",
+            "heading": "",
+            "heading_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "media_GgQ6yC",
+        "media_hreH9k",
+        "media_W49HPH",
+        "media_EPdmix",
+        "media_tnY6VE",
+        "media_PXWpnm",
+        "media_fdWEWt",
+        "media_BzWFj3",
+        "media_HcgkrR"
+      ],
+      "settings": {
+        "title": "",
+        "description": "",
+        "css_id": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "slideshow_QrQcFK",
+    "rich_text_bexP93",
+    "rich_text_JCNBwW",
+    "custom_map_with_locations_RgRFiR",
+    "custom_text_with_slider_Fz9z78"
+  ]
+}

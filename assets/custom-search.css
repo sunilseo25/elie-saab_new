@@ -1,0 +1,198 @@
+.main__wishlist-search {
+  font-weight: 500;
+  font-size: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.page__heading {
+  text-align: center;
+}
+.page__heading h1 {
+  font-size: 19px;
+}
+.page__content {
+  display: flex;
+  gap: 50px;
+}
+
+.page__content .wishlist_search {
+  flex: 0 0 calc(100%);
+}
+
+.page__content .wishlist_search > h4 {
+  font-size: 16px;
+  display: inline-block;
+  margin: 0px 0px 17px;
+  line-height: normal;
+}
+.page__content .wishlist_search .suggested_categories {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+.page__content .wishlist_search ul li {
+  list-style: none;
+}
+.page__content .wishlist_search ul li a {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.page__content .wishlist_search ul li div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+}
+.page__content .wishlist_search ul li img {
+  overflow: hidden;
+  border-radius: 3px;
+  transition: all 0.5s;
+}
+.page__content .wishlist_search ul li a:hover img {
+  transform: scale(1.1);
+  transition: all 0.5s;
+}
+.page__content .wishlist_search ul li p {
+  margin: 0;
+}
+.page__content .wishlist_search .featured-collection {
+  margin-bottom: 46px;
+}
+.wishlist_search .product-secondary-images-progress {
+  display: none;
+}
+body
+  .wishlist_search
+  .featured-collection__inner
+  .product-card
+  button.st-wishlist-button {
+  opacity: 1;
+  visibility: visible;
+  right: 20px;
+}
+.page__content .wishlist_search .featured-collection {
+  overflow: visible;
+  margin-left: -2px;
+  margin-right: -2px;
+}
+
+.page__content .product-card .product-featured-image-link {
+  --padding-bottom: 160% !important;
+}
+.suggested_categories-wrp .suggestions-title {
+  font-size: 16px;
+  display: inline-block;
+  line-height: normal;
+  margin: 0px 0px 26px;
+}
+.wishlist_search .product-card {
+  margin-bottom: 0 !important;
+}
+
+.wish-search-inner {
+  position: relative;
+  margin: 0px 0px 25px;
+}
+.wish-search-inner .wish-searchcls {
+  width: 100%;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: none;
+  margin: 0px 0px;
+  padding-right: 50px;
+  border: 1px solid #d5d5d4;
+  font-size: 15px;
+}
+.wish-search-inner .wish-searchcls:focus {
+  border: 1px solid #d5d5d4;
+}
+.wish-search-inner .search-buttoncls {
+  position: absolute;
+  right: 15px;
+  top: calc(50% - 0px);
+  transform: translateY(-50%);
+}
+.wish-search-inner .search-buttoncls svg {
+  width: 20px;
+  height: 20px;
+}
+.product-card-spacing-small
+  .page__content
+  .wishlist_search
+  .products.row
+  .flickity-nav.flickity-prev {
+  left: -19px;
+}
+.product-card-spacing-small
+  .page__content
+  .wishlist_search
+  .products.row
+  .flickity-nav.flickity-next {
+  right: -19px;
+}
+.wish-search-inner input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+.wish-search-inner input[type="search"]::-ms-clear {
+  display: none;
+}
+.wish-search-inner input[type="search"]::-moz-search-clear-button {
+  display: none;
+}
+.wish-search-inner input[type="search"]::-webkit-input-placeholder {
+  color: #777777;
+}
+
+.wish-search-inner input[type="search"]::-moz-placeholder {
+  color: #777777;
+}
+
+.wish-search-inner input[type="search"]::-ms-placeholder {
+  color: #777777;
+}
+
+.wish-search-inner input[type="search"]::placeholder {
+  color: #777777;
+}
+.template-page-custom-search .footer .footer-top {
+  display: none;
+}
+.template-page-custom-search .footer .middle-footer {
+  display: none;
+}
+.template-page-custom-search
+  .st-wishlist-details-button.st-wishlist-details-button--bottom_right {
+  display: none;
+}
+.wishlist_search .product-card .product-card-info .product-card-title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  white-space: normal;
+  text-align: left;
+}
+
+.wishlist_search span.product-card--badges.top.left {
+  display: none;
+}
+@media only screen and (min-width: 1068px) {
+  .main__wishlist-search {
+    padding: 40px 0;
+  }
+  .product-card-spacing-small .wishlist_search .products.row .columns.large-3 {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+}

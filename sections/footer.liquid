@@ -1,0 +1,763 @@
+{% liquid
+  assign full_width = section.settings.full_width
+  assign copyright_text = section.settings.copyright_text
+  assign show_language_switcher = section.settings.show_language_switcher
+  assign show_currency_switcher = section.settings.show_currency_switcher
+  assign show_payment_icons = section.settings.show_payment_icons
+%}
+{% comment %}
+<link rel="stylesheet" href="{{ 'footer.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'footer.css' | asset_url | stylesheet_tag }}</noscript>
+{% endcomment %}
+{{ 'footer.css' | asset_url | stylesheet_tag }}
+<footer class="footer" id="footer">
+  <div class="row footer-top{% if full_width %} full-width-row{% endif %}">
+    {%- for block in section.blocks -%}
+      {% if block.type == 'text' %}
+        {%- liquid
+          assign column_class = 'auto'
+          case block.settings.column_size
+            when 'medium'
+              assign column_class = 'small-12 medium-3'
+            when 'large'
+              assign column_class = 'small-12 medium-6'
+          endcase
+        -%}
+        <div class="{{ column_class | escape }} columns" {{ block.shopify_attributes }}>
+          <div class="widget widget--text">
+            {%- if block.settings.title != blank -%}
+              <div class="thb-widget-title">{{ block.settings.title }}</div>
+            {%- endif -%}
+            {%- if block.settings.image != blank -%}
+              {% assign image = block.settings.image %}
+              {% assign master_width = image.src.width | append: 'x' | append: image.src.height %}
+              {%- render 'responsive-image', image: image, sizes: master_width, retina: 1, priority: 'low' -%}
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <div class="rte text-size--{{ block.settings.text_size }}">
+                {{ block.settings.text }}
+              </div>
+            {%- endif -%}
+            {%- if block.settings.button_text != blank -%}
+              <a
+                class="text-button"
+                href="{{ block.settings.button_link }}"
+                role="button"
+                title="{{ block.settings.button_text | escape }}"
+              >
+                {{- block.settings.button_text -}}
+              </a>
+            {%- endif -%}
+            {%- if block.settings.show_social_links -%}
+              {%- render 'social-links' -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {% endif %}
+      {%- if block.type == 'menu' -%}
+        {%- liquid
+          assign column_class = 'auto'
+          case block.settings.column_size
+            when 'medium'
+              assign column_class = 'small-12 medium-3'
+            when 'large'
+              assign column_class = 'small-12 medium-6'
+          endcase
+        -%}
+        <div class="{{ column_class | escape }} columns widget--menu-column" {{ block.shopify_attributes }}>
+          <div class="widget widget--menu">
+            <button class="thb-widget-title collapsible" tabindex="0">
+              {{ block.settings.title }}
+              <span>
+                <svg viewBox="0 0 10 6" width="14">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path>
+                </svg>
+              </span>
+            </button>
+            {%- if block.settings.menu != blank -%}
+              <ul class="thb-widget-menu">
+                {% for link in block.settings.menu.links %}
+                  {% assign has_sub_menu = false %}
+                  {% if link.links.size > 0 %}
+                    {% assign has_sub_menu = true %}
+                  {% endif %}
+                  {% assign link_title_downcase = link.title | downcase %}
+                  <li class="{% if has_sub_menu %}menu-item-has-children{% endif %}{% if link.active %} active{% endif %}">
+                    <a
+                      href="{% if link_title_downcase == 'track order' and customer %}https://elie-saab-switzerland.myshopify.com/account?from=track-order{% else %}{{ link.url }}{% endif %}"
+                      class="{% if link_title_downcase == 'track order' and customer == nil %}track-order-link{% endif %}"
+                      title="{{ link.title | escape }}"
+                      {%- if link.active %}
+                        aria-current="page"
+                      {% endif -%}
+                    >
+                      {{- link.title -}}
+                    </a>
+                    {%- if has_sub_menu -%}
+                      <span class="thb-arrow" tabindex="0">{%- render 'svg-icons' with 'thb-dropdown-bottom' -%}</span>
+                    {%- endif %}
+                    {% if has_sub_menu %}
+                      <ul class="sub-menu" tabindex="-1">
+                        {% for l in link.links %}
+                          {% assign has_sub_menu = false %}
+                          {% if l.links.size > 0 %}
+                            {% assign has_sub_menu = true %}
+                          {% endif %}
+                          <li
+                            class="{% if has_sub_menu %}menu-item-has-children{% endif %}{% if l.active %} active{% endif %}"
+                            role="none"
+                          >
+                            <a href="{{ l.url }}" title="{{ l.title | escape }}" role="menuitem">{{ l.title }}</a>
+                            {%- if has_sub_menu -%}
+                              <span class="thb-arrow" tabindex="0">
+                                {%- render 'svg-icons' with 'thb-dropdown-bottom' -%}
+                              </span>
+                            {%- endif %}
+                            {% if has_sub_menu %}
+                              <ul class="sub-menu" role="menu">
+                                {% for sub_link in l.links %}
+                                  {% assign has_sub_menu = false %}
+                                  {% if sub_link.links.size > 0 %}
+                                    {% assign has_sub_menu = true %}
+                                  {% endif %}
+                                  <li
+                                    class="{% if has_sub_menu %}menu-item-has-children{% endif %}{% if sub_link.active %} active{% endif %}"
+                                    role="none"
+                                  >
+                                    <a href="{{ sub_link.url }}" title="{{ sub_link.title | escape }}" role="menuitem">
+                                      {{- sub_link.title -}}
+                                    </a>
+                                  </li>
+                                {% endfor %}
+                              </ul>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.type == 'signup' -%}
+        {%- liquid
+          assign column_class = 'auto'
+          case block.settings.column_size
+            when 'medium'
+              assign column_class = 'small-12 medium-3'
+            when 'large'
+              assign column_class = 'small-12 medium-6'
+          endcase
+        -%}
+        <div class="{{ column_class | escape }} columns" {{ block.shopify_attributes }}>
+          <div class="widget widget--signup">
+            {% if block.settings.title != blank %}
+              <div class="thb-widget-title">{{ block.settings.title }}</div>
+            {% endif %}
+            {% if block.settings.text != blank %}
+              {{ block.settings.text }}
+            {% endif %}
+            {% render 'email-signup-form' %}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.type == 'social' -%}
+        {%- liquid
+          assign column_class = 'auto'
+          case block.settings.column_size
+            when 'medium'
+              assign column_class = 'small-12 medium-3'
+            when 'large'
+              assign column_class = 'small-12 medium-6'
+          endcase
+        -%}
+        <div class="{{ column_class | escape }} columns" {{ block.shopify_attributes }}>
+          <div class="widget widget--social">
+            {% if block.settings.title != blank %}
+              <div class="thb-widget-title">{{ block.settings.title }}</div>
+            {% endif %}
+            {% render 'social-links' %}
+          </div>
+        </div>
+      {%- endif -%}
+      {%- if block.type == 'custom_liquid' -%}
+        {%- liquid
+          assign column_class = 'auto'
+          case block.settings.column_size
+            when 'medium'
+              assign column_class = 'small-12 medium-3'
+            when 'large'
+              assign column_class = 'small-12 medium-6'
+          endcase
+        -%}
+        <div class="{{ column_class | escape }} columns" {{ block.shopify_attributes }}>
+          <div class="widget widget--custom">
+            {% if block.settings.title != blank %}
+              <div class="thb-widget-title">{{ block.settings.title }}</div>
+            {% endif %}
+            {{ block.settings.custom_liquid }}
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+  {%- if section.settings.image != blank or section.settings.menu != blank -%}
+    <div class="middle-footer">
+      <div class="row {% if full_width %}full-width-row{% endif %}">
+        {%- if section.settings.menu != blank -%}
+          <div class="small-12 columns medium-5 widget--menu">
+            <ul class="thb-widget-menu horizontal-menu">
+              {% if section.settings.title != blank %}
+                <li class="menu_title m-none">
+                  <span>
+                    {{- section.settings.title -}}
+                  </span>
+                </li>
+              {% endif %}
+              {% for link in section.settings.menu.links %}
+                {% assign has_sub_menu = false %}
+                {% if link.links.size > 0 %}
+                  {% assign has_sub_menu = true %}
+                {% endif %}
+                <li class="{% if has_sub_menu %}menu-item-has-children{% endif %}{% if link.active %} active{% endif %}">
+                  <a
+                    href="{{ link.url }}"
+                    title="{{ link.title | escape }}"
+                    target="_blank"
+                    {%- if link.active %}
+                      aria-current="page"
+                    {% endif -%}
+                  >
+                    {{- link.title -}}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.image != blank -%}
+          <div class="small-12 columns medium-2 logo-icon widget--text cstftr">
+            {% assign image = section.settings.image %}
+            {% assign master_width = image.src.width | append: 'x' | append: image.src.height %}
+            {%- render 'responsive-image', image: image, sizes: master_width, retina: 1, priority: 'low' -%}
+            <img class="-mob-logo-ftr" src="https://cdn.shopify.com/s/files/1/0605/8872/0370/files/ftr-logo-wh.png?v=1743508379">
+          </div>
+        {%- endif -%}
+        <div class="small-12 columns medium-5">
+          <div class="copy d-none">
+            <p>
+              {{ shop.name }}
+              {{ 'now' | date: '%Y' }}
+              {{ copyright_text }}
+            </p>
+            {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
+              <div class="footer--follow-on-shop">
+                {{ shop | login_button: action: 'follow' }}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+  <div class="sub-footer">
+    <div class="row {% if full_width %}full-width-row{% endif %}">
+      {% comment %}
+        {% if show_language_switcher or show_currency_switcher %}
+          <div class="small-12 medium-4 columns dropdown_switcher">
+            <svg viewBox="0 0 10 6" width="14" class="close_btn m-none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor"></path>
+            </svg>
+            {% render 'localization',
+              id: 'footer-localization'
+              show_language_switcher: show_language_switcher,
+              show_currency_switcher: show_currency_switcher
+            %}
+          </div>
+        {% endif %}
+      {% endcomment %}
+      {% if show_payment_icons %}
+        <div class="small-12 medium-4 columns">
+          {%- if show_payment_icons -%}
+            <div class="payment-icons">
+              {%- unless shop.enabled_payment_types == empty -%}
+                {%- for type in shop.enabled_payment_types -%}
+                  <figure>{{ type | payment_type_svg_tag: class: 'payment-icons__icon' }}</figure>
+                {%- endfor -%}
+              {%- endunless -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      {% if show_language_switcher or show_currency_switcher %}
+        <div class="small-12 medium-4 columns country_currency ">
+          {%- render 'drawer-localization',
+            id: 'FooterLocalization',
+            show_language_switcher: true,
+            show_currency_switcher: true
+          -%}
+
+          <!--
+            {% if show_currency_switcher %}
+              <div class="country_name localization_btn">
+                <img width="35" height="19" src="{{ 'USA.png' | asset_url }}">
+                <span>USD <span class="dollar-icon">$</span></span>
+              </div>
+            {% endif %}
+            {% if show_language_switcher %}
+            <div class="country_lang localization_btn">
+              Country/Region: <span>International (English)</span>
+            </div>
+            {% endif %}
+          -->
+        </div>
+      {% endif %}
+      <div class="small-12 medium-4 copy m-none">
+        <p>
+          {{ shop.name }}
+          {{ 'now' | date: '%Y' }}
+          {{ copyright_text }}
+        </p>
+        {%- if shop.features.follow_on_shop? and section.settings.enable_follow_on_shop -%}
+          <div class="footer--follow-on-shop">
+            {{ shop | login_button: action: 'follow' }}
+          </div>
+        {%- endif -%}
+        {% if localization.country.iso_code == 'US' %}
+            <script>
+    window.addEventListener('load', function () {
+      const icon = document.querySelector('#accessiblyWidgetIcon');
+      if (icon) {
+        icon.style.display = 'block';
+        icon.style.visibility = 'visible';
+        icon.style.opacity = '1';
+      }
+    });
+  </script>
+  {% endif %}
+      </div>
+    </div>
+  </div>
+</footer>
+  
+<script type="load" >
+    function  switchCurrencyAuto(){
+    let savedCountry = localStorage.getItem('selectedCountry')??"US";
+     let currencyCode_ = $("#currency--selector option[value^='"+savedCountry+"|']").val();
+     let [countryCode, currencyCode, symbol] = currencyCode_.split('|'); 
+     if (currencyCode == "LBP"){
+       currencyCode = "USD";
+       symbol = "$"; 
+     }
+ document.cookie = "currency="+currencyCode+";Path=/;";
+  console.log(countryCode, currencyCode, symbol)
+    $(".currency_image_flag").html(`<img src="//cdn.shopify.com/static/images/flags/${countryCode.toLowerCase()}.svg?crop=center&height=20&width=32" />`);
+    $(".currency_image_symbol").html(`${currencyCode} (${symbol})`);
+      $(".coutnryselector.toggle-option").removeAttr("open");
+      {% if template contains "cart" %}
+           setTimeout(function(){
+            //$("td[data-checkout-payment-total-target]").attr("data-checkout-payment-total-target",$("[data-checkout-payment-total-target] span").data("price")+"00"); 
+            //  $("td[data-checkout-payment-due-target]").attr("data-checkout-payment-due-target",$("[data-checkout-payment-total-target] span").data("price")+"00"); 
+          },4000); 
+      {% endif %} 
+  }
+  switchCurrencyAuto();
+</script>
+<script type="load">   
+    const trackOrderLink = document.querySelector('.track-order-link');
+    if (trackOrderLink) {
+      trackOrderLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        const loginTrigger = document.querySelector('[data-tb="#login_account"]');
+        if (loginTrigger) {
+          loginTrigger.click();
+        }
+      });
+    }
+ 
+  $(document).ready(function () {
+    var selectedCountry = localStorage.getItem('selectedCountry'); // e.g., "AL"
+    var savedCountry = localStorage.getItem("selectedCountry23");
+    if (savedCountry) {
+      selectedCountry = savedCountry;
+    } else {
+      selectedCountry = selectedCountry;
+    }
+    if (selectedCountry) {
+      const radios = document.querySelectorAll('.customCountryOption input[name="country_code1"]');
+      radios.forEach(function (radio) {
+        const dataCountry = radio.getAttribute('data-country');
+        if (radio.value === selectedCountry) {
+          radio.checked = true;
+          const label = document.querySelector('label[for="' + radio.id + '"]');
+          if (label) {
+           
+            $('.inner-class.custom-selected').html(label.innerHTML.trim());
+            localStorage.setItem("selectedCountry23", radio.value);
+            localStorage.setItem("selectedCountrynumber", dataCountry);
+          }
+        }
+      });
+    }
+    // $('.customcountryInput').on('input', function () {
+    //   const typed = $(this).val().toLowerCase().trim();
+    //   $('.country-options-wrapper .country-inline').each(function () {
+    //     const labelText = $(this).find('label').text().toLowerCase().trim();
+    //     // Show if typed input is part of label
+    //     if (labelText.includes(typed)) {
+    //       $(this).show();
+    //     } else {
+    //       $(this).hide();
+    //     }
+    //   });
+    // });
+    
+    $('.customCountryOption .country-inline').on('click', function() {
+      // Example action: check the radio input inside
+      var countryName = $(this).find('.labelwrapper').html().trim();
+      var countryCode = $(this).find('input').val();
+      var dataCountry = $(this).find('input').data('country');
+      
+      // Set it as the text of the selected span
+      $('.inner-class.custom-selected').html(countryName);
+      localStorage.setItem("selectedCountry23", countryCode);
+      localStorage.setItem("selectedCountrynumber", dataCountry);
+  
+      // Optionally, check the radio button
+      $(this).find('input[type="radio"]').prop('checked', true);
+     // location.reload();
+      $(".default_country option[value='"+countryCode+"']").prop("selected",true);
+      $(".default_country form").submit(); 
+    });
+    $(".is_currency_selector").on('click', function() {
+        setTimeout(function(){
+           document.querySelector(".is_country_selector").removeAttribute("open");
+           
+       },200)
+     }); 
+  });
+</script>
+
+  <script type="load" d-src="{{ 'localization.js' | asset_url }}"></script>
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": false,
+      "label": "Make section full width"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Additional copyright text",
+      "default": "All rights reserved."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language_switcher",
+      "label": "Enable language switcher",
+      "default": true,
+      "info": "To add a language, go to your [language settings](/admin/settings/languages)."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_switcher",
+      "label": "Enable currency switcher",
+      "default": true,
+      "info": "To add a country/region, go to your [payment settings](/admin/settings/payments)."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true,
+      "info": "By default your theme shows the icons that are associated with the payment gateway you have enabled in the [payment settings](/admin/settings/payments)."
+    },
+    {
+      "type": "header",
+      "content": "Follow on Shop",
+      "info": "To allow customers to follow your store on the Shop app from your storefront, Shop Pay must be enabled. [Learn more](https://help.shopify.com/manual/online-store/themes/customizing-themes/follow-on-shop)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_follow_on_shop",
+      "default": true,
+      "label": "Enable Follow on Shop"
+    },
+    {
+      "type": "header",
+      "content": "Middle Section"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "240 x 100 px .png recommended."
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "Menu Title"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "info": "Select navigation to display"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column_size",
+          "label": "Column size",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            },
+            {
+              "value": "auto",
+              "label": "Auto"
+            }
+          ],
+          "default": "small"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "240 x 100 px .png recommended."
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add company info here.</p>"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "label": "Text size",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            }
+          ],
+          "default": "medium"
+        },
+        {
+          "id": "button_text",
+          "type": "text",
+          "label": "Button label",
+          "default": "Explore",
+          "info": "Leave the label blank to hide the button."
+        },
+        {
+          "id": "button_link",
+          "type": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social_links",
+          "label": "Show social links",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column_size",
+          "label": "Column size",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            },
+            {
+              "value": "auto",
+              "label": "Auto"
+            }
+          ],
+          "default": "small"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "Menu",
+          "info": "Select navigation to display"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social links",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column_size",
+          "label": "Column size",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            }
+          ],
+          "default": "small"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title"
+        }
+      ]
+    },
+    {
+      "type": "signup",
+      "name": "Email signup",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "column_size",
+          "label": "Column size",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            },
+            {
+              "value": "auto",
+              "label": "Auto"
+            }
+          ],
+          "default": "small"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add a text to attract more customers to <strong>sign up!</strong></p>"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom liquid",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column_size",
+          "label": "Column size",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "large",
+              "label": "Large"
+            },
+            {
+              "value": "auto",
+              "label": "Auto"
+            }
+          ],
+          "default": "small"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Title"
+        },
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom liquid",
+          "info": "Add app snippets or other Liquid code to create advanced customizations."
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

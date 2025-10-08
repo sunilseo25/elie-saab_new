@@ -1,0 +1,442 @@
+.template-page-haute-couture-home .thb-secondary-area-item .icon-item {
+  filter: invert(1);
+}
+.template-page-haute-couture-home,
+.template-page-haute-couture-home .header,
+.template-page-haute-couture-home .footer,
+.template-page-haute-couture-home .sub-footer {
+  background: #231f20;
+}
+
+.template-page-haute-couture-home .custom-sticky-style {
+  position: sticky;
+    top: var(--header-height);
+  background: #231f20;
+  z-index: 2;
+}
+
+.template-page-haute-couture-home #mobile-menu .underline-offset {
+  background-color: #fff;
+}
+
+.template-collection-custom-haute-couture-template
+  .mobile-menu-drawer
+  .parent-link-back--button
+  span.light:hover {
+  color: #fff;
+}
+
+/* .template-page-haute-couture-home #mobile-menu .mobile-menu-drawer--inner,
+.template-page-haute-couture-home #mobile-menu .thb-mobile-menu-footer,
+.template-page-haute-couture-home #mobile-menu .outersubmenu,
+.template-page-haute-couture-home #mobile-menu #MobileMenuLocalization,
+.template-page-haute-couture-home #mobile-menu .parent-menu .link-container.menu-opening > .sub-menu,
+.template-page-haute-couture-home #mobile-menu .mobile-menu::-webkit-scrollbar-track,
+.template-page-haute-couture-home #mobile-menu .mobile-menu::-webkit-scrollbar-thumb {
+  background: #231f20;
+}
+
+.template-page-haute-couture-home #mobile-menu .mobile-menu::-webkit-scrollbar-thumb {
+  border: none;
+} */
+
+/* .template-page-haute-couture-home #mobile-menu .mobile-menu li .link-container,
+.template-page-haute-couture-home #mobile-menu .thb-mobile-menu-footer .menu-option a,
+.template-page-haute-couture-home #mobile-menu .thb-mobile-menu-footer .switch-mobile-btn .text-wrapp,
+.template-page-haute-couture-home #mobile-menu .mobile-menu .parent-link-back button {
+  color: #fff;
+} */
+
+/* .template-page-haute-couture-home #mobile-menu .link-container .link-forward svg path,
+.template-page-haute-couture-home #mobile-menu .link-container .link-minus svg path {
+  fill: #fff;
+} */
+
+.template-page-haute-couture-home .footer {
+  border-top: unset;
+}
+
+.template-page-haute-couture-home .sign-letter-main:before,
+.template-page-haute-couture-home .sign-letter-main:after {
+  content: "";
+  height: 1px;
+  background: #d5d5d4;
+}
+
+.template-page-haute-couture-home
+  #mobile-menu
+  button.parent-link-back--button:after {
+  background-color: #fff;
+}
+
+#shopify-section-template--19314237243634__custom_video_tab_mrmLjV {
+  position: sticky;
+  top: 70px;
+  background: #231f20;
+  z-index: 2;
+}
+
+.template-page-haute-couture-home .video-collection-tabs__list-link {
+  color: #fff;
+}
+
+.template-page-haute-couture-home .tab-indicator {
+  background: #fff;
+}
+
+.template-page-haute-couture-home .rich-text {
+  padding: 50px 0;
+  background: #231f20 !important;
+    border-top: 1px solid #e9e9e9;
+    border-bottom: 1px solid #e9e9e9;
+}
+
+.template-page-haute-couture-home .rich-text__inner h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.template-page-haute-couture-home .rich-text .rte {
+  margin-bottom: 1.25rem;
+  color: #fff;
+}
+
+.template-page-haute-couture-home .view-btn {
+  margin-top: 2rem;
+  border: none;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.5;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+  position: relative;
+  color: #fff;
+}
+
+.template-page-haute-couture-home .view-btn:after {
+  background-color: #fff;
+  border-radius: 4px;
+  content: " ";
+  display: block;
+  margin: 3px auto 0;
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 2px;
+  transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+}
+.template-page-haute-couture-home .middle-footer .retina_size {
+  display: none;
+}
+.template-page-haute-couture-home .view-btn:hover:after {
+  width: 0;
+  right: 0;
+}
+
+.template-page-haute-couture-home .slider-text a {
+  display: flex;
+  justify-content: center;
+}
+
+.template-page-haute-couture-home #looks .custom-slick-slider {
+  margin-top: 6rem;
+}
+
+.template-page-haute-couture-home #press-release .welcome-guest-heading {
+  margin-top: 3rem;
+  color: #fff;
+}
+.template-page-haute-couture-home #behind-the-scenes .rich-text {
+  border: unset;
+}
+
+.template-page-haute-couture-home #behind-scenes,
+.template-page-haute-couture-home #details{
+  margin-bottom: 6rem;
+  margin-top: 2rem;
+}
+
+.template-page-haute-couture-home .welcome-guest-heading:before,
+.template-page-haute-couture-home .welcome-guest-heading:after {
+  background: #e9e9e9;
+  height: 0.5px;
+}
+
+.template-page-haute-couture-home .sign-desc {
+  color: #fff;
+  max-width: 944px;
+}
+
+.template-page-haute-couture-home #behind-the-scenes .rich-text__inner {
+  max-width: 944px;
+}
+
+.template-page-haute-couture-home #behind-the-scenes .rich-text__inner p {
+  text-align: center;
+}
+
+.template-page-haute-couture-home .welcome-guest .letter-btn {
+  color: #fff;
+}
+
+.template-page-haute-couture-home .welcome-guest .letter-btn:after {
+  background-color: #fff;
+}
+
+.template-page-haute-couture-home a.button.outline,
+.template-page-haute-couture-home
+  #appointments
+  .rich-text
+  .button.outline:hover {
+  color: #fff;
+}
+.template-page-haute-couture-home
+  #appointments
+  .rich-text
+  .button.outline:before {
+  background: #221f20;
+}
+.template-page-haute-couture-home #appointments a.button.outline:after {
+  background: #fff;
+}
+
+.template-page-haute-couture-home .rich-text .button.outline:before {
+  background: unset;
+}
+
+.template-page-haute-couture-home .rich-text .button.outline:hover {
+  color: #fff;
+}
+
+.template-page-haute-couture-home .footer .thb-widget-title.collapsible,
+.template-page-haute-couture-home .footer a,
+.template-page-haute-couture-home .footer .thb-widget-menu li,
+.template-page-haute-couture-home .copy,
+.template-page-haute-couture-home .coutnryselector .inner-class,
+.template-page-haute-couture-home .coutnryselector .text-small,
+.template-page-haute-couture-home .coutnryselector .select_arrow {
+  color: #fff !important;
+}
+
+.template-page-haute-couture-home .coutnryselector .select_arrow svg path {
+  color: #fff;
+  fill: #fff;
+}
+
+.template-page-haute-couture-home .logoimg,
+.template-page-haute-couture-home img.retina_size.lazyautosizes.lazyloaded {
+  opacity: 0;
+}
+
+.template-page-haute-couture-home .header .logolink .logoimg--light {
+  opacity: 1;
+}
+
+.template-page-haute-couture-home img.-mob-logo-ftr {
+  opacity: 1;
+  display: block !important;
+}
+
+.template-page-haute-couture-home .mobile-toggle-wrapper .mobile-toggle:after {
+  color: #fff;
+}
+
+.template-page-haute-couture-home .mobile-toggle svg path {
+  stroke: #fff;
+}
+
+.template-page-haute-couture-home #looks .collection-text {
+  color: #fff;
+}
+
+.template-page-haute-couture-home
+  .haute-couture-home
+  .video-collection-tabs__list:after {
+  background: #d5d5d4;
+  opacity: 0.4;
+}
+
+.template-page-haute-couture-home .thb-secondary-area .thb-item-count,
+.template-page-haute-couture-home
+  .thb-secondary-area
+  .st-wishlist-details-button[data-type="manually"]
+  .st-number {
+  color: #fff;
+}
+
+.template-page-haute-couture-home
+  .thb-secondary-area
+  .st-wishlist-details-button[data-type="manually"]:before {
+  background-image: url("https://cdn.shopify.com/s/files/1/0605/8872/0370/files/wishlist-icon_fae9d7e4-748e-4307-b7c5-3f4078cc03fa.png?v=1747339726");
+}
+
+.template-page-haute-couture-home theme-header.header.is-sticky {
+  border-bottom: 1px solid #74747466;
+}
+
+.hide-on-desktop {
+  display: none;
+}
+
+.template-page-haute-couture-home #behind-scenes-1 {
+  display: none;
+}
+
+/* .template-page-haute-couture-home #mobile-menu .localization-option {
+  display: none;
+} */
+
+@media screen and (max-width: 768px) {
+  body.template-page-haute-couture-home .sliderImgText video.custom-video {
+    height: 460px !important;
+    object-position: center;
+    object-fit: cover;
+  }
+
+  body.template-page-haute-couture-home .sliderImgText img {
+    height: 460px !important;
+    object-position: center;
+    object-fit: cover;
+  }
+  body.template-page-haute-couture-home
+    .custom-slick-slider
+    video.custom-video {
+    height: 460px !important;
+  }
+  .template-page-haute-couture-home .sign-letter-main:before,
+  .template-page-haute-couture-home .sign-letter-main:after {
+    content: "";
+    height: 0.5px !important;
+    background: #e9e9e9;
+  }
+
+  .template-page-haute-couture-home .rich-text {
+    border: unset;
+    /* border-top: 0.5px solid #e9e9e9 !important;
+    border-bottom: 0.5px solid #e9e9e9 !important; */
+    background: unset;
+  }
+
+  .template-page-haute-couture-home .rich-text {
+    border: unset;
+    border-top: 1px solid #e9e9e9;
+    border-bottom: 1px solid #e9e9e9;
+    background: unset;
+  }
+
+  .template-page-haute-couture-home .custom-slider-section {
+    margin-top: 0rem;
+    padding: unset;
+  }
+
+  .template-page-haute-couture-home .custom-slider-section .row {
+    padding: unset;
+  }
+
+  .template-page-haute-couture-home .custom-slider-section .row .columns {
+    padding: unset;
+  }
+
+  .template-page-haute-couture-home .rich-text .rte p {
+    font-size: 17px;
+    letter-spacing: 0.7px;
+  }
+
+  .template-page-haute-couture-home .rich-text .rte {
+    text-align: center;
+  }
+
+  .template-page-haute-couture-home .view-btn {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 1rem;
+  }
+
+  #shopify-section-template--19314237243634__custom_video_tab_mrmLjV {
+    position: relative !important;
+    top: unset !important;
+    z-index: 1 !important;
+  }
+
+  .template-page-haute-couture-home .sign-desc {
+    text-align: center;
+  }
+
+  .template-page-haute-couture-home #behind-scenes {
+    margin-bottom: 6rem;
+    margin-top: 0;
+  }
+
+  .template-page-haute-couture-home #looks .collection-text {
+    left: 50%;
+  }
+
+  .template-page-haute-couture-home #shows-mob {
+    margin-top: 3rem;
+  }
+
+  .template-page-haute-couture-home #behind-the-scenes .rich-text {
+    background: unset;
+  }
+
+  .template-page-haute-couture-home footer#footer,
+  .template-page-haute-couture-home .row.footer-top,
+  .template-page-haute-couture-home .middle-footer,
+  .template-page-haute-couture-home #FooterLocalization {
+    background: #231f20;
+  }
+
+  .template-page-haute-couture-home theme-header.header {
+    border-bottom: unset;
+  }
+
+  .template-page-haute-couture-home theme-header.header.is-sticky {
+    border-bottom: 1px solid #f6f6f6;
+  }
+
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .hide-on-desktop {
+    display: block;
+  }
+
+  .template-page-haute-couture-home #press-release-mob .welcome-guest-heading {
+    margin-top: 3rem;
+    color: #fff;
+  }
+
+  .template-page-haute-couture-home #behind-scenes-1 {
+    display: block;
+  }
+
+  .template-page-haute-couture-home #behind-scenes-1 .rich-text {
+    border: unset;
+  }
+  .outersubmenu details[open] > summary.parent-link {
+    color: white;
+  }
+
+  .outersubmenu details[open] > summary .link-forward {
+    background-color: transparent;
+  }
+}
+
+.outersubmenu .link-inline-menu:hover,
+.outersubmenu details.link-container:hover > summary {
+  font-weight: 600;
+  color: white;
+}
+
+.underline-offset {
+  height: 1.5px;
+  top: 35.8px;
+}
+
+.parent-menu.active-menu > summary {
+  font-weight: 600;
+}

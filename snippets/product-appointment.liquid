@@ -1,0 +1,103 @@
+<div class="product-sticky-add-button product-information--inner appoint-box" {{ block.shopify_attributes }}>
+  <style>
+    .product-sticky-add-button.appoint-box {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 25px;
+      width: 100%;
+      padding-left: 20px;
+      padding-right: 10px;
+    }
+    .product-sticky-add-button.appoint-box .single-add-cart-button {
+      position: relative;
+    }
+    .modal--white .modal-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 420px;         
+  max-width: 90vw;       
+}
+    
+    .modal--white .modal-body {
+      flex: 1 1 auto;
+      display: grid;
+      place-items: center;   
+      overflow-y: auto;     
+      padding: 2rem 1.5rem 4rem; 
+    }
+    
+    .modal--white .modal_header {
+      flex: 0 0 auto;
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 2;
+    }
+    
+  </style>
+
+  <!-- Trigger Button -->
+
+  <button type="button"
+        class="select_variant single-add-cart-button button"
+        data-bs-toggle="modal"
+        data-bs-target="#bookingModal-{{ section.id }}">
+  <span class="single-add-to-cart-button--text">Request an appointment</span>
+</button>
+
+<div class="side-panel side--panel modal appointmentModal modal--white"
+     id="bookingModal-{{ section.id }}"
+     data-bs-backdrop="true" data-bs-keyboard="true">
+
+  <div class="modal-dialog">
+    <div class="modal_header">
+      <span class="btn-close" data-bs-dismiss="modal">
+        <span class="animation-underline">Return to product</span>
+        <span class="arrow-icon">{% render 'svg-icons' with 'thb-caret-up' %}</span>
+      </span>
+    </div>
+
+      <!-- Typeform body -->
+      <div class="modal-body"
+           data-tf-live="01JSQEA6QX41S058T5CETMB825"
+           data-tf-hidden="product_id={{ product.handle }}">
+      </div>
+
+
+
+  </div>
+</div>
+
+
+  <!-- Wishlist Button -->
+  <button class="st-wishlist-button button"
+    button-wishlist
+    data-product-handle="{{ product.handle }}"
+    data-type="details"
+    data-handle="{{ product.handle }}">
+  </button>
+
+</div>
+
+<!-- Typeform Script -->
+<script src="https://embed.typeform.com/next/embed.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+   const bookingmodal = document.getElementById('bookingModal-{{ section.id }}');
+    const bookBtn = document.querySelector('.single-add-cart-button');
+
+   bookingmodal.addEventListener('shown.bs.modal', function () {
+      bookBtn.style.display = 'none';
+  
+       document.body.style.overflow = '';
+         document.body.style.paddingRight = '';
+    });
+
+    bookingmodal.addEventListener('hidden.bs.modal', function () {
+      bookBtn.style.display = 'inline-block';
+    });
+  });
+</script>
+

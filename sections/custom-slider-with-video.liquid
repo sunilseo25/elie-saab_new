@@ -1,0 +1,304 @@
+<section class="custom-slider-section slider--{{ section.id }} {% unless section.settings.keep_for_both %} {% if section.settings.hide_on_mobile %}hide-on-mobile{% else %}hide-on-desktop{% endif %} {% endunless %}">
+  <div class="row" id="{{ section.settings.slider_id }}">
+    <div class="small-12 columns setPadding">
+      {% if section.settings.show_collection_products %}
+      <div class="custom-slick-slider">
+          {% assign collection_handle = section.settings.collection %}
+          {% assign selected_collection = collections[collection_handle] %}
+          {% assign video_interval = section.settings.position_video_list | default: 2 %}
+          {% assign counter = 0 %}
+
+          {% if selected_collection and selected_collection.products.size > 0 %}
+            {% for product in selected_collection.products limit: section.settings.products_to_show %}
+              <div class="slide-item">
+                <a href="{{ product.url | within:selected_collection }}">
+                  <div class="sliderImgText">
+                    {%- render 'responsive-image', image: product.featured_image, sizes: '407x0,500x0', retina: product.settings.retina -%}
+                    <div class="main-collection-section">
+                      <div class="collection-text">{{ product.title | escape }}</div>
+{% unless product.price == 999900 or product.price == 9999900 %}
+  {% if localization.country.iso_code == 'US' %}
+    <span class="price"></span>
+  {% else %}
+    <span class="price">{{ product.price | money }}</span>
+  {% endif %}
+{% endunless %}                
+                    </div>
+                  </div>
+                </a>
+              </div>
+              {% assign counter = counter | plus: 1 %}
+              {% assign mod_result = counter | modulo: video_interval %}
+              {% if mod_result == 0 %}
+                {% if section.settings.media_video_url_col or section.settings.media_video_file_col %}
+                  <div class="slide-item">
+                    <div class="sliderImgText">
+                      {% if section.settings.media_video_url_col %}
+                        <iframe
+                          src="{{ section.settings.media_video_url_col | escape }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ section.settings.media_video_url_col | split: '/' | last }}"
+                          width="100%"
+                          height="100%"
+                          frameborder="0"
+                          allow="autoplay; encrypted-media"
+                          allowfullscreen
+                        ></iframe>
+                      {% endif %}
+
+                      {% if section.settings.media_video_file_col %}
+                        {{
+                          section.settings.media_video_file_col
+                          | video_tag:
+                            loop: true,
+                            autoplay: true,
+                            controls: false,
+                            muted: true,
+                            sizes: '407x0,500x0',
+                            image_size: "500x", 
+                            class: 'custom-video',
+                            attributes: 'controlslist="nodownload noremoteplayback"'
+                        }}
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% else %}
+      <div class="custom-slick-slider products row no-padding">
+          {% assign block_count = section.blocks | size %}
+          {% for block in section.blocks %}
+            <div class="slide-item">
+              <a href="{{ block.settings.collection.url | default:"javascript:void(0)" }}">
+                <div class="sliderImgText">
+                  {% case block.settings.media_type %}
+                    {% when 'image' %}
+                      {% if block.settings.media_image %}
+                        {%- render 'responsive-image', image: block.settings.media_image, sizes: '407x0,500x0', retina: block.settings.retina -%}
+                      {% elsif block.settings.collection.image %}
+                        {%- render 'responsive-image', image: block.settings.collection.image, sizes: '407x0,500x0', retina: block.settings.retina -%}
+                      {% endif %}
+                    {% when 'video_url' %}
+                      {% if block.settings.media_video_url %}
+                        <iframe
+                          src="{{ block.settings.media_video_url | escape }}"
+                          width="100%"
+                          height="100%"
+                          frameborder="0"
+                          allow="autoplay; encrypted-media"
+                          allowfullscreen
+                        ></iframe>
+                      {% endif %}
+                    {% when 'video_file' %}
+                      {% if block.settings.media_video_file %}
+                        {{
+                          block.settings.media_video_file
+                          | video_tag:
+                            loop: true,
+                            controls: false,
+                            muted: true,
+                            sizes: '407x0,500x0',
+                            image_size: "500x",
+                            class: 'custom-video lazyvideo',
+                            attributes: 'controlslist="nodownload noremoteplayback"' | replace:'preload="metadata"' , 'preload="none"' | replace: 'poster','data-poster'
+                        }}
+                      {% endif %}
+                  {% endcase %}
+                  {% if block.settings.collection_title != blank %}
+                    <div class="collection-text">{{ block.settings.collection_title }}</div>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.slider_text != blank %}
+        <div class="slider-text">
+          <a href="{{ section.settings.slider_text_url }}">
+            <h2 class="view-btn">{{ section.settings.slider_text }}</h2>
+          </a>
+          {% if section.settings.slider_textarea != blank %}
+            <span class="vc-desc">{{ section.settings.slider_textarea }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<script type="load">
+  $('.slider--{{ section.id }} .custom-slick-slider').slick({
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: true,
+    prevArrow: '<button type="button" class="slick-prev1 flickity-nav"><img width="38" height="38" src="{{ "arrow-left.svg" | asset_url }}"></button>',
+    nextArrow: '<button type="button" class="slick-next1 flickity-nav"><img width="38" height="38" src="{{ "arrow-right.svg" | asset_url }}"></button>',
+    responsive: [
+      {
+        breakpoint:1250,
+        settings: {
+          slidesToShow: 3,
+   arrows: true,
+        }
+      },
+           {
+        breakpoint: 850,
+        settings: {
+          slidesToShow: 2,
+   arrows: true,
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          arrows: false,
+          centerMode: true,
+           centerPadding: '30px',
+        }
+      }
+    ]
+  });
+
+</script>
+
+{% schema %}
+{
+  "name": "Custom Slider With Video",
+  "settings": [
+          {
+      "type":"checkbox",
+      "id":"keep_for_both",
+      "label": "Keep for both",
+      "info":"It will show both mobile and desktop",
+      "default":false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide Section On Mobile",
+       "info": "Enable this to hide this section on mobile."
+    },
+     {
+      "type": "checkbox",
+      "id": "show_collection_products",
+      "label": "Show products from collection",
+        "info": "Enable this to display products from the selected collection on the page."
+    },
+    {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection",
+        "info": "Select this collection to display product from collection instead of images"
+        },
+    {
+  "type": "range",
+  "id": "products_to_show",
+  "label": "Products to show",
+  "min": 4,
+  "max": 30,
+  "step": 1,
+  "default": 4
+},
+    {
+          "type": "url",
+          "id": "media_video_url_col",
+          "label": "External Video URL",
+          "info": "Supports YouTube or Vimeo links"
+        },
+        {
+          "type": "video",
+          "id": "media_video_file_col",
+          "label": "Hosted Video"
+        },
+     {
+  "type": "range",
+  "id": "position_video_list",
+  "label": "Position of video to show at",
+  "min": 2,
+  "max": 30,
+  "step": 1,
+  "default": 2
+},
+    {
+      "type": "text",
+      "id": "slider_id",
+      "label": "CSS ID"
+    },
+    {
+      "type": "text",
+      "id": "slider_class",
+      "label": "CSS Class"
+    },
+    {
+      "type": "text",
+      "id": "slider_text",
+      "label": "View Collection text",
+    },
+    {
+      "type": "url",
+      "id": "slider_text_url",
+      "label": "View Collection button link"
+    },
+    {
+      "type": "textarea",
+      "id": "slider_textarea",
+      "label": "View Collection description"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media_slide",
+      "name": "Media Slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video_url", "label": "External Video (YouTube/Vimeo)" },
+            { "value": "video_file", "label": "Hosted Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "media_video_url",
+          "label": "External Video URL",
+          "info": "Supports YouTube or Vimeo links"
+        },
+        {
+          "type": "video",
+          "id": "media_video_file",
+          "label": "Hosted Video"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        },
+        {
+          "type": "text",
+          "id": "collection_title",
+          "label": "Collection Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Slider With Video",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

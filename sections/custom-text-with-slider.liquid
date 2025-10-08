@@ -1,0 +1,188 @@
+<style>
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 400;
+  margin-top: 40px;
+}
+
+.back-btn svg {
+  transform: rotate(90deg);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+</style>
+
+<section class="text-slideshow" id="{{ section.settings.css_id }}">
+  <div class="row">
+    <div class="small12 columns">
+      {% if section.settings.title != blank %}
+        <h2 class="text-with-line">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p class="text-slideshow-description">{{ section.settings.description }}</p>
+      {% endif %}
+      <div class="text-slideshow-content custom-slideshow">
+        {% for block in section.blocks %}
+          {% if block.type == 'media' %}
+            <div>
+              {% if block.settings.media_type == 'image' and block.settings.media_image %}
+                <img src="{{ block.settings.media_image | img_url: 'master' }}" height="auto" width="auto" alt="">
+                <div class="text-abs-section2">
+                  <div class="image-text">{{ block.settings.subheading }}</div>
+                  <a href="{{ block.settings.heading_url }}">
+                    <div class="image-collection-text">{{ block.settings.heading }}</div>
+                  </a>
+                </div>
+              {% elsif block.settings.media_type == 'video_url' and block.settings.media_video_url %}
+                <iframe src="{{ block.settings.media_video_url }}" frameborder="0" allowfullscreen></iframe>
+                <div class="text-abs-section2">
+                  <div class="image-text">{{ block.settings.subheading }}</div>
+                  <a href="{{ block.settings.heading_url }}">
+                    <div class="image-collection-text">{{ block.settings.heading }}</div>
+                  </a>
+                </div>
+              {% elsif block.settings.media_type == 'video_file' and block.settings.media_video_file %}
+                <video controls>
+                  <source src="{{ block.settings.media_video_file | file_url }}" type="video/mp4">
+                </video>
+                <div class="text-abs-section2">
+                  <div class="image-text">{{ block.settings.subheading }}</div>
+                  <a href="{{ block.settings.heading_url }}">
+                    <div class="image-collection-text">{{ block.settings.heading }}</div>
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% if section.settings.link__label != blank %}
+        <a href="{% if section.settings.link != blank %}{{ section.settings.link }}{% else %}javascript:void(0){% endif %}" class="back-btn link">
+          <span>
+            <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.75 1.5L3.75 4.5L0.75 1.5" stroke="var(--color-body)" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <span class="animation-underline">{{ section.settings.link__label }}</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<script type="load">
+  $(document).ready(function(){
+    $('.custom-slideshow').slick({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      centerMode: true,
+      centerPadding: '15%',
+      arrows: true,
+      prevArrow: '<button type="button" class="flickity-nav slick_prev"><img width="38" height="38" src="{{ "arrow-left.svg" | asset_url }}"></button>',
+      nextArrow: '<button type="button" class="flickity-nav slick_next"><img width="38" height="38" src="{{ "arrow-right.svg" | asset_url }}"></button>',
+      responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          arrows: false,
+          centerMode: true,
+          centerPadding: '50px',
+        }
+      }
+    ]
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Text with Slideshow",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "id": "link__label",
+      "type": "text",
+      "label": "Button label",
+      "info": "Leave the label blank to hide the button."
+    },
+    {
+      "id": "link",
+      "type": "url",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "css_id",
+      "label": "CSS ID"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media",
+      "name": "Media Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video_url", "label": "External Video (YouTube/Vimeo)" },
+            { "value": "video_file", "label": "Hosted Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image",
+          "label": "Image"
+        },
+        {
+          "type": "video_url",
+          "id": "media_video_url",
+          "label": "External Video URL",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "video",
+          "id": "media_video_file",
+          "label": "Hosted Video"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Sub heading"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "url",
+          "id": "heading_url",
+          "label": "Link"
+        },
+
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text with Slideshow",
+      "category": "Custom Sections"
+    }
+  ]
+}
+{% endschema %}

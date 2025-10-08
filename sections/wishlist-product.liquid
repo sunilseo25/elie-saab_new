@@ -1,0 +1,219 @@
+{{- 'facets.css' | asset_url | stylesheet_tag -}}
+{%- liquid
+  assign full_width = section.settings.full_width
+  assign enable_filtering = section.settings.enable_filtering
+  assign enable_sorting = section.settings.enable_sorting
+  assign show_counts = section.settings.show_counts
+  assign sidebar_size = section.settings.sidebar_size
+  assign filter_color_swatches = section.settings.filter_color_swatches
+  assign columns_desktop = section.settings.columns_desktop
+  assign facets_desktop = section.settings.facets_desktop
+  assign pagination_type = section.settings.pagination_type
+  assign products_per_page = section.settings.products_per_page
+
+  unless enable_filtering
+    assign facets_desktop = 'drawer'
+  endunless
+-%}
+<style>
+  #product-grid .product-card .st-wishlist-button, 
+  #product-grid .product-card slider-component>*:not(.flickity-viewport), 
+  #product-grid .product-card .product-card-info {
+    opacity: 1;
+  }
+  .notify_card{
+    top:-10px;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .product-card:hover .notify_card{
+    opacity: 1;
+    visibility: visible;
+  }
+  #custom_notify,
+  .notify_btn {
+    height: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .collection-with-grid {
+    min-height: auto;
+  }
+  .section-spacing-bottom{
+    --section-spacing-desktop:40px  
+  }
+  @media(max-width:767px){
+    .notify_card{
+      display:none;
+    }
+  }
+</style>
+<div class="row{% if full_width %} full-width-row{% endif %}" data-account-tab="wishlist">
+  <div class="small-12 columns collection-with-grid">
+    <div class="collection-container section-spacing-bottom">
+      <div id="ProductGridContainer">
+        <div class="sidebar-container facets--{{ facets_desktop }} facets--sidebar-{{ sidebar_size }} results--{{ collection.products.size }}">          
+          {% comment %}
+          {%- if facets_desktop == 'sidebar' -%}
+            {%- render 'facets-desktop',
+              results: collection,
+              enable_filtering: enable_filtering,
+              enable_sorting: enable_sorting,
+              show_counts: show_counts,
+              filter_color_swatches: filter_color_swatches
+            -%}
+          {%- endif -%}
+          <div class="facet-box-wrapper">
+            <div class="inner-box-facets">
+              {%- render 'facets-bar',
+                results: collection,
+                enable_filtering: enable_filtering,
+                enable_sorting: enable_sorting,
+                facets_desktop: facets_desktop,
+                filter_color_swatches: filter_color_swatches
+              -%}
+              {%- render 'facets-mobile',
+                results: collection,
+                enable_filtering: enable_filtering,
+                enable_sorting: enable_sorting,
+                show_counts: show_counts,
+                filter_color_swatches: filter_color_swatches
+              -%}
+            </div>
+          </div>
+          {% endcomment %}
+          <ul page-wishlist id="product-grid" data-id="{{ section.id }}" class="products collection row small-up-2 medium-up-{{ columns_desktop }} pagination--{{ pagination_type }}"></ul>
+          {% comment %}
+          {% render 'pagination', paginate: paginate, pagination_type: pagination_type, id: section.id %}
+          {% endcomment %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "class": "product-grid-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": false,
+      "label": "Make section full width"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 2,
+      "max": 48,
+      "step": 1,
+      "label": "Number of products",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Number of columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "pagination_type",
+      "options": [
+        {
+          "value": "paginated",
+          "label": "Paginated"
+        },
+        {
+          "value": "loadmore",
+          "label": "Click to load"
+        },
+        {
+          "value": "infinite",
+          "label": "Infinite"
+        }
+      ],
+      "default": "paginated",
+      "label": "Pagination",
+      "info": "Choose how additional pages of products are navigated."
+    },
+    {
+      "type": "header",
+      "content": "Filtering and sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable filtering",
+      "info": "Customize [filters](/admin/menus)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "default": true,
+      "label": "Show filter values count"
+    },
+    {
+      "type": "checkbox",
+      "id": "filter_color_swatches",
+      "default": true,
+      "label": "Show color swatches"
+    },
+    {
+      "type": "select",
+      "id": "facets_desktop",
+      "options": [
+        {
+          "value": "sidebar",
+          "label": "Sidebar"
+        },
+        {
+          "value": "drawer",
+          "label": "Drawer"
+        }
+      ],
+      "default": "sidebar",
+      "label": "Desktop position",
+      "info": "Position of filters on desktop"
+    },
+    {
+      "type": "select",
+      "id": "sidebar_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "medium",
+      "label": "Sidebar size",
+      "info": "Changes the width of the sidebar"
+    }
+  ],
+  "presets":[
+    {
+      "name":"Wishlist product"
+    }
+  ]
+}
+{% endschema %}

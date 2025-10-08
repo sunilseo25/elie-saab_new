@@ -1,0 +1,34 @@
+
+<div class="appointment-section" data-account-tab="appointment">
+  <div class="accound-page-wrapper">
+    <div class="space-around">
+    <div class="row">
+      <div class="small-12 columns">
+        <div class="text-center">
+          <p class="title-head">Request an Appointment</p>
+        </div>
+      </div>
+          </div>
+      <div class="table-box">
+        <div
+          data-tf-live="01JTJNDE1XHGECD7F1TN1ZRR4R"
+          data-tf-hidden="first_name={{ customer.first_name | escape }},last_name={{ customer.last_name | escape }},email={{ customer.email | escape }},phone_number={{ customer.phone | default: customer.default_address.phone | escape }}">
+        ></div>      
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="//embed.typeform.com/next/embed.js"></script>
+
+{% schema %}
+{
+  "name": "Appointment account",
+  "settings": [],
+  "presets":[
+    {
+      "name":"Apointment account"
+    }
+  ]
+}
+{% endschema %}

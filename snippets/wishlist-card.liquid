@@ -1,0 +1,81 @@
+{%- liquid 
+    assign featured_media = product.featured_media
+    assign item = product_card_product
+-%}
+
+<div class="product-cart-item main_item" id="CartDrawerItem-{{ item.index | plus: 1 }}">
+  <div class="product-cart-item-image cover_img">
+    {% if featured_media %}
+      {%- render 'responsive-image', image: featured_media, sizes: '900x0', priority: 'low' -%}
+    {% else %}
+      <div class="thb-placeholder" style="width: 96px;">
+        {{ 'product-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+    <div class="loading-overlay">
+      {% render 'svg-icons' with 'thb-loading' %}
+    </div>
+  </div>
+  <div class="product-cart-item-info">
+    <div>
+      <a href="{{ item.url }}" title="{{ item.title | escape }}" class="cart-product-link">
+        {{- item.title -}}
+      </a>
+      {% if item.selling_plan_allocation %}
+        <div class="properties">
+          <span class="selling-plan">{{ item.selling_plan_allocation.selling_plan.name }}</span>
+        </div>
+      {% endif %}
+      {%- unless product.has_only_default_variant -%}
+        <div class="product-cart-item-options">
+          {%- for option in item.options_with_values -%}
+            {% render 'product-option',
+              option_type: 'dropdown',
+              color_picker_size: 'large',
+              product: item,
+              option: option,
+              forloop: forloop.index0,
+              product_form_id: item.id,
+              item: item
+            %}
+          {% endfor %}
+        </div>
+      {% endunless %}
+      {%- for property in item.properties -%}
+        {%- assign property_first_char = property.first | slice: 0 -%}
+        {%- if property.last != blank and property_first_char != '_' -%}
+          <div class="product-cart-item-options">
+            <span>{{ property.first }}: </span>
+            {%- if property.last contains '/uploads/' -%}
+              <a href="{{ property.last }}" class="link" target="_blank">
+                {{ property.last | split: '/' | last }}
+              </a>
+            {%- else -%}
+              {{ property.last }}
+            {%- endif -%}
+            <br>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if item.discounts != blank -%}
+        <ul class="discounts" role="list">
+          {%- for discount in item.discounts -%}
+            <li class="discounts__discount">
+              {%- render 'svg-icons' with 'discount' -%}
+              {{ discount.title }} (-{{ discount.amount | money }})
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+    <div class="product-cart-item-price {% if product.vendor == 'Ready To Wear' and product.tags contains 'PRODUCT-BADGE::Lookbook' %}cust1-rtw-look-product{% else %}cust-{{ product.vendor | handleize }}{% endif %}">
+      {% render 'product-price', product: product_card_product %}
+      <div class="bottom_button">
+        <button class="text-button st-wishlist-button" data-type="details" button-wishlist data-product-id="{{ product.id }}" data-product-title="{{ product.id }}" data-product-handle="{{ product.handle }}" data-handle="{{ product.handle }}" ></button>
+        {% unless product.vendor == 'Bridal' or product.vendor == 'bridal' or product.vendor == 'Haute Couture' %}
+          <a href="" class="text-button add-to-cart-from-cart {{ product.vendor | handleize }}">Add to bag</a>
+        {% endunless %}
+      </div>
+    </div>
+  </div>
+</div>

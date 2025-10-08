@@ -1,0 +1,27 @@
+{%- liquid
+assign body_bg = settings.color_body_bg
+unless no_bg
+assign body_bg = settings.color_body_bg | color_darken: 5
+endunless
+assign body_bg_rgb = body_bg.rgb
+%}
+<max-height class="max-height{% if no_bg %} max-height--no-background{%- endif-%}" data-max="{{ max_height }}" style="--max-height: {{ max_height | append: 'px'}}; --bg-body: {{ body_bg }};  --bg-body-rgb: {{ body_bg_rgb | replace: ' ' , ',' }}">
+  <div class="max-height--inner">
+    <div class="max-height--inner-content rte {{ extra_class -}}">
+      {% if content == product.description %}
+       {% comment %}
+        {% assign description_parts = product.description | split: "<!--split-->" %}
+        {{ description_parts[0] }}
+       {% endcomment %}
+        {{ product.description }}
+      {% else %}
+        {{ content }}
+      {% endif %}
+        {{ custom_liquid }}
+      {{ page }}
+    </div>
+  </div>
+  {% if show_read_button %}
+  <button class="max-height-toggle m-none" data-bs-toggle="modal" data-bs-target=".exampleModal" data-target-tab="#{{ block }}"><span class="animation-underline text-button--read-more">{{ read_more }}</span></button>
+  {% endif %}
+</max-height>

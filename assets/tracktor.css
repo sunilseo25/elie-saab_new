@@ -1,0 +1,50 @@
+#tracktorOrderForm h1 {
+  font-size: 17px;
+  padding: 0 17px;
+  text-align: left;
+  line-height: 20px;
+}
+#tracktorOrderForm .field,
+#tracktorOrderForm label {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+#tracktorOrderForm label {
+  text-align: center;
+  width: 123px !important;
+  position: unset;
+}
+#tracktorOrderForm .recaptcha > div {
+  margin-right: auto !important;
+  margin-left: unset !important;
+}
+#tracktorOrderForm button {
+  display: flex !important;
+}
+#tracktorResponseContainer h1 {
+  font-size: 17px;
+  text-align: left;
+  line-height: 20px;
+}
+#tracktorOrderForm .recaptcha > div {
+  padding-left: 0px;
+}
+#tracktorOrderForm button {
+  margin-left: 0px !important;
+}
+#tracktorOrderForm label {
+  padding-left: 0px;
+}
+#tracktorOrderForm h1 {
+  padding-left: 0;
+}
+@media screen and (min-width: 750px) {
+}
+@media screen and (max-width: 749px) {
+  #tracktorOrderForm h1 {
+    padding-left: 0px;
+  }
+  #tracktorOrderForm label {
+    padding-left: 0;
+  }
+}

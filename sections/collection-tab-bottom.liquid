@@ -1,0 +1,488 @@
+<style>
+    .product-card-spacing-small .slider-{{ section.id }} .products.row {
+      margin-left: auto !important;
+      margin-right: auto !important;
+      border-radius:3px
+    }
+   .slider-{{ section.id }}{
+     position: relative;
+   }
+    @media (max-width: 767px) {
+   .slider-{{ section.id }} .flickity-nav {
+      display: none !important;
+    }
+  }
+</style>
+
+<div class="main-multi-tab-section">
+  {% if section.settings.title != blank %}
+    <div class="row">
+      <div class="columns column-title">
+        <h5>{{ section.settings.title }}</h5>
+      </div>
+    </div>
+  {% endif %}
+  <div class="row slider-{{ section.id }}">
+    <div class="small-12 columns setPadding">
+      <slider-component class="swiper mySwiper products row no-padding">
+        <div class="swiper-wrapper">
+          {% assign block_count = section.blocks | size %}
+          {% for block in section.blocks %}
+            {% if block.type == 'tab' %}
+              {% assign media_count = 0 %}
+              {% for media in section.blocks %}
+                {% if media.type == 'media' and media.settings.tab_id == block.settings.tab_id %}
+                  {% assign media_count = media_count | plus: 1 %}
+                {% endif %}
+              {% endfor %}
+              {% for media in section.blocks %}
+                {% if media.type == 'media' and media.settings.tab_id == block.settings.tab_id %}
+                  <div class="tab-slide swiper-slide slide-item">
+                    {% case media.settings.media_type %}
+                      {% when 'image' %}
+                        <div class="image-wrapper">
+                          <a href="{{ media.settings.media_url }}">
+                            <div class="cover_img" style="--padding-bottom:160%">
+                              {%- render 'responsive-image',
+                                image: media.settings.media_image,
+                                sizes: '407x0,500x0',
+                                retina: block.settings.retina
+                              -%}
+                            </div>
+                            {% if media.settings.media_text_explore != blank %}
+                              <a href="{{ media.settings.media_url }}">
+                                <div class="explore-word">{{ media.settings.media_text_explore }}</div>
+                              </a>
+                            {% endif %}
+                          </a>
+                        </div>
+                      {% when 'video_url' %}
+                        <div class="cover_img video_wrapper" style="--padding-bottom:160%">
+                          <iframe
+                            width="100%"
+                            height="315"
+                            src="{{ media.settings.media_video_url }}"
+                            frameborder="0"
+                            allowfullscreen
+                          ></iframe>
+                        </div>
+                        {% if media.settings.media_text_explore != blank %}
+                          <a href="{{ media.settings.media_url }}">
+                            <div class="explore-word">{{ media.settings.media_text_explore }}</div>
+                          </a>
+                        {% endif %}
+                      {% when 'video_file' %}
+                        <div
+                          class="cover_img {% if media.settings.play %} video_wrapper{% endif %}"
+                          style="--padding-bottom:160%"
+                        >
+                          {{
+                            media.settings.media_video_file
+                            | video_tag:
+                              loop: true,
+                              controls: false,
+                              muted: true,
+                              sizes: '407x0,500x0',
+                              image_size: '500x',
+                              class: 'custom_video lazyvideo',
+                              attributes: 'controlslist="nodownload noremoteplayback"' | replace:'preload="metadata"','preload="none"' | replace: ' poster' , ' data-poster'
+                          }}
+                          {% if media.settings.media_text_explore != blank %}
+                            <a href="{{ media.settings.media_url }}">
+                              <div class="explore-word">{{ media.settings.media_text_explore }}</div>
+                            </a>
+                          {% endif %}
+                          {% if media.settings.play %}
+                            <div class="play-button"></div>
+                          {% endif %}
+                        </div>
+                    {% endcase %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </slider-component>
+      {% if block_count >= 4 %}
+        {%- render 'slideshow-arrows' -%}
+      {% endif %}
+    </div>
+  </div>
+  <div class="row slider-{{ section.id }}">
+    <div class="small-12 columns setPadding">
+      {% for block in section.blocks %}
+        {% if block.type == 'tab' %}
+          {% assign media_count = 0 %}
+          {% for media in section.blocks %}
+            {% if media.type == 'media' and media.settings.tab_id == block.settings.tab_id %}
+              {% assign media_count = media_count | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+          <div class="content" data-tab-id="{{ block.settings.tab_id }}">
+            <div class="single-image">
+              <a href="{{ block.settings.single_image_url }}">
+                {%- render 'responsive-image',
+                  image: block.settings.single_image,
+                  sizes: '407x0,1300x0',
+                  retina: block.settings.retina
+                -%}
+                {% if block.settings.single_image_text != blank %}
+                  <a href="{{ block.settings.single_image_url }}">
+                    <div class="single-image-text">{{ block.settings.single_image_text }}</div>
+                  </a>
+                {% endif %}
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="small-12 columns setPadding">
+      <div class="tabs-container">
+        <button class="arrow-btn prev-btn">‹</button>
+        <div class="tabs collection-tabs__list">
+          {% assign total_tabs = 0 %}
+          {% assign tab_buttons = '' %}
+
+          <!-- First Loop: Count the tabs and store buttons in a variable -->
+          {% for block in section.blocks %}
+            {% if block.type == 'tab' %}
+              {% assign total_tabs = total_tabs | plus: 1 %}
+              {% capture tab_buttons %}
+          {{ tab_buttons }}
+          <button
+            class="tab collection-tabs__list-link {% if total_tabs == 1 %}active{% endif %}"
+            data-tab-id="{{ block.settings.tab_id }}"
+            data-progress="{{ total_tabs }}"
+          >
+            {{ block.settings.tab_title }}
+          </button>
+        {% endcapture %}
+            {% endif %}
+          {% endfor %}
+          {% if total_tabs > 0 %}
+            {% assign progress_step = 100 | divided_by: total_tabs %}
+          {% else %}
+            {% assign progress_step = 0 %}
+          {% endif %}
+          {% assign final_buttons = '' %}
+          {% assign counter = 0 %}
+
+          {% for block in section.blocks %}
+            {% if block.type == 'tab' %}
+              {% assign counter = counter | plus: 1 %}
+              {% assign progress_value = counter | times: progress_step %}
+              {% capture final_buttons %}
+          {{ final_buttons }}
+          <button
+            class="tab collection-tabs__list-link {% if counter == 1 %}active{% endif %}"
+            data-tab-id="{{ block.settings.tab_id }}"
+            data-progress="{{ progress_value }}"
+          >
+            {{ block.settings.tab_title }}
+          </button>
+        {% endcapture %}
+            {% endif %}
+          {% endfor %}
+          {{ final_buttons }}
+          <div class="tab-underline"></div>
+        </div>
+        <button class="arrow-btn next-btn">›</button>
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 34%;"></div>
+          <div class="progress-bar-mobile"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const section = document.querySelector('.main-multi-tab-section');
+     if (!section) return;
+
+    const tabs = section.querySelectorAll('.collection-tabs__list-link');
+    const underline = section.querySelector('.tab-underline');
+    const progressBar = section.querySelector('.progress-bar');
+
+    function moveUnderline(el) {
+      const { offsetLeft: left, offsetWidth: width } = el;
+      underline.style.left = `${left}px`;
+      underline.style.width = `${width}px`;
+    }
+
+    // Initialize underline on page load
+    const activeTab = section.querySelector('.collection-tabs__list-link.active');
+    if (activeTab) moveUnderline(activeTab);
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        moveUnderline(tab);
+
+        // Update progress bar
+        const progress = tab.getAttribute('data-progress');
+        if (progressBar) progressBar.style.width = `${progress}%`;
+      });
+    });
+   });
+</script>
+<script type="load">
+   var swiper = new Swiper(".slider-{{ section.id }}  .mySwiper", {
+     slidesPerView: 4,
+     spaceBetween: 5,
+  loop:true,
+     pagination: {
+       el: ".swiper-pagination",
+       clickable: false,
+     },
+     navigation: {
+       nextEl: ".slider-{{ section.id }} .flickity-next",
+       prevEl: ".slider-{{ section.id }} .flickity-prev",
+     },
+     breakpoints: {
+       0: {
+         slidesPerView: 1.35,
+         centeredSlides: true,
+       },
+       768: {
+         slidesPerView: 2,
+         centeredSlides: false,
+       },
+       1024: {
+         slidesPerView: 4,
+         centeredSlides: false,
+       }
+     }
+   });
+</script>
+<script type="load">
+      jQuery(document).ready(function ($) {
+            {% comment %}
+            function initializeSlick() {
+              var initialSlideIndex = 0;
+              if (window.innerWidth <= 768) {
+                  initialSlideIndex = 1; // Show the second slide by default on mobile
+              }
+                $('.custom-slider').not('.slick-initialized').slick({
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                    autoplay: false,
+                    arrows: true,
+                    prevArrow: '<button type="button" class="flickity-nav slick-prev1"><img width="38" height="38" src="{{ "arrow-left.svg" | asset_url }}"></button>',
+                    nextArrow: '<button type="button" class="flickity-nav slick-next1"><img width="38" height="38" src="{{ "arrow-right.svg" | asset_url }}"></button>',
+                  initialSlide: initialSlideIndex,
+                    responsive: [
+                        {
+                            breakpoint: 768,
+                            settings: {
+                                slidesToShow: 1,
+                                arrows: false,
+                              centerMode: true,
+                              initialSlide: 1
+                            }
+                        }
+                    ]
+                });
+                // adjustSlideHeight();
+            }
+
+
+            function adjustSlideHeight() {
+                let maxHeight = 0;
+                $(".tab-slide img, .tab-slide iframe, .tab-slide video").each(function () {
+                    let height = $(this).outerHeight();
+                    if (height > maxHeight) {
+                        maxHeight = height;
+                    }
+                });
+
+                $(".tab-slide img, .tab-slide iframe, .tab-slide video").css("height", maxHeight + "px");
+            }
+            {% endcomment %}
+            // Tab switching
+            $('.tab').on('click', function () {
+                let tabId = $(this).data('tab-id');
+                $('.content').removeClass('active');
+                $('.content[data-tab-id="' + tabId + '"]').addClass('active');
+                //initializeSlick();
+                //$('.custom-slider').slick("refresh");
+                //$('.custom-slider').slick('setPosition');
+                //adjustSlideHeight();
+            });
+            $('.tab').first().addClass('active').trigger('click');
+            //initializeSlick();
+            //$(window).on('resize', adjustSlideHeight);
+            // Video Play/Pause Handling
+            $(".video_wrapper").each(function () {
+                let wrapper = $(this);
+                let video = wrapper.find(".custom_video")[0];
+                let playButton = wrapper.find(".play-button");
+
+                wrapper.on("click", function () {
+                    if (video.paused) {
+                        video.play();
+                        playButton.fadeOut(); // Hides the play button
+                    } else {
+                        video.pause();
+                        playButton.fadeIn(); // Shows the play button
+                        playButton.css("display", "flex");
+                    }
+                });
+
+                $(video).on("ended", function () {
+                    playButton.fadeIn();
+                    playButton.css("display", "flex");
+                });
+            });
+        });
+
+    const tabs = document.querySelectorAll(".tab");
+          let currentIndex = 0;
+  if (window.innerWidth <= 768) {
+          function updateTabs(index) {
+              tabs.forEach((tab, i) => {
+                  tab.classList.remove("active");
+                  tab.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+              });
+
+              tabs[index].classList.add("active");
+              tabs[index].click();
+          }
+
+          document.querySelector(".prev-btn").addEventListener("click", () => {
+              if (currentIndex > 0) {
+                  currentIndex--;
+                  updateTabs(currentIndex);
+              }
+          });
+
+          document.querySelector(".next-btn").addEventListener("click", () => {
+              if (currentIndex < tabs.length - 1) {
+                  currentIndex++;
+                  updateTabs(currentIndex);
+              }
+          });
+
+          updateTabs(currentIndex);
+     }
+</script>
+{% schema %}
+{
+  "name": "Tabbed Media Section",
+  "settings": [  {
+      "type":"text",
+      "id":"title",
+      "label":"Title",
+      "default":"Discover Bridal 2026 Collection"
+    }],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Use a unique identifier (e.g., 'tab1', 'summer2025')"
+        },
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "single_image",
+          "label": "Single Image"
+        },
+        {
+          "type": "text",
+          "id": "single_image_text",
+          "label": "Text on image"
+        },
+        {
+        "type": "url",
+          "id": "single_image_url",
+          "label": "Image url"
+        },
+      ]
+    },
+    {
+      "type": "media",
+      "name": "Media Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_id",
+          "label": "Tab ID",
+          "info": "Enter the Tab ID this media belongs to."
+        },
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image" },
+            { "value": "video_url", "label": "External Video (YouTube/Vimeo)" },
+            { "value": "video_file", "label": "Hosted Video" }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image",
+          "label": "Image"
+        },
+        {
+          "type": "video_url",
+          "id": "media_video_url",
+          "label": "External Video URL",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "video",
+          "id": "media_video_file",
+          "label": "Hosted Video"
+        },
+        {
+          "type": "checkbox",
+          "default":false,
+          "id": "play",
+          "label": "Show play/pause button"
+        },
+        {
+          "type": "text",
+          "id": "media_text_explore",
+          "label": "Image Text"
+
+        },
+        {
+          "type": "url",
+          "id": "media_url",
+          "label": "Image url"
+
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabbed Media Section",
+      "blocks": [
+        {
+          "type": "tab"
+        },
+        {
+          "type": "media"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

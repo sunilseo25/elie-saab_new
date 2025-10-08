@@ -1,0 +1,197 @@
+{{ 'homepage.css' | asset_url | stylesheet_tag }}
+{{ 'fragrance.css' | asset_url | stylesheet_tag }}
+{{ 'fragrances-home.js' | asset_url | script_tag }}
+
+<style>
+  .customHide {
+        border-radius: 4px;
+      }
+</style>
+<script type="load">
+   jQuery(document).ready(function($) {
+      function updateTabIndicator() {
+            const activeTab1 = document.querySelector('.fragrance-home .video-tab.active span');
+              const activeTab = document.querySelector('.fragrance-home .video-tab.active');
+            const indicator = document.querySelector('.tab-indicator');
+            if (activeTab && indicator) {
+              const tabRect1 = activeTab1.getBoundingClientRect();
+              const containerRect1 = activeTab1.parentElement.getBoundingClientRect();
+              const tabRect = activeTab.getBoundingClientRect();
+              const containerRect = activeTab.parentElement.getBoundingClientRect();
+           const width = window.innerWidth;
+            var left = 0;
+               var width1 = 0;
+  if (width < 370) {
+    // alert("here");
+    // Mobile devices (e.g. phones)
+    console.log("Mobile view");
+    left = tabRect1.left - containerRect1.left;
+                width1 = tabRect1.width;
+
+    // Do something for mobile
+  } else if (width >= 370 && width < 768) {
+    // alert("here1");
+  left = tabRect1.left - containerRect1.left;
+                width1 = tabRect1.width;
+    // Small tablets
+    console.log("Small tablet view");
+    // Do something for small tablets
+  }else if (width >= 768 && width < 992) {
+    // Tablets
+    left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    console.log("Tablet view");
+    // Do something for tablets
+  } else if (width >= 992 && width < 1281) {
+    // Small desktops
+    left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    console.log("Small desktop view");
+    // Do something for small desktops
+  }else if (width >= 1281 && width < 1441) {
+    // Small desktops
+    left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    console.log("mac desktop view");
+    // Do something for small desktops
+  }  else {
+        left = tabRect.left - containerRect.left;
+                width1 = tabRect.width;
+    // Large desktops
+    console.log("Large desktop view");
+    // Do something for large desktops
+  }
+            
+          
+              indicator.style.left = `${left}px`;
+              indicator.style.width = `${width1}px`;
+            }
+          }
+let scrollEnabled = true;
+
+// Debounce function to optimize scroll
+function debounce(func, wait) {
+  let timeout;
+  return function () {
+    const context = this, args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+}
+
+function handleScroll() {
+  if (!scrollEnabled) return;
+
+  $(".text-slideshow").each(function () {
+    let section = $(this);
+    let sectionTop = section.offset().top;
+    let sectionBottom = sectionTop + section.outerHeight();
+    let scrollTop = $(window).scrollTop();
+    let windowHeight = $(window).height();
+
+    // Your original customheight logic
+    let customheight = 0;
+    const width = window.innerWidth;
+    if (width >= 768 && width < 992) {
+      customheight = 300;
+    } else if (width >= 992 && width < 1281) {
+      customheight = 380;
+    } else if (width >= 1281 && width < 1441) {
+      customheight = 450;
+    } else {
+      customheight = 500;
+    }
+
+    if (scrollTop + windowHeight - customheight > sectionTop && scrollTop < sectionBottom) {
+      let sectionId = section.attr("id");
+      let matchingTab = $('.video-tab[data-tab-id="' + sectionId + '"]');
+
+      if (matchingTab.length) {
+        $(".fragrance-home .video-tab").removeClass("active");
+        matchingTab.addClass("active");
+        updateTabIndicator();
+      }
+    }
+  });
+}
+
+// Attach scroll handler if width > 768
+if (window.innerWidth > 768) {
+  $(window).on("scroll", debounce(handleScroll, 5));
+}
+
+// Tab click handler
+$('.fragrance-home .video-tab').on('click', function () {
+  let tabId = $(this).data('tab-id');
+
+  // $('.fragrance-home .video-tab').removeClass('active');
+  // $(this).addClass('active');
+  $('.fragrance-home .video-tab-content').removeClass('active');
+
+  updateTabIndicator();
+
+  // Temporarily disable scroll detection
+  scrollEnabled = false;
+
+  // Your original customheight logic here too (for offset)
+  let customheight = 0;
+  const width = window.innerWidth;
+  if (width >= 768 && width < 992) {
+    customheight = 10;
+  } else if (width >= 992 && width < 1281) {
+    customheight = 150;
+  } else if (width >= 1281 && width < 1441) {
+    customheight = 150;
+  } else {
+    customheight = 160;
+  }
+
+  // Smooth scroll to section with offset
+  $('html, body').animate({
+    scrollTop: $('#' + tabId).offset().top - customheight
+  }, 5, function () {
+    scrollEnabled = true; // Re-enable after scroll animation
+  });
+});
+
+// Set first tab as active on page load
+$('.fragrance-home .video-tab').first().addClass('active');
+
+     const tabsvideo = document.querySelectorAll(".fragrance-home .video-tab");
+         let currentIndex = 0;
+         if (window.innerWidth <= 768) {
+           function updateTabsvideo(index) {
+             tabsvideo.forEach((tab, i) => {
+               tab.classList.remove("active");
+               tab.style.display = i === index ? "inline-block" : "none"; // Show only the active tab
+             });
+
+             tabsvideo[index].classList.add("active");
+             tabsvideo[index].click();
+           }
+
+         document.querySelector(".fragrance-home .prev-btn-video").addEventListener("click", () => {
+           if (currentIndex > 0) {
+             currentIndex--;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+         document.querySelector(".fragrance-home .next-btn-video").addEventListener("click", () => {
+           if (currentIndex < tabsvideo.length - 1) {
+             currentIndex++;
+             updateTabsvideo(currentIndex);
+           }
+         });
+
+         updateTabsvideo(currentIndex);
+     }
+     updateTabIndicator();
+   });
+</script>
+{% schema %}
+{
+  "name": "Fragances section",
+  "settings": []
+}
+{% endschema %}

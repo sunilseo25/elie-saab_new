@@ -1,0 +1,1954 @@
+<div class="container mx-auto cstAbt">
+  <!-- Banner Section -->
+  <div id="banner" class="cstbnr">
+  {% if section.settings.bn1 != blank %}
+   <img src="{{ section.settings.bn1 | img_url: ' ' }}" id="bannerImage" alt="Banner" class="w-full" > 
+    {%- else %} 
+    <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/banner-haute.jpg?v=1743001733" id="bannerImage" alt="Banner" class="w-full" >
+  {%- endif %}
+  </div>
+
+  <!-- Tabs -->
+  <div class="cstbtnss flex mb-4 target-div">
+    <button
+      class="tab-btn active"
+      data-target="looks"
+    >
+      {{ section.settings.tab1 }}
+    </button>
+    <button
+      class="tab-btn"
+      data-target="shows"
+    >
+      {{ section.settings.Legacy }}
+    </button>
+    <button
+      class="tab-btn"
+      data-target="press-release"
+    >
+      {{ section.settings.SAAB }}
+    </button>
+    <button
+      class="tab-btn"
+      data-target="Details"
+    >
+      {{ section.settings.Details }}
+    </button>
+    <button
+      class="tab-btn"
+      data-target="Behind-the-scenes"
+    >
+      {{ section.settings.bhg }}
+    </button>
+    <button
+      class="tab-btn"
+      data-target="Appointments"
+    >
+      {{ section.settings.aatr }}
+    </button>
+  </div>
+  <!-- Tab Content -->
+  <div class="tab-content" id="tab1">
+    <div class="carouselMain" id="looks">
+      <div class="carousel">
+        <div>
+          <!-- 1 -->
+          <a class="cstbtn" tabindex="0"><span>Look 1</span></a>
+          {% if section.settings.show_stars %}
+            {% if section.settings.imaffgeaq != blank %}
+              <img src="{{ section.settings.imaffgeaq | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video %}
+            <div class="video-wrappert">
+              <video class="customVideot" autoplay muted loop playsinline poster="{{ section.settings.imaffgeaqqe }}">
+                <source src="{{section.settings.bvkkk}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 2 -->
+          <a class="cstbtn" tabindex="0"><span>Look 2</span></a>
+          {% if section.settings.show_stars1 %}
+            {% if section.settings.imaffgeaq1 != blank %}
+              <img src="{{ section.settings.imaffgeaq1 | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video1 %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe1 }}">
+                <source src="{{ section.settings.bvkkk1 }}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 3 -->
+          <a class="cstbtn" tabindex="0"><span>Look 3</span></a>
+          {% if section.settings.show_stars2 %}
+            {% if section.settings.imaffgeaq2 != blank %}
+              <img src="{{ section.settings.imaffgeaq2 | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video2 %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe2 }}">
+                <source src="{{ section.settings.bvkkk2 }}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 4 -->
+          <a class="cstbtn" tabindex="0"><span>Look 1</span></a>
+          {% if section.settings.show_stars3 %}
+            {% if section.settings.imaffgeaq3 != blank %}
+              <img src="{{ section.settings.imaffgeaq3 | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video3 %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe3 }}">
+                <source src="{{section.settings.bvkkk3}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 5 -->
+          <a class="cstbtn" tabindex="0"><span>Look 2</span></a>
+
+          {% if section.settings.show_stars4 %}
+            {% if section.settings.imaffgeaq4 != blank %}
+              <img src="{{ section.settings.imaffgeaq4 | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe4 }}">
+                <source src="{{section.settings.bvkkk4}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <!-- 1 -->
+          <a class="cstbtn" tabindex="0"><span>Look 3</span></a>
+
+          {% if section.settings.show_stars5 %}
+            {% if section.settings.imaffgeaq5 != blank %}
+              <img src="{{ section.settings.imaffgeaq5 | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video5 %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe5 }}">
+                <source src="{{section.settings.bvkkk5}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="cstbtn1-wr">
+        <a href="{{ section.settings.vcl }}" class="cstbtn1"
+          ><span>{{ section.settings.vc }}</span></a
+        >
+      </div>
+    </div>
+
+    <div class="" id="shows">
+      <video class="cstBoom" width="100" height="420" autoplay loop muted playsinline>
+        <source src="{{ section.settings.vdl }}" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="vmi" id="press-release">
+      <h2 class="sty">
+        <span>{{ section.settings.pvs }}</span>
+      </h2>
+      <p class="styP">
+        {{ section.settings.pv1s }}
+      </p>
+      <div class="cstbtn1-wr">
+        <a href="{{ section.settings.vc1l }}" class="cstbtn1"
+          ><span>{{ section.settings.vc1 }}</span></a
+        >
+      </div>
+    </div>
+
+    <div class="carouselMain" id="Details">
+      <div class="carousel">
+        <div>
+          <!-- 1 -->
+          {% if section.settings.show_starsq %}
+            {% if section.settings.imaffgeaqq != blank %}
+              <img src="{{ section.settings.imaffgeaqq | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_videoq %}
+            <div class="video-wrappert">
+              <video class="customVideot" autoplay muted loop playsinline poster="{{ section.settings.imaffgeaqqeq }}">
+                <source src="{{section.settings.bvkkkq}}" type="video/mp4">
+                bbb
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 2 -->
+          {% if section.settings.show_stars1q %}
+            {% if section.settings.imaffgeaq1q != blank %}
+              <img src="{{ section.settings.imaffgeaq1q | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video1q %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe1q }}">
+                <source src="{{ section.settings.bvkkk1q }}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 3 -->
+          {% if section.settings.show_stars2q %}
+            {% if section.settings.imaffgeaq2q != blank %}
+              <img src="{{ section.settings.imaffgeaq2q | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video2q %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe2q }}">
+                <source src="{{ section.settings.bvkkk2q }}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 4 -->
+          {% if section.settings.show_stars3q %}
+            {% if section.settings.imaffgeaq3q != blank %}
+              <img src="{{ section.settings.imaffgeaq3q | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video3q %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe3q }}">
+                <source src="{{section.settings.bvkkk3q}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 5 -->
+          {% if section.settings.show_stars4q %}
+            {% if section.settings.imaffgeaq4q != blank %}
+              <img src="{{ section.settings.imaffgeaq4q | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_videoq %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe4q }}">
+                <source src="{{section.settings.bvkkk4q}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <!-- 1 -->
+          {% if section.settings.show_stars5q %}
+            {% if section.settings.imaffgeaq5q != blank %}
+              <img src="{{ section.settings.imaffgeaq5q | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video5q %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe5q }}">
+                <source src="{{section.settings.bvkkk5q}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <p class="evrtySt" id="Behind-the-scenes">
+      {{ section.settings.Every }}
+    </p>
+    <div class="carouselMain">
+      <div class="carousel">
+        <div>
+          <!-- 1 -->
+          {% if section.settings.show_starst %}
+            {% if section.settings.imaffgeaqt != blank %}
+              <img src="{{ section.settings.imaffgeaqt | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_videot %}
+            <div class="video-wrappert">
+              <video class="customVideot" autoplay muted loop playsinline poster="{{ section.settings.imaffgeaqqet }}">
+                <source src="{{section.settings.bvkkkt}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 2 -->
+          {% if section.settings.show_stars1t %}
+            {% if section.settings.imaffgeaq1t != blank %}
+              <img src="{{ section.settings.imaffgeaq1t | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video1t %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe1t }}">
+                <source src="{{ section.settings.bvkkk1t }}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 3 -->
+          {% if section.settings.show_stars2t %}
+            {% if section.settings.imaffgeaq2t != blank %}
+              <img src="{{ section.settings.imaffgeaq2t | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video2t %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe2t }}">
+                <source src="{{ section.settings.bvkkk2t }}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 4 -->
+          {% if section.settings.show_stars3t %}
+            {% if section.settings.imaffgeaq3t != blank %}
+              <img src="{{ section.settings.imaffgeaq3t | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video3t %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe3t }}">
+                <source src="{{section.settings.bvkkk3t}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <!-- 5 -->
+          {% if section.settings.show_stars4t %}
+            {% if section.settings.imaffgeaq4t != blank %}
+              <img src="{{ section.settings.imaffgeaq4t | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_videot %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe4t }}">
+                <source src="{{section.settings.bvkkk4t}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <!-- 1 -->
+          {% if section.settings.show_stars5t %}
+            {% if section.settings.imaffgeaq5t != blank %}
+              <img src="{{ section.settings.imaffgeaq5t | img_url: ' ' }}">
+            {% else %}
+              <img src="https://elie-saab-switzerland.myshopify.com/cdn/shop/files/Untitled_design_10.png?v=1741883370&width=750">
+            {%- endif -%}
+          {%- endif %}
+          {% if section.settings.show_video5t %}
+            <div class="video-wrappert">
+              <video class="customVideot" playsinline poster="{{ section.settings.imaffgeaqqe5t }}">
+                <source src="{{section.settings.bvkkk5t}}" type="video/mp4">
+              </video>
+              <button class="play-buttont">
+                <img src="https://cdn.shopify.com/s/files/1/0895/6582/3316/files/Group_1171276055.svg?v=1740584804">
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="appr" id="Appointments">
+      <h2>{{ section.settings.pv }}</h2>
+      <p>{{ section.settings.pv1 }}</p>
+      <a href="{{ section.settings.raaa }}" class="cstbtn1"
+        ><span>{{ section.settings.raa }}</span></a
+      >
+    </div>
+  </div>
+</div>
+
+<style>
+  .carouselMain.scf56 {
+      margin: 0px !important;
+  }
+      .video-wrappert {
+      position: relative;
+      display: inline-block;
+    }
+
+    .play-buttont {display:none !important;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgb(0 0 0 / 0%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      padding: 10px 15px;
+      font-size: 24px;
+      cursor: pointer;
+      display: block;
+      z-index: 10; /* Ensure play button is above */
+    }
+
+    .video-wrappert video {
+      width: 100%;
+      height: auto;
+      position: relative;
+      z-index: 5; /* Ensure video is below the button */
+      pointer-events: none; /* Prevent video from blocking clicks */
+    }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const buttons = document.querySelectorAll(".tab-btn");
+      const sections = document.querySelectorAll(".content-section");
+
+      function highlightActiveButton() {
+          let index = sections.length;
+
+          while (--index && window.scrollY + 100 < sections[index].offsetTop) {}
+
+          buttons.forEach((btn) => btn.classList.remove("active"));
+          buttons[index].classList.add("active");
+      }
+
+      buttons.forEach((button) => {
+          button.addEventListener("click", function () {
+              const targetId = this.getAttribute("data-target");
+              const targetSection = document.getElementById(targetId);
+
+              if (targetSection) {
+                  targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+          });
+      });
+
+      window.addEventListener("scroll", highlightActiveButton);
+  });
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css">
+<script type="load" d-src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="load" d-src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+<script type="load">
+  // Convert to slider on mobile
+  function initializeMobileSlider() {
+    if (window.innerWidth <= 768) {
+      if (!$('.cstbtnss').hasClass('slick-initialized')) {
+        $('.cstbtnss').slick({
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: true,
+   prevArrow: '<i class="fa fa-chevron-left"></i>',
+          nextArrow: '<i class="fa fa-chevron-right"></i>',
+          dots: false,
+          responsive: [
+            {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+              },
+            },
+          ],
+        });
+      }
+    } else {
+      if ($('.cstbtnss').hasClass('slick-initialized')) {
+        $('.cstbtnss').slick('unslick');
+      }
+    }
+  }
+
+  // Initialize slider on load and window resize
+  initializeMobileSlider();
+  window.addEventListener('resize', initializeMobileSlider);
+  // Initialize Slick Slider for all carousels
+  $('.carousel').slick({
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  autoplay: false,
+  autoplaySpeed: 2000,
+  arrows: true,
+
+  responsive: [
+  {
+  breakpoint: 1024,
+  settings: {
+  slidesToShow: 3
+  }
+  },
+  {
+  breakpoint: 600,
+  settings: {
+  slidesToShow: 1,centerMode: true,
+  arrows: false,
+  }
+  },
+   {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+             centerMode: true,
+  arrows: false,
+              },}
+  ]
+  });
+</script>
+
+<script>
+          document.addEventListener("DOMContentLoaded", function () {
+      const buttons = document.querySelectorAll(".tab-btn");
+      const sections = document.querySelectorAll(".content-section");
+
+      function highlightActiveButton() {
+          let index = sections.length;
+
+          while (--index && window.scrollY + 100 < sections[index].offsetTop) {}
+
+          buttons.forEach((btn) => btn.classList.remove("active"));
+          buttons[index].classList.add("active");
+      }
+
+      buttons.forEach((button) => {
+          button.addEventListener("click", function () {
+              const targetId = this.getAttribute("data-target");
+              const targetSection = document.getElementById(targetId);
+
+              if (targetSection) {
+                  // Scroll to the target section
+                  targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+                  // Remove active class from all buttons and add to the clicked one
+                  buttons.forEach((btn) => btn.classList.remove("active"));
+                  this.classList.add("active");
+              }
+          });
+      });
+
+      window.addEventListener("scroll", highlightActiveButton);
+  });
+</script>
+
+<script>
+  const banner = document.querySelector('.cstbnr');
+  const target = document.querySelector('.target-div');
+
+  window.addEventListener('scroll', () => {
+    const bannerBottom = banner.getBoundingClientRect().bottom;
+    const targetRect = target.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    const isBannerOut = bannerBottom <= 0;
+    const isTargetVisible = targetRect.bottom > 0 && targetRect.top < windowHeight;
+
+    if (isBannerOut && isTargetVisible) {
+      target.classList.add('active-kp');
+    } else {
+      target.classList.remove('active-kp');
+    }
+  });
+</script>
+{% schema %}
+{
+"name": "Haute Couture",
+"settings": [
+
+{
+"type": "image_picker",
+"id": "bn1",
+"label": "Banner Image"
+},
+{
+"type": "text",
+"id": "tab1",
+"label": "tab 1 heading",
+"default": "About"
+},
+{
+"type": "text",
+"id": "Legacy",
+"label": "tab 2 heading",
+"default": "Legacy"
+},
+{
+"type": "text",
+"id": "SAAB",
+"label": "tab 3 heading",
+"default": "ELIE SAAB World"
+},
+{
+"type": "text",
+"id": "Details",
+"label": "tab 4 heading",
+"default": "Details"
+},
+{
+"type": "text",
+"id": "bhg",
+"label": "tab 4 heading",
+"default": " Behind the scenes"
+},
+{
+"type": "text",
+"id": "aatr",
+"label": "tab 4 heading",
+"default": "Appointments"
+},
+
+
+{
+"type": "header",
+"content": "First carousel"
+},
+{
+"type": "text",
+"id": "vc",
+"label": "View Lookbook",
+"default": "View Lookbook"
+},
+
+
+
+{
+"type": "text",
+"id": "vcl",
+"label": "link"
+},
+{
+"type": "text",
+"id": "vdl",
+"label": "Video Link",
+"default": "https://cdn.shopify.com/videos/c/o/v/ba1e4ff3f4124f54b1a0464ae2a63cc4.mp4"
+},
+
+
+{
+"type": "text",
+"id": "pvs",
+"label": "Heading",
+"default": "Portrait of a Dream"
+},
+{
+"type": "textarea",
+"id": "pv1s",
+"label": "text",
+"default": "Painted in soft pigment, traced in translucent layers, and daubed with exquisite detail: ELIE SAAB HAUTE COUTURE SS25 blends the craft of couture with the illusion of art to reveal an otherworldly masterpiece. Inspired by the romantic radiance of an Impressionist garden, each look in this ethereal collection is designed to be one brushstroke in a harmonious whole. From the palette of dreamy pastels to the fluid lines of their silhouettes, these luminous portraits combine into a transporting tableau, which is both intensely feminine and powerfully delicate"
+},
+{
+"type": "text",
+"id": "vc1",
+"label": "Read More",
+"default": "Read More"
+},
+{
+"type": "text",
+"id": "vcl1",
+"label": "link"
+},
+{
+"type": "checkbox",
+"id": "show_stars",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq1",
+"label": "Image"
+},
+{
+"type": "text",
+"id": "imaffgeaqqe1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk1",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars2",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video2",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq2",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe2",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk2",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars3",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video3",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq3",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe3",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk3",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars4",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video4",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq4",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe4",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk4",
+"label": "video link"
+},
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars5",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video5",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq5",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe5",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk5",
+"label": "video link"
+},
+{
+"type": "textarea",
+"id": "Every",
+"label": "Text",
+"default":"Every fold, every glint, every whisper of fabric conjures an illusion of fleeting splendor, a masterpiece captured between shadow and light."
+},
+
+{
+"type": "header",
+"content": "Second carousel"
+},
+
+{
+"type": "text",
+"id": "Dear_Guest",
+"label": "Heading",
+"default": "Dear Guest"
+},
+{
+"type": "image_picker",
+"id": "iaqq",
+"label": "Text Image"
+},
+{
+"type": "checkbox",
+"id": "show_starsq",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_videoq",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaqq",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqeq",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkkq",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars1q",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video1q",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq1q",
+"label": "Image"
+},
+{
+"type": "text",
+"id": "imaffgeaqqe1q",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk1q",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars2q",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video2q",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq2q",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe2q",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk2q",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars3q",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video3q",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq3q",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe3q",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk3q",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars4q",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video4q",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq4q",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe4q",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk4q",
+"label": "video link"
+},
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars5q",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video5q",
+"label": "Show video",
+"default": false
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq5q",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe5q",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk5q",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "header",
+"content": "Third carousel"
+},
+
+
+
+
+
+{
+"type": "header",
+"content": "First carousel"
+},
+
+{
+"type": "text",
+"id": "fs",
+"label": "Heading",
+"default": "Fashion Shows"
+},
+{
+"type": "checkbox",
+"id": "show_starst",
+"label": "Show Image",
+"default": true
+},
+
+
+{
+"type": "checkbox",
+"id": "show_videot",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "p0",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaqt",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqet",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkkt",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars1t",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video1t",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "p00",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq1t",
+"label": "Image"
+},
+{
+"type": "text",
+"id": "imaffgeaqqe1t",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk1t",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars2t",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video2t",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "p000",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq2t",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe2t",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk2t",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars3t",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video3t",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "p0000",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq3t",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe3t",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk3t",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars4t",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video4t",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "p00000",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq4t",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe4t",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk4t",
+"label": "video link"
+},
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars5t",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video5t",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "p000000",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq5t",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe5t",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk5t",
+"label": "video link"
+},
+
+
+
+{
+"type": "header",
+"content": "Second carousel"
+},
+
+
+{
+"type": "text",
+"id": "hs",
+"label": "Heading",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "checkbox",
+"id": "show_starss",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_videos",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "po",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaqs",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqes",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkks",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars1s",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video1s",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "poo",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq1s",
+"label": "Image"
+},
+{
+"type": "text",
+"id": "imaffgeaqqe1s",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk1s",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars2s",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video2s",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "pooo",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq2s",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe2s",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk2s",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars3s",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video3s",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "poooo",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq3s",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe3s",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk3s",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars4s",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video4s",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "pooooo",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq4s",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe4s",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk4s",
+"label": "video link"
+},
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars5s",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video5s",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "poooooo",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq5s",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe5s",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk5s",
+"label": "video link"
+},
+
+
+
+
+
+
+
+
+
+{
+"type": "header",
+"content": "Third carousel"
+},
+
+
+{
+"type": "text",
+"id": "hs1",
+"label": "Heading",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "checkbox",
+"id": "show_starss1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_videos1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "po1",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaqs1",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqes1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkks1",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars1s1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video1s1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "poo1",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq1s1",
+"label": "Image"
+},
+{
+"type": "text",
+"id": "imaffgeaqqe1s1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk1s1",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars2s1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video2s1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "pooo1",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq2s1",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe2s1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk2s1",
+"label": "video link"
+},
+
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars3s1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video3s1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "poooo1",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq3s1",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe3s1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk3s1",
+"label": "video link"
+},
+
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars4s1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video4s1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "pooooo1",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq4s1",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe4s1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk4s1",
+"label": "video link"
+},
+
+
+
+
+{
+"type": "checkbox",
+"id": "show_stars5s1",
+"label": "Show Image",
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_video5s1",
+"label": "Show video",
+"default": false
+},
+{
+"type": "text",
+"id": "poooooo1",
+"label": "Caption",
+"default": "RTW Fall / Winter 2025-26"
+},
+{
+"type": "image_picker",
+"id": "imaffgeaq5s1",
+"label": "Image"
+},
+
+{
+"type": "text",
+"id": "imaffgeaqqe5s1",
+"label": "Video poster Image link"
+},
+{
+"type": "text",
+"id": "bvkkk5s1",
+"label": "video link"
+},
+{
+"type": "text",
+"id": "pv",
+"label": "Heading",
+"default": "Private Viewing"
+},
+{
+"type": "textarea",
+"id": "pv1",
+"label": "text",
+"default": "Experience the collection with an in-person private consultation."
+},
+{
+"type": "text",
+"id": "raa",
+"label": "Request an appointment",
+"default": "Request an appointment"
+},
+{
+"type": "text",
+"id": "raaa",
+"label": "link"
+},
+
+
+],
+"presets": [
+{
+"name": "haute-couture"
+}
+]
+}
+{% endschema %}

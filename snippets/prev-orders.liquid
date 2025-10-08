@@ -1,0 +1,45 @@
+                     <div class="order-invoice-boxes">
+  <div class="order-box-wrapper">
+
+      <div class="orders-inline">
+        {% for order in orders %}
+<div class="order-header aside-info">
+  <p class="o-title margin-none">    {{ order.created_at | time_tag: format: 'date' }}</p>
+
+    <a href="{{ order.customer_url }}" class="order-wrap link o-title" aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}">
+	                 {{ 'customer.orders.order_number_link' | t: number: order.name }}
+	                </a>
+
+  <div class="order-line-info-col">
+    <div class="order-wrap-box js-slider-mobile">
+      {% for line_item in order.line_items %}
+        <div class="line-item-wrap">
+          <div class="line-item-wrap">
+            <div class="line-item-image">
+              {{ line_item.image | image_url: width: 1000 | image_tag }}
+            </div>
+            <!-- <div class="line-item-info">
+              <h3 class="o-title">{{ line_item.title }}</h3>
+              <div class="line-variant o-title">{{ line_item.variant.title }}</div>
+            </div> -->
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="order-line-items">
+      <div class="link-order">
+        <a href="{{ order.order_status_url }}" class="link link-underline">Return item</a>
+      </div>
+<div class="order-wrap-button">
+      <a href="{{shop.url}}/apps/download-pdf/orders/68d5c900f476ef0c9bdb/{{ order.id | times: 9598 }}/{{ order.name | handleize }}.pdf" class="link link-underline">Download your invoice</a>
+</div>
+
+    </div>
+  </div>
+</div>
+        {% endfor %}
+      </div>
+
+  </div>
+</div>

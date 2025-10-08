@@ -1,0 +1,170 @@
+{% style %}
+.collection-list .column{
+  padding:0 3px;
+}
+  .collection-list  .sliderImgText{
+    position:relative;
+  }
+   .collection-list  .collection-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+     padding-bottom:15px;
+         font-size: 15px;
+    font-weight: 400;
+}
+  .collection-text{
+    color:#fff;
+  }
+  .collection-text > * {
+    margin:0;
+  }
+  .collection-text h3{
+    color:#fff;
+    font-size:15px;
+    line-height: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid;
+  }
+  @media screen and (max-width:768px){
+ .collection-list   .slide-item.column{
+    width:80%;  
+    }
+    .custom-collection-list .row{
+      padding:0;
+    }
+    .collection-list .sliderImgText{
+      height:460px;
+    }
+     .collection-list .sliderImgText img{
+       height: 100%;
+    object-fit: cover;
+     }
+  }
+  {% endstyle %}
+<div class="custom-collection-list">
+  <div class="row" id="{{ section.settings.slider_id }}">
+    <div class="small-12 columns setPadding">
+      <!--
+        <div class="slider-heading">
+          <!-- <h2>{{ section.settings.slider_heading }}</h2>
+        </div>
+      -->
+
+      <div class="collection-list row large-4 js-collection-slider">
+        {% for block in section.blocks %}
+          <div class="slide-item column ">
+            <a href="{{ block.settings.collection.url }}">
+              <div class="sliderImgText">
+                {% if block.settings.image %}
+                  <img
+                    src="{{ block.settings.image | img_url: 'master' }}"
+                    width="100%"
+                    height="100%"
+                    alt="Slide Image"
+                  >
+                {% else %}
+                  <img
+                    src="{{ block.settings.collection.image | img_url: 'master' }}"
+                    width="100%"
+                    height="100%"
+                    alt="Slide Image"
+                  >
+                {% endif %}
+                <div class="collection-text">
+                  <p>{{ block.settings.subtitle }}</p>
+                  <h3>{{ block.settings.collection_title }}</h3></div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  let flkty = null;
+  let isFlickityEnabled = false; // Track Flickity state
+
+  function checkScreenSize() {
+    const isMobile = window.innerWidth < 768;
+    const carousel = document.querySelector('.js-collection-slider');
+
+    if (isMobile && !isFlickityEnabled) {
+      // Enable Flickity
+      flkty = new Flickity(carousel, {
+        cellAlign: 'center',
+        contain: true,
+        wrapAround: true,
+        pageDots: false,
+        prevNextButtons: false,
+        draggable: true,
+        freeScroll: true
+      });
+      isFlickityEnabled = true;
+    } else if (!isMobile && isFlickityEnabled) {
+      // Destroy Flickity and reset layout
+      flkty.destroy();
+      isFlickityEnabled = false;
+      carousel.style.display = 'flex'; // Ensure normal layout on desktop
+    }
+  }
+
+  // Initial check
+  checkScreenSize();
+
+  // Listen for screen size changes
+  window.addEventListener("resize", checkScreenSize);
+});
+
+</script>
+
+{% schema %}
+{
+  "name": "Custom Collection List",
+  "settings": [
+
+
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Slide Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Select Image"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        },
+           {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+             "default":"Shop"
+        },
+        {
+          "type": "text",
+          "id": "collection_title",
+          "label": "Collection Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Collection list"
+
+    }
+  ]
+}
+{% endschema %}

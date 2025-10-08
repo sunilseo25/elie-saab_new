@@ -1,0 +1,185 @@
+{%- liquid
+  assign disable_top_spacing = section.settings.disable_top_spacing
+  assign disable_bottom_spacing = section.settings.disable_bottom_spacing
+  assign full_width = section.settings.full_width
+-%}
+<style>
+    .template-page-wishlist-v2 .haute-couture span.price {
+      display: none;
+    }
+    .cust-rtw-look-product span.price {
+      display: none;
+    }
+    .section-{{ section.id }}{
+      --section-spacing-desktop:40px;
+      --section-spacing-mobile: 20px;
+    }
+    #product-grid .product-card .st-wishlist-button,
+    #product-grid .product-card slider-component>*:not(.flickity-viewport),
+    #product-grid .product-card .product-card-info {
+      opacity: 1;
+    }
+    .notify_card{
+      top:-10px;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .product-card:hover .notify_card{
+      opacity: 1;
+      visibility: visible;
+    }
+    #custom_notify,
+    .notify_btn {
+      height: 50px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .collection-with-grid {
+      min-height: auto;
+    }
+    {% if template contains 'wishlist-v' %}
+      [data-account-tab="wishlist"]{
+        display:block !important
+      }
+    {% endif %}
+    @media(max-width:767px){
+      .notify_card{
+        display:none;
+      }
+    }
+</style>
+<div class="section-{{ section.id }} section-spacing{% if disable_top_spacing %} section-spacing--disable-top{% endif %}{% if disable_bottom_spacing %} section-spacing--disable-bottom{% endif %}" data-account-tab="wishlist">
+  <div class="row{% if full_width %} full-width-row{% endif %}">
+    <div class="small-12 columns">
+      <div class="text-center wishlist_card">
+        <h2 class="h5">
+          {% if customer %}
+            Your Wishlist, {{ customer.name }}
+          {% else %}
+            Your Wishlist
+          {% endif %}
+        </h2>
+        <tab-component class="nav nav-tabs wishlist-tabs">
+          <li class="nav-item carousel">
+            <a class="nav-link active" data-bs-toggle="tab" data-bs-target="ready-to-wear" href="javascript:void(0);" >Ready-to-wear</a >
+          </li>
+          <li class="nav-item carousel">
+            <a class="nav-link column-3" data-bs-toggle="tab" data-bs-target="haute-couture" href="javascript:void(0);" >Haute Couture</a >
+          </li>
+          <li class="nav-item carousel">
+            <a class="nav-link column-3" data-bs-toggle="tab" data-bs-target="bridal" href="javascript:void(0);" >Bridal</a >
+          </li>
+          <div class="slide-btn flickity-nav flickity-prev" tabindex="0">
+            {%- render 'svg-icons' with 'arrow-left' -%}
+          </div>
+          <div class="slide-btn flickity-nav flickity-next" tabindex="0">
+            {%- render 'svg-icons' with 'arrow-right' -%}
+          </div>
+        </tab-component>
+        <div class="underline-progress">
+          <div class="wishlistprogress under_progress"></div>
+        </div>
+      </div>
+      <div class="collection-container">
+        <ul page-wishlist id="wishlist_page" data-id="{{ section.id }}" class="products collection row small-up-2 medium-up-4"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    function setUnderline() {
+      var $activeTab = $(".wishlist-tabs .nav-link.active");
+      var $underline = $(".wishlistprogress");
+      if ($activeTab.length > 0) {
+        var offset = $activeTab.offset().left - $(".wishlist-tabs").offset().left;
+        $underline.css({
+          width: $activeTab.outerWidth(),
+          transform: 'translateX(' + offset + 'px)',
+        });
+      }
+    }
+    setUnderline();
+
+    function showTabContentOrMessage(target) {
+      $('#wishlist_page .tab-pane').removeClass('show active');
+      $('.empty-message').remove();
+      if ($('.' + target).length > 0) {
+        $('.' + target).addClass('show active');
+      } else {
+        // $('<div class="empty-message h6 empty-wishlist">Your wishlist is empty.</div>').insertAfter('#product-grid');
+      }
+    }
+
+    $(".wishlist-tabs .nav-link").on("shown.bs.tab", function () {
+      let target = $(this).attr('data-bs-target');
+      showTabContentOrMessage(target);
+      if ($(this).hasClass('column-3')) {
+        $('#wishlist_page').removeClass('medium-up-4').addClass('medium-up-3');
+      } else {
+        $('#wishlist_page').removeClass('medium-up-3').addClass('medium-up-4');
+      }
+      setTimeout(function () {
+        $('slider-component').each(function () {
+          let flkty = Flickity.data(this);
+          if (flkty) {
+            flkty.resize(); // Force Flickity to update layout
+          }
+        });
+      }, 100);
+      setUnderline();
+    });
+
+    $(document).ready(function () {
+      let activeTab = $(".wishlist-tabs .nav-link.active, .wishlist-tabs .nav-link:first").attr('data-bs-target');
+      showTabContentOrMessage(activeTab);
+    });
+
+    $(window).on("resize", function () {
+      setUnderline();
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Wishlist Tabs",
+  "tag": "section",
+  "class": "section-page product-grid-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": false,
+      "label": "Make section full width"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "default": true,
+      "label": "Show page title"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "checkbox",
+      "id": "disable_top_spacing",
+      "default": false,
+      "label": "Remove top spacing"
+    },
+    {
+      "type": "checkbox",
+      "id": "disable_bottom_spacing",
+      "default": false,
+      "label": "Remove bottom spacing"
+    }
+  ],
+  "presets":[
+    {
+      "name":"Wishlist tab"
+    }
+  ]
+}
+{% endschema %}

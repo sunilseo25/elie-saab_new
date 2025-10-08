@@ -1,0 +1,38 @@
+<style>
+ html:not(.xh) .mobile-menu-drawer--inner .layout-square .mega-menu-promotion img{
+    opacity:0 !important;
+}
+.lazyload, .lazyloading{
+     opacity: 1 !important;
+     filter: none !important;
+}
+html:not(.xh) .template-index .custom-slider-section .sliderImgText .cover_img img{
+      opacity:0 !important;
+     }
+ html:not(.mainopt):not(.xh), html:not(.mainopt):not(.xh) * {
+        font-family: unset !important;
+     }
+   html:not(.xh)  .template-collection .product-featured-image .carousel_slide:nth-child(n+2) img,   
+ html:not(.xh) .sidebar-container .grid__item:nth-child(n+4) img{
+    opacity:0 !important
+}
+html:not(.xh) label.aa.facet-checkbox {
+    --option-color-image:none !important
+}
+.template-product .thb-product-detail.product product-slider-thumbnails:not(.flickity-enabled) .product-images__slide:nth-of-type(1) {
+    display: block;
+}
+@media(max-width:767px){
+    section.custom-slider-section slider-component.mySwiper:not(.swiper-initialized) .swiper-wrapper .swiper-slide {
+        transform: translateZ(0);
+        width: 80%;
+        margin-right: 5px;
+    }
+}
+@media(min-width:1200px){
+    section.custom-slider-section slider-component.mySwiper:not(.swiper-initialized) .swiper-wrapper {gap: 5px;}
+    section.custom-slider-section slider-component.mySwiper:not(.swiper-initialized) .swiper-wrapper .swiper-slide {
+        width: 25%;
+    }
+}
+</style>

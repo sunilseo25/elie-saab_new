@@ -1,0 +1,189 @@
+<style>
+  .product-card-spacing-small .slider-{{ section.id }} .products.row {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius:3px
+  }
+  .slider-{{ section.id }}{position:relative;}
+ .slider-{{ section.id }} .slide-item{padding:0 !important;}
+ .slider-{{ section.id }} .slick-slide{margin:0 2.5px;}
+ .slider-{{ section.id }}  .slick-list {
+  margin-left: -2.5px;
+   width: calc(100% + 2.5px);
+}
+  button.flickity-nav.flickity-next {
+    right: 1rem;
+}
+  button.flickity-nav.flickity-prev {
+    left: 1rem;
+}
+  span.animation-underline {
+    font-weight: 400 !important;
+}
+  section.custom-slider-section {
+    margin-top: 1rem;
+}
+.columns{
+    text-align:center;
+  }
+  @media (max-width: 767px) {
+ .slider-{{ section.id }} .flickity-nav {
+    display: none !important;
+  }
+}
+</style>
+<section class="custom-slider-section">
+  {% if section.settings.title != blank %}
+    <div class="row">
+      <div class="columns column-title">
+        <h5>{{ section.settings.title }}</h5>
+      </div>
+  </div>
+  {% endif %}
+  <div class="row slider-{{ section.id }}" id="{{ section.settings.slider_id }}">
+    <div class="small-12 columns setPadding">
+      <slider-component class="swiper mySwiper products row no-padding">
+        <div class="swiper-wrapper">
+          {% assign block_count = section.blocks | size %}
+          {% for block in section.blocks %}
+            <div class="swiper-slide slide-item carousel_slide-2">
+              <a href="{{ block.settings.collection_url | default:block.settings.collection.url }}">
+                <div class="sliderImgText">
+                  {% if block.settings.image %}
+                    <div class="cover_img" style="--padding-bottom:160%">
+                      {%- render 'responsive-image', image: block.settings.image, sizes: '407x0,1000x0', retina: block.settings.retina -%}
+                    </div>
+                  {% else %}
+                    <div class="cover_img" style="--padding-bottom:160%">
+                      {%- render 'responsive-image', image: block.settings.collection.image, sizes: '407x0,1000x0', retina: block.settings.retina -%}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.collection_title != blank %}
+                    <div class="collection-text testing">{{ block.settings.collection_title }}</div>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </slider-component>
+      {% if block_count >= 4 %}
+        {%- render 'slideshow-arrows' -%}
+      {% endif %}
+    </div>
+  </div>
+</section>
+<div class="row">
+{% if section.settings.button_label != blank and section.settings.button_link != blank %}
+    <div class="columns" style="margin: 1rem 0;">
+      <a href="{{ section.settings.button_link }}" class="link" id="js-back-link">
+        <span class="animation-underline">{{ section.settings.button_label }}</span>
+      </a>
+    </div>
+{% endif %}
+</div>
+<script type="load">
+  var swiper = new Swiper(".slider-{{ section.id }}  .mySwiper", {
+    slidesPerView: 4,
+    spaceBetween: 5,
+	loop:true,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: false,
+    },
+    navigation: {
+      nextEl: ".slider-{{ section.id }} .flickity-next",
+      prevEl: ".slider-{{ section.id }} .flickity-prev",
+    },
+    breakpoints: {
+      0: {
+        slidesPerView: 1.35,
+        centeredSlides: true,
+      },
+      768: {
+        slidesPerView: 2,
+        centeredSlides: false,
+      },
+      1024: {
+        slidesPerView: 4,
+        centeredSlides: false,
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Collection Slider",
+  "settings": [
+            {
+      "type":"text",
+      "id":"title",
+      "label":"Title"
+
+    },
+    {
+      "type": "text",
+      "id": "slider_heading",
+      "label": "Slider Heading",
+      "default": "Collection Slider"
+    },
+    {
+      "type": "text",
+      "id": "slider_id",
+      "label": "CSS ID"
+    },
+    {
+      "type": "text",
+      "id": "slider_class",
+      "label": "CSS Class"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "View All Boutiques"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Slide Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Select Image"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        },
+        {
+          "type": "url",
+          "id": "collection_url",
+          "label": "Collection URL",
+          "info":"Default url will be used if this is empty"
+        },
+        {
+          "type": "text",
+          "id": "collection_title",
+          "label": "Collection Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Collection Slider",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

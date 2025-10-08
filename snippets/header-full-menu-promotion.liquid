@@ -1,0 +1,42 @@
+<a {% if promotion_link != null -%}href="{{ promotion_link }}"{%- else -%}disabled{%- endif %} class="111 mega-menu-promotion">
+	{%- if promotion_video != blank -%}
+		{%- liquid
+			assign sizes = '1340x'
+			if full_width
+			assign sizes = '1600x'
+			endif
+		-%}
+		<div class="mega_video">
+			{{ promotion_video | video_tag: autoplay: promotion_autoplay, loop: true, controls: false, muted: promotion_autoplay, image_size: sizes }}
+			{% unless promotion_autoplay %}
+			<span class="play_btn">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M176 96C149.5 96 128 117.5 128 144L128 496C128 522.5 149.5 544 176 544L240 544C266.5 544 288 522.5 288 496L288 144C288 117.5 266.5 96 240 96L176 96zM400 96C373.5 96 352 117.5 352 144L352 496C352 522.5 373.5 544 400 544L464 544C490.5 544 512 522.5 512 496L512 144C512 117.5 490.5 96 464 96L400 96z"/></svg>
+			</span>
+			{% endunless %}
+		</div>
+	{%- elsif promotion_video_url != blank -%}
+    <div class="mega_video">
+      {%- assign url = promotion_video_url -%}
+        {% if url contains 'youtu.be' or url contains 'youtube.com' %}
+          <iframe data-src="https://www.youtube.com/embed/{{ url | split: 'v=' | last }}?loop=1{% if promotion_autoplay %}&autoplay=1&mute=1{% endif %}&playlist={{ url | split: 'v=' | last }}&iv_load_policy=3&disablekb=1&controls=1&playsinline=1" frameborder="0" class="lazyload" allow="autoplay; encrypted-media" allowfullscreen tabindex="-1"> </iframe>
+      {% elsif url contains 'vimeo.com' %}
+          <iframe data-src="https://player.vimeo.com/video/{{ url | split: '/' | last }}{% if promotion_autoplay %}?autoplay=1&muted=1{% endif %}" frameborder="0" class="lazyload" allow="autoplay; encrypted-media" allowfullscreen tabindex="-1"> </iframe>
+      {% else %}
+        <video src="{{ promotion_video_url }}" loop playsinline preload="none" class="lazyvideo" controlslist="nodownload noremoteplayback" crossorigin="anonymous" {% if promotion_autoplay %}loop muted{% endif %}></video>
+        {% unless promotion_autoplay %}
+        <span class="play_btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M176 96C149.5 96 128 117.5 128 144L128 496C128 522.5 149.5 544 176 544L240 544C266.5 544 288 522.5 288 496L288 144C288 117.5 266.5 96 240 96L176 96zM400 96C373.5 96 352 117.5 352 144L352 496C352 522.5 373.5 544 400 544L464 544C490.5 544 512 522.5 512 496L512 144C512 117.5 490.5 96 464 96L400 96z"/></svg>
+        </span>
+        {% endunless %}
+      {% endif %}
+		</div>
+	{%- else -%}
+		{%- render 'responsive-image-v1', image: promotion_image, sizes: '670x0' -%}
+	{%- endif -%}
+	<div class="mega-menu-promotion--cover">
+		{%- if promotion_heading != blank -%}<p class="heading-font">{{ promotion_heading }}</p>{%- endif -%}
+		{%- if promotion_link_label != null -%}<span class="text-button white">{{ promotion_link_label }}</span>{%- endif -%}
+	</div>
+</a>
